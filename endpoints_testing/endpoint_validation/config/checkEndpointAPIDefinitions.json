@@ -1,0 +1,28 @@
+{
+  "log_dir_tag": "endpoints_testing/endpoint_validation/discovery",
+  "outdir": "endpoints_testing/endpoint_validation/doc/",
+  "ENDPOINT_LIST_URL": "https://%s/_ah/api/discovery/v1/apis",
+  "ENDPOINT_URL": "https://%s/_ah/api/discovery/v1/apis/%s/%s/rest",
+  "list": {
+    "keys": {
+      "strings": [
+        "kind",
+        "id",
+        "name",
+        "version",
+        "title",
+        "description",
+        "discoveryRestUrl",
+        "discoveryLink",
+        "documentationLink",
+        "preferred"
+      ],
+      "maps": {
+        "icons": [
+          "x16",
+          "x32"
+        ]
+      }
+    }
+  }
+}
