@@ -2,20 +2,30 @@ import time
 import os
 import json
 import random
-import requests # replace with isb-curl
+import isb_auth, isb_curl, requests 
 import unittest
 from multiprocessing import Pool
 from ParametrizedApiTest import ParametrizedApiTest
 
 API_URL = "https://mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/"
-HEADERS = {
-	"Authorization": "Bearer {access_token}",
-	"Content-type": "application/json"
-}
 
 class TestSaveCohort(ParametrizedApiTest):
 	def setUp(self):
 		# authenticate (or not, depending on whether the "auth" dict contains an entry or is None)
+		self.headers = {
+			"Authorization": "Bearer {access_token}",
+			"Content-type": "application/json"
+		}
+
+		if self.auth is not None:
+			# simulate user login with selenium
+			isb_auth.get_credentials()
+			self.token = isb_curl.get_access_token()
+		else:
+			self.token = "notatoken"	
+
+		headers["Authorization"].format(access_token=token)
+
 		# set up the test
 		self.endpoint = "save_cohort/"
 		self.json_requests = []
@@ -38,7 +48,8 @@ class TestSaveCohort(ParametrizedApiTest):
 				response = requests.delete(API_URL + "delete_cohort/?cohort_id={cohort_id}".format(cohort_id=cohort_id))
 				# should I make any assertions about the response?  if so, can this be an implicit test of the delete operation?
 				
-		
+	
+	# save_cohort tests
 	@unittest.skipIf(self.auth is None or self.config != "minimal")
 	def test_save_cohort_authenticated(self): # use for load testing
 		expected_response = {
@@ -72,14 +83,41 @@ class TestSaveCohort(ParametrizedApiTest):
 	def test_save_cohort_optional_params(self): 
 		pass
 	
-	@unittest.skipIf(self.auth is None or self.config != "undefined_params") # necessary?
-	def test_save_cohort_undefined_params(self): 
+	@unittest.skipIf(self.auth is None or self.config != "undefined_param_values") 
+	def test_save_cohort_undefined_param_values(self): 
+		pass
+
+	@unittest.skipIf(self.auth is None or self.config != "undefined_param_names") 
+	def test_save_cohort_undefined_param_names(self):
 		pass
 		
 	@unittest.skipIf(self.auth is None or self.config != "incorrect_param_types")
 	def test_save_cohort_incorrect_param_types(self):
 		pass
+
+	# cohorts_list tests
+	def test_cohorts_list_authenticated(self):
+		pass
+
+	def test_cohorts_list_unauthenticated(self):
+		pass
+
+	def test_cohorts_list_optional_params(self):
+		pass
+
+	def test_cohorts_list_undefined_param_values(self):
+		pass
+
+	def test_cohorts_list_undefined_param_names(self):
+		pass
+
+	def test_cohorts_list_incorrect_param_types(self):
+		pass
+
+	# cohorts_patients_samples_list tests
+	def
 		
+	# helper functions
 	def save_cohort(self): # not a test, just a helper function
 		start = time.time()
 		response = requests.post(API_URL + endpoint, headers=HEADERS, json=cohort_request)
@@ -87,7 +125,7 @@ class TestSaveCohort(ParametrizedApiTest):
 		execution_time = start - end
 		return response, execution_time
 
-class TestPreviewCohort(ParametrizedApiTest):
+class TestPreviewCohort(ParametrizedApiTest): # this endpoint hasn't been implemented yet, but probably will be in the future
 	def setUp(self):
 		pass
 	def tearDown(self):
@@ -160,7 +198,7 @@ def main():
 	### run test_datafilenamekey_list
 	### run test_delete_cohort (or, alternatively, just assert that the created cohort no longer exists)
 	suite = unittest.TestSuite()
-	suite.addTest(ParametrizedTestCase.parametrize(TestSaveCohort, config_dir="", num_requests=1, auth=True)
+	suite.addTest(ParametrizedTestCase.parametrize(TestSaveCohort, config="", config_dir="", num_requests=1, auth=True)
 	
 if __name__ == "__main__":
 	main()
