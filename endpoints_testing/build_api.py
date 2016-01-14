@@ -18,11 +18,12 @@ def main(argv):
   api = 'cohort_api'
   version = 'v1'
   discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, api, version)
-  cohort_api = discovery.build(
+
+  service = discovery.build(
       api, version, discoveryServiceUrl=discovery_url, http=http)
 
   # Fetch all greetings and print them out.
-  response = cohort_api.cohorts_list().execute()
+  response = service.cohort_endpoints().cohorts().list().execute()
   pprint.pprint(response)
 
 if __name__ == '__main__':
