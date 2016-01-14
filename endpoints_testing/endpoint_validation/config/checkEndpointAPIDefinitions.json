@@ -3,7 +3,18 @@
   "outdir": "endpoints_testing/endpoint_validation/doc/",
   "ENDPOINT_LIST_URL": "https://%s/_ah/api/discovery/v1/apis",
   "ENDPOINT_URL": "https://%s/_ah/api/discovery/v1/apis/%s/%s/rest",
-  "list": {
+  "endpoint_report": {
+    "filename": "EndpointReport.tsv",
+    "header": "Endpoints for %s\n",
+    "endpoint_def" : {
+      "columns": [
+        "name",
+        "version",
+        "description"
+      ]
+    }
+  },
+  "endpoint_list": {
     "keys": {
       "strings": [
         "kind",
