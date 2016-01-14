@@ -15,7 +15,7 @@ def main(argv):
 
   # Build a service object for interacting with the API.
   api_root = 'https://mvm-dot-isb-cgc.appspot.com/_ah/api'
-  api = 'cohorts'
+  api = 'cohort_api'
   version = 'v1'
   discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, api, version)
   service = discovery.build(

@@ -22,7 +22,7 @@ def main(argv):
       api, version, discoveryServiceUrl=discovery_url, http=http)
 
   # Fetch all greetings and print them out.
-  response = service.cohorts().cohorts_list().execute()
+  response = service.cohort_api().cohorts_list().execute()
   pprint.pprint(response)
 
 if __name__ == '__main__':
