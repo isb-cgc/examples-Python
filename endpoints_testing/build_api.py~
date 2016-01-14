@@ -3,8 +3,6 @@ import pprint
 import isb_auth, isb_curl
 from apiclient import discovery
 
-
-
 def main(argv):
   # Parse command line flags used by the oauth2client library.
 
