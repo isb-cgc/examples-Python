@@ -2,6 +2,7 @@ import time
 import os
 import json
 import random
+import pprint
 import isb_auth, isb_curl, requests 
 import unittest
 from multiprocessing import Pool
@@ -9,6 +10,22 @@ from ParametrizedApiTest import ParametrizedApiTest
 
 API_URL = "https://mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/"
 
+def skipIfUnauthenticated(f):
+	def _skipIfUnauthenticated(self):
+		if self.auth is None:
+			return unittest.skip("Skipping test... Reason: User is unauthenticated")
+		else:
+			return f(self)
+		return _skipIfUnauthenticated
+		
+def skipIfConfigMismatch(f, config):
+	def _skipIfConfigMismatch(self):
+		if f.config!= self.config:
+			return unittest.skip("Skipping test... Reason: Test configuration mismatch".format(reason=reason))
+		else:
+			return f(self, config)
+	return _skipIfConfigMismatch
+		
 class TestSaveCohort(ParametrizedApiTest):
 	def setUp(self):
 		# authenticate (or not, depending on whether the "auth" dict contains an entry or is None)
@@ -25,6 +42,16 @@ class TestSaveCohort(ParametrizedApiTest):
 			self.token = "notatoken"	
 
 		headers["Authorization"].format(access_token=token)
+		
+		# get information about the endpoints
+		api_root = 'https://mvm-dot-isb-cgc.appspot.com/_ah/api'
+		api = 'cohort_api'
+		version = 'v1'
+		discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, api, version)
+		
+		endpoint_methods = requests.get(discovery_url)
+		pprint.prrint(endpoint_methods)
+		exit(0)
 
 		# set up the test
 		self.endpoint = "save_cohort/"
@@ -50,7 +77,9 @@ class TestSaveCohort(ParametrizedApiTest):
 				
 	
 	# save_cohort tests
-	@unittest.skipIf(self.auth is None or self.config != "minimal")
+	#@unittest.skipIf(self.auth is None or self.config != "minimal")
+	@skipIfUnauthenticated
+	@skipIfConfigMismatch("minimal")
 	def test_save_cohort_authenticated(self): # use for load testing
 		expected_response = {
 			"kind": "cohort_api#cohortsItem",
@@ -115,7 +144,7 @@ class TestSaveCohort(ParametrizedApiTest):
 		pass
 
 	# cohorts_patients_samples_list tests
-	def
+	#def
 		
 	# helper functions
 	def save_cohort(self): # not a test, just a helper function
@@ -198,7 +227,7 @@ def main():
 	### run test_datafilenamekey_list
 	### run test_delete_cohort (or, alternatively, just assert that the created cohort no longer exists)
 	suite = unittest.TestSuite()
-	suite.addTest(ParametrizedTestCase.parametrize(TestSaveCohort, config="", config_dir="", num_requests=1, auth=True)
+	suite.addTest(ParametrizedTestCase.parametrize(TestSaveCohort, config="", config_dir="", num_requests=1, auth=True))
 	
 if __name__ == "__main__":
 	main()
