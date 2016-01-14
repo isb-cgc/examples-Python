@@ -1,0 +1,25 @@
+import argparse
+import pprint
+import isb_auth, isb_curl
+from apiclient import discovery
+
+def main(argv):
+  # Parse command line flags used by the oauth2client library.
+
+  # Acquire and store oauth token.
+  credentials = isb_auth.get_credentials()
+
+  # Build a service object for interacting with the API.
+  api_root = 'https://mvm-dot-isb-cgc.appspot.com/_ah/api'
+  api = 'cohorts'
+  version = 'v1'
+  discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, api, version)
+  service = discovery.build(
+      api, version, discoveryServiceUrl=discovery_url, http=credentials)
+
+  # Fetch all greetings and print them out.
+  response = service.cohorts().cohorts_list().execute()
+  pprint.pprint(response)
+
+if __name__ == '__main__':
+  main(sys.argv)
