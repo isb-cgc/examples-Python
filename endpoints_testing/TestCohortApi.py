@@ -104,9 +104,12 @@ class IsbCgcApiTest(ParametrizedApiTest):
 	@skipIfUnauthenticated
 	@skipIfConfigMismatch("minimal")
 	def test_authenticated(self): # use for load testing
-		results = self.run_test()
-		for r, execution_time in results:
-			# log execution time
+		start = time.time()
+		results = self.process_pool.map(self.method_to_call, self.json_requests)
+		end = time.time()
+		execution_time = end - start
+		# log execution time
+		for r in results:
 			# make an assertion about the status code
 			for key, value in self.response_body_dict.iteritems():
 				self.assertIn(key,r.keys())
@@ -148,13 +151,6 @@ class IsbCgcApiTest(ParametrizedApiTest):
 	def test_incorrect_param_types(self):
 		pass
 		
-	# helper functions
-	def run_test(self): # not a test, just a helper function
-		start = time.time()
-		results = self.process_pool.map(self.method_to_call, self.json_requests)
-		end = time.time()
-		execution_time = end - start
-		return response, execution_time
 		
 def main():
 	# final report should include length of all responses and time taken for each test
