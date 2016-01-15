@@ -1,14 +1,27 @@
-import time
 import os
+import time
 import json
 import random
 import pprint
-import isb_auth, isb_curl, requests 
+import httplib2
+import isb_auth
+import isb_curl
+import requests 
 import unittest
 from multiprocessing import Pool
+from apiclient import discovery
+from jsonspec.reference import resolve
 from ParametrizedApiTest import ParametrizedApiTest
 
 API_URL = "https://mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/"
+
+def skipIfAuthenticated(f):
+	def _skipIfAuthenticated(self):
+		if self.auth is not None:
+			return unittest.skip("Skipping test... Reason: User is authenticated")
+		else:
+			return f(self)
+		return _skipIfAuthenticated
 
 def skipIfUnauthenticated(f):
 	def _skipIfUnauthenticated(self):
@@ -18,48 +31,54 @@ def skipIfUnauthenticated(f):
 			return f(self)
 		return _skipIfUnauthenticated
 		
-def skipIfConfigMismatch(f, config):
-	def _skipIfConfigMismatch(self):
-		if f.config!= self.config:
-			return unittest.skip("Skipping test... Reason: Test configuration mismatch".format(reason=reason))
-		else:
-			return f(self, config)
+def skipIfConfigMismatch(config):
+	def _skipIfConfigMismatch(f):
+		def wrapper(self):
+			if config!= self.config:
+				return unittest.skip("Skipping test... Reason: Test configuration mismatch".format(reason=reason))
+			else:
+				return f(self)
+		return wrapper
 	return _skipIfConfigMismatch
 		
-class TestSaveCohort(ParametrizedApiTest):
+class IsbCgcApiTest(ParametrizedApiTest):
 	def setUp(self):
+		# need to keep track of any items that were created by the test so they can be deleted later
+		self.created_items = []
+			
 		# authenticate (or not, depending on whether the "auth" dict contains an entry or is None)
-		self.headers = {
-			"Authorization": "Bearer {access_token}",
-			"Content-type": "application/json"
-		}
-
 		if self.auth is not None:
 			# simulate user login with selenium
-			isb_auth.get_credentials()
-			self.token = isb_curl.get_access_token()
-		else:
-			self.token = "notatoken"	
-
-		headers["Authorization"].format(access_token=token)
+			pass
 		
-		# get information about the endpoints
+		# build an API service object for the testing
+		credentials = isb_auth.get_credentials()
+		http = httplib2.Http()
+		http = credentials.authorize(http)
+		
+		# build a an API service object and get information about the endpoint method to test
 		api_root = 'https://mvm-dot-isb-cgc.appspot.com/_ah/api'
-		api = 'cohort_api'
-		version = 'v1'
-		discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, api, version)
+		discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, "{api}_api".format(api=self.api), self.version) # consider refactoring api and version to ParametrizedApiTest
+		discovery_doc = resolve(requests.get(discovery_url).json())
+		method_info = discovery_doc["resources"]["{api}_endpoints".format(api=self.api)]["resources"]["{resource}".format(resource=self.resource)]["methods"]["{method}".format(self.method)]
+		self.service = discovery.build(
+      self.api, self.version, discoveryServiceUrl=discovery_url, http=http)
 		
-		endpoint_methods = requests.get(discovery_url)
-		pprint.prrint(endpoint_methods)
-		exit(0)
+		# get expected response
+		self.response_body_dict = {}
+		expected_response = method_info["response"]
+		for property_name, property_attr in expected_response["properties"].iteritems():
+			self.response_body_dict[property_name] = property_attr["type"]
 
 		# set up the test
-		self.endpoint = "save_cohort/"
 		self.json_requests = []
-		self.cohort_ids = []
 		self.process_pool = Pool(self.num_requests)
+		method_grandparent = getattr(self.service, "{api}_endpoints".format(api=self.api))
+		method_parent = getattr(method_grandparent, "{resource}".format(resource=self.resoure))
+		self.method_to_call = getattr(method_parent, "{method}".format(self.method))
 		
 		# select a random group (num_requests many) of files containing cohort requests from the given config directory
+		# note to self: may need to update the format of the config files
 		all_files = [os.listdir(self.config_dir)]
 		count = 0
 		while count < self.num_requests:
@@ -67,128 +86,75 @@ class TestSaveCohort(ParametrizedApiTest):
 			self.json_requests.append(json.load(next_file))
 			all_files.pop(next_file)
 			count += 1
+			
+		# if the operation type is "DELETE", create some items and store the item ids in the created_items array
+		if self.crud_op == "DELETE":
+			
 		
 	def tearDown(self):
-		# delete cohorts if the setUp authenticated a user (auth is not None) or if the cohort ids array contains anything
-		if self.auth is not None:
-			for cohort_id in self.cohort_ids:
-				response = requests.delete(API_URL + "delete_cohort/?cohort_id={cohort_id}".format(cohort_id=cohort_id))
-				# should I make any assertions about the response?  if so, can this be an implicit test of the delete operation?
+		# delete items if the setUp authenticated a user (auth is not None) or if the created items array contains anything
+		if self.auth is not None or if len(self.created_items) > 0:
+			method_grandparent = getattr(self.service, "{api}_endpoints".format(api=self.api))
+			method_parent = getattr(method_grandparent, "{resource}".format(resource=self.resoure))
+			method_to_call = getattr(method_parent, self.delete_method_name)
+			for item in self.created_items:
+				item_to_delete = item[self.delete_key]
+				response = method_to_call(item_to_delete)
 				
-	
-	# save_cohort tests
-	#@unittest.skipIf(self.auth is None or self.config != "minimal")
 	@skipIfUnauthenticated
 	@skipIfConfigMismatch("minimal")
-	def test_save_cohort_authenticated(self): # use for load testing
-		expected_response = {
-			"kind": "cohort_api#cohortsItem",
-			"id": "",
-			"name": "",
-			"active": "",
-			"last_date_saved": "",
-			"user_id": ""
-		}
-		results = self.process_pool.map(self.save_cohort, self.json_requests)
+	def test_authenticated(self): # use for load testing
+		results = self.run_test()
 		for r, execution_time in results:
-			assert r.status_code == 201
-			# assert that kind is in the response, and kind == cohort_api#cohortsItem
-			# assert that id is in the response, and is of type string
-			# assert that name is in the response, is of type string, and matches the name given in the request
-			# assert that active is in the response, and active == True
-			# assert that last_date_saved is in the response, is of type string (is it possible to match it with anything?)
-			# assert that user_id is in the response, is of type string, and matches the user name of the authenticated user
-			self.cohort_ids.append(r["id"])
+			# log execution time
+			# make an assertion about the status code
+			for key, value in self.response_body_dict.iteritems():
+				self.assertIn(key,r.keys())
+				self.assertIs(type(r[key]), value)
+			if self.operation_type == "CREATE":
+				self.created_items.append(r)
 	
-	@unittest.skipIf(self.auth is not None)
-	def test_save_cohort_unauthenticated(self): 
-		pass
-
-	@unittest.skipIf(self.auth is None or self.config != "missing_required_params")
-	def test_save_cohort_missing_required_params(self):
-		pass
-	
-	@unittest.skipIf(self.auth is None or self.config != "optional_params")
-	def test_save_cohort_optional_params(self): 
-		pass
-	
-	@unittest.skipIf(self.auth is None or self.config != "undefined_param_values") 
-	def test_save_cohort_undefined_param_values(self): 
-		pass
-
-	@unittest.skipIf(self.auth is None or self.config != "undefined_param_names") 
-	def test_save_cohort_undefined_param_names(self):
+	@skipIfAuthenticated
+	def test_unauthenticated(self): 
 		pass
 		
-	@unittest.skipIf(self.auth is None or self.config != "incorrect_param_types")
-	def test_save_cohort_incorrect_param_types(self):
+	@skipIfUnauthenticated
+	@skipIfConfigMismatch("incorrect_permissions")
+	def test_incorrect_permissions(self):
+		pass
+	
+	@skipIfUnauthenticated
+	@skipIfConfigMismatch("missing_required_params")
+	def test_missing_required_params(self):
+		pass
+	
+	@skipIfUnauthenticated
+	@skipIfConfigMismatch("optional_params")
+	def test_optional_params(self): 
+		pass
+	
+	@skipIfUnauthenticated
+	@skipIfConfigMismatch("undefined_param_values")
+	def test_undefined_param_values(self): 
 		pass
 
-	# cohorts_list tests
-	def test_cohorts_list_authenticated(self):
+	@skipIfUnauthenticated
+	@skipIfConfigMismatch("undefined_param_names")
+	def test_undefined_param_names(self):
 		pass
-
-	def test_cohorts_list_unauthenticated(self):
+	
+	@skipIfUnauthenticated
+	@skipIfConfigMismatch("incorrect_param_types")
+	def test_incorrect_param_types(self):
 		pass
-
-	def test_cohorts_list_optional_params(self):
-		pass
-
-	def test_cohorts_list_undefined_param_values(self):
-		pass
-
-	def test_cohorts_list_undefined_param_names(self):
-		pass
-
-	def test_cohorts_list_incorrect_param_types(self):
-		pass
-
-	# cohorts_patients_samples_list tests
-	#def
 		
 	# helper functions
-	def save_cohort(self): # not a test, just a helper function
+	def run_test(self): # not a test, just a helper function
 		start = time.time()
-		response = requests.post(API_URL + endpoint, headers=HEADERS, json=cohort_request)
+		results = self.process_pool.map(self.method_to_call, self.json_requests)
 		end = time.time()
-		execution_time = start - end
+		execution_time = end - start
 		return response, execution_time
-
-class TestPreviewCohort(ParametrizedApiTest): # this endpoint hasn't been implemented yet, but probably will be in the future
-	def setUp(self):
-		pass
-	def tearDown(self):
-		pass
-			
-class TestCohortsList(ParametrizedApiTest):
-	def setUp(self):
-		pass
-	def tearDown(self):
-		pass
-		
-class TestCohortsPatientsSamplesList(ParametrizedApiTest):
-	def setUp(self):
-		pass
-	def tearDown(self):
-		pass
-		
-class TestPatientDetails(ParametrizedApiTest):
-	def setUp(self):
-		pass
-	def tearDown(self):
-		pass
-		
-class TestSampleDetails(ParametrizedApiTest):
-	def setUp(self):
-		pass
-	def tearDown(self):
-		pass
-		
-class TestDatafilenamekeyList(ParametrizedApiTest):
-	def setUp(self):
-		pass
-	def tearDown(self):
-		pass
 		
 def main():
 	# final report should include length of all responses and time taken for each test
