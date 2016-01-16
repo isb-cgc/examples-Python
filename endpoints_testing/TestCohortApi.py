@@ -14,7 +14,8 @@ from apiclient import discovery
 from jsonspec.reference import resolve
 from ParametrizedApiTest import ParametrizedApiTest
 
-API_URL = "https://mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/"
+# TODO: Write browser automation with selenium modules (user login)
+# TODO: Create config files for each method, and categorize by config type
 
 def skipIfAuthenticated(f):
 	def _skipIfAuthenticated(self):
@@ -51,10 +52,9 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		json_config = json.load("config/{api}/{config_type}/{method}.json".format(api=self.api, config_type=self.config, method=self.method))
 		
 		self.resource = json_config["resource"]
-		self.method = json_config["resource_test_method"]
-		self.crud_op = json_config["resource_crud_op"]
-		self.create_method = json_config["resource_create_method"]
-		self.delete_method = json_config["resource_delete_method"]
+		self.method_name = json_config["resource_test_method"]
+		self.create_method_name = json_config["resource_create_method"]
+		self.delete_method_name = json_config["resource_delete_method"]
 		self.delete_key = json_config["resource_delete_key"]
 		self.requires_auth = json_config["requires_auth"]
 		self.requests_params = json_config["resource_requests"][0:self.num_requests]
@@ -69,7 +69,8 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		http = httplib2.Http()
 		http = credentials.authorize(http)
 		
-		api_root = 'https://mvm-dot-isb-cgc.appspot.com/_ah/api'
+		#api_root = 'https://mvm-dot-isb-cgc.appspot.com/_ah/api'
+		api_root = "https://20160115t172707-dot-mvm-dot-isb-cgc.appspot.com/_ah/api"
 		discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, "{api}_api".format(api=self.api), self.version)
 		discovery_doc = requests.get(discovery_url).json()
 		self.service = discovery.build(
@@ -90,32 +91,47 @@ class IsbCgcApiTest(ParametrizedApiTest):
 			return resolved_document
 
 		resolved_disovery_doc = resolve_json_document_references(discovery_doc)
-		method_info = resolved_discovery_doc["resources"]["{api}_endpoints".format(api=self.api)]["resources"]["{resource}".format(resource=self.resource)]["methods"]["{method}".format(self.method)]
+		method_info = resolved_discovery_doc["resources"]["{api}_endpoints".format(api=self.api)]["resources"]["{resource}".format(resource=self.resource)]["methods"]["{method}".format(self.method_name)]
 
 		# get expected response
 		self.response_body_dict = {}
 		expected_response = method_info["response"]
 		for property_name, property_attr in expected_response["properties"].iteritems():
-			self.response_body_dict[property_name] = property_attr["type"]
+			if "required" in property_attr.keys():
+				required = True
+			else: 
+				required = False
+
+			self.response_body_dict[property_name] = {
+				"type": property_attr["type"],
+				"format": property_attr["format"],
+				"required": required
+			}
 
 		# set up the test
 		self.process_pool = Pool(self.num_requests)
 		method_grandparent = getattr(self.service, "{api}_endpoints".format(api=self.api))
 		method_parent = getattr(method_grandparent, "{resource}".format(resource=self.resoure))
-		self.method_to_call = getattr(method_parent, "{method}".format(method=self.method))
-		self.delete_method = getattr(method_parent, "{delete_method}".format(delete_method=self.delete_method_name)
+		self.method_to_call = getattr(method_parent, "{method}".format(method=self.method_name))
+		self.create_method = getattr(method_parent, "{create_method}".format(create_method=self.create_method_name))
+		self.delete_method = getattr(method_parent, "{delete_method}".format(delete_method=self.delete_method_name))
 			
-		# if the operation type is "DELETE", create some items and store the item ids in the created_items array
-		if self.crud_op == "DELETE":
-			pass
+		# if the operation type is "DELETE" create and configuration type is one of "minimal", "large_data" or "optional_params", create some items and store the item ids in the created_items array
+		if self.method_name == self.delete_method_name and self.config == "minimal" or self.config == "optional_params":
+			# create some items using the resource's create method's "minimal" configuration 
+			json_config = json.load("config/{api}/minimal/{method}.json".format(api=self.api, config_type=self.config, method=self.create_method))
 			
+			for request in json_config["resource_requests"]:
+				response = self.create_item(request)
+				self.created_items.append(response[self.delete_key])
 		
 	def tearDown(self):
 		# delete items if the setUp authenticated a user (auth is not None) or if the created items array contains anything
 		if self.auth is not None or if len(self.created_items) > 0:
+			delete_kwargs = {}
 			for item in self.created_items:
-				item_to_delete = item[self.delete_key]
-				response = self.delete_method(item_to_delete)
+				delete_kwargs[self.delete_key] = item
+				self.delete_method(**delete_kwargs)
 				
 	@skipIfUnauthenticated
 	def test_authenticated(self): # use for load testing
@@ -191,6 +207,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
 	def test_undefined_param_names(self):
 		results, execution_time = self._query_endpoint()
 		# log execution time
+		# log the length of the response in bytes
 		for r in results:
 			self.assertEqual(r.status_code, 400)
 
@@ -210,7 +227,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		for key, value in self.response_body_dict.iteritems():
 				self.assertIn(key, response.keys())
 				self.assertIs(type(response[key]), value)
-			if self.operation_type == "CREATE":
+			if self.method_name == self.create_method_name:
 				self.created_items.append(response[self.delete_key])
 		
 		
@@ -229,6 +246,13 @@ def main():
 	suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api="cohort", config="undefined_param_values", num_requests=1, auth={})
 
 	# load/stress tests
+	suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api="cohort", config="minimal", num_requests=50, auth={}))
+	suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api="cohort", config="minimal", num_requests=100, auth={}))
+	suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api="cohort", config="minimal", num_requests=500, auth={}))
+	suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api="cohort", config="minimal", num_requests=1000, auth={}))
+
+	# dealing with large requests and responses
+	suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api="cohort", config="large_data", num_requests=1, auth={}))
 	
 	
 if __name__ == "__main__":
