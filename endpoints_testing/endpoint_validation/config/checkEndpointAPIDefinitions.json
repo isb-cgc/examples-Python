@@ -1,8 +1,11 @@
 {
   "log_dir_tag": "endpoints_testing/endpoint_validation/discovery",
-  "outdir": "endpoints_testing/endpoint_validation/doc/",
+  "outdir": "endpoints_testing/endpoint_validation/doc_test/",
+  "discovery_filename": "discovery",
   "ENDPOINT_LIST_URL": "https://%s/_ah/api/discovery/v1/apis",
+  "ENDPOINT_LIST_URL_google": "https://%s/discovery/v1/apis",
   "ENDPOINT_URL": "https://%s/_ah/api/discovery/v1/apis/%s/%s/rest",
+  "ENDPOINT_URL_google": "https://%s/discovery/v1/apis/%s/%s/rest",
   "endpoint_report": {
     "filename": "EndpointReport.tsv",
     "header": "Endpoints for %s\n",
@@ -15,25 +18,6 @@
     }
   },
   "endpoint_list": {
-    "keys": {
-      "strings": [
-        "kind",
-        "id",
-        "name",
-        "version",
-        "title",
-        "description",
-        "discoveryRestUrl",
-        "discoveryLink",
-        "documentationLink",
-        "preferred"
-      ],
-      "maps": {
-        "icons": [
-          "x16",
-          "x32"
-        ]
-      }
-    }
+    "key": "id"
   }
 }
