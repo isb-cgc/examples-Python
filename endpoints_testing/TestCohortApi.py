@@ -229,7 +229,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
 
 	# helper methods
 	def _create_entity(self, type, format):
-		pass
+		pass # this method should return an object of type "type", format "format"
 		
 	def _query_api(self):
 		def wrap_method_call(self, params):
