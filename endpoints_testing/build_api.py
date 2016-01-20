@@ -22,8 +22,12 @@ def main(argv):
   service = discovery.build(
       api, version, discoveryServiceUrl=discovery_url, http=http)
 
-  # Fetch all greetings and print them out.
+  # list cohorts
   response = service.cohort_endpoints().cohorts().list().execute()
+  pprint.pprint(response)
+  
+  # get patient details for a particular patient barcode
+  response = service.cohort_endpoints().cohorts().patient_details(patient_barcode="TCGA-02-0043").execute()
   pprint.pprint(response)
 
 if __name__ == '__main__':

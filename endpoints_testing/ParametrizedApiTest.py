@@ -1,18 +1,25 @@
 import unittest
 
 class ParametrizedApiTest(unittest.TestCase):
-	def __init__(self, methodName="runTest", config=None, config_dir=None, num_requests=None, auth=None):
+	def __init__(self, methodName="runTest", api=None, version=None, config=None, num_requests=None, auth=None):
 		super(ParametrizedTestCase, self).__init__(methodName)
-		self.config = config # this is the "type" of configuration for the test (one of "minimal", "missing_required_params", "optional_params", "undefined_param_names", "undefined_param_values", "incorrect_param_types")
-		self.config_dir = config_dir # this is the directory location of the requests (json files) which match the given configuration
-		self.num_requests = num_requests # the number of requests to make simultaneously for the test
-		self.auth = auth # will be a dictionary containing a username/password combo -- do I need to use a copy() method for this?
+		self.api = api
+		self.config = config  
+		self.num_requests = num_requests 
+		self.auth = auth 
 		
 	@staticmethod
-	def parametrize(testcase_class, config=None, config_dir=None, num_requests=None, auth=None):
+	def parametrize(testcase_class, api=None, version=None, config=None, num_requests=None, auth=None):
 		testloader = unittest.TestLoader()
 		testnames = testloader.getTestCaseNames(testcase_class)
 		suite = unittest.TestSuite()
 		for name in testnames:
-			suite.addTest(testcase_class(name, config=config, config_dir=config_dir, num_requests=num_requests, auth=auth))
+			suite.addTest(testcase_class(name, api=api, version=version, resource=resource, test_method_name=test_method_name, crud_op=crud_op, delete_method_name=delete_method_name, delete_key=delete_key, config=config, num_requests=num_requests, auth=auth))
 		return suite
+		
+		# NOTES: 
+		# name: the name of the testcase class
+		# api: the name of the api to test (e.g., "cohort")
+		# config: the test configuration type (one of "minimal", "missing_required_params", "optional_params", "undefined_param_names", "undefined_param_values", "incorrect_param_types", "incorrect_permissions")
+		# num_requests: the number of concurrent requests to run -- to use for load testing; default=1
+		# auth: a dict containing user credentials for logging in using selenium (e.g., { "username":"...", "password": "..." } )

@@ -1,0 +1,15 @@
+{
+	"resource": "api_resource",
+	"resource_test_method": "test_method_name",
+	"resource_create_method": "create_method_name",
+	"resource_delete_method": "delete_method_name",
+	"resource_delete_key": "delete_key_name",
+	"resource_request_params": [
+		{
+			"param_name": "param_value",
+			"param_type": "param_type",
+			"param_format": "param_format"
+		}
+	],
+	"requires_auth": "True|False"
+}
