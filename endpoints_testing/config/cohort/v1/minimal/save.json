@@ -8,7 +8,7 @@
 		{
 			"param_name": "name",
 			"param_type": "string",
-			"param_format": ""
+			"param_format": "None"
 		}
 	],
 	"requires_auth": "true"
