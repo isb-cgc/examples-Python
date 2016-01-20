@@ -5,7 +5,11 @@
 	"resource_delete_method": "delete",
 	"resource_delete_key": "cohort_id",
 	"resource_request_params": [
-		{}
+		{
+			"param_name": "cohort_id",
+			"param_type": "string",
+			"param_format": "int64"
+		}
 	],
 	"requires_auth": "true"
 }
