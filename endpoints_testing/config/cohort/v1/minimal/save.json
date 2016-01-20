@@ -1,0 +1,15 @@
+{
+	"resource": "cohort",
+	"resource_test_method": "save",
+	"resource_create_method": "save",
+	"resource_delete_method": "delete",
+	"resource_delete_key": "cohort_id",
+	"resource_request_params": [
+		{
+			"param_name": "name",
+			"param_type": "string",
+			"param_format": ""
+		}
+	],
+	"requires_auth": "true"
+}

@@ -49,7 +49,8 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		self.created_items = []
 
 		# select a group (num_requests many) of requests from the given config
-		json_config = json.load("config/{api}/{config_type}/{method}.json".format(api=self.api, config_type=self.config, method=self.method))
+		with open("config/{api}/{config_type}/{method}.json".format(api=self.api, config_type=self.config, method=self.method)) as f:
+			json_config = json.load(f)
 		
 		self.resource = json_config["resource"]
 		self.method_name = json_config["resource_test_method"]
@@ -57,7 +58,17 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		self.delete_method_name = json_config["resource_delete_method"]
 		self.delete_key = json_config["resource_delete_key"]
 		self.requires_auth = json_config["requires_auth"]
-		self.requests_params = json_config["resource_requests"][0:self.num_requests]
+		self.request_params = json_config["resource_request_params"]
+		
+		self.requests = []
+		count = 0
+		while count < self.num_requests:
+			r = {}
+			for request_param in self.request_params:
+				# create an entity of type "type" with format "format", and insert it into the request object under key "name"
+				value = self._create_entity(type, format)
+				r[name] = value
+			self.requests.append(r)
 			
 		# authenticate (or not, depending on whether the "auth" dict contains an entry or is None)
 		if self.auth is not None:
@@ -69,12 +80,15 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		http = httplib2.Http()
 		http = credentials.authorize(http)
 		
+		if credentials.access_token_expired:
+			credentials.refresh(http)
+		
 		#api_root = 'https://mvm-dot-isb-cgc.appspot.com/_ah/api'
 		api_root = "https://20160115t172707-dot-mvm-dot-isb-cgc.appspot.com/_ah/api"
 		discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (api_root, "{api}_api".format(api=self.api), self.version)
 		discovery_doc = requests.get(discovery_url).json()
 		self.service = discovery.build(
-      self.api, self.version, discoveryServiceUrl=discovery_url, http=http)		
+      		self.api, self.version, discoveryServiceUrl=discovery_url, http=http)		
 
 		# get information about the endpoint method to test
 		def resolve_json_document_references(document): # this could probably be moved to a utils module, since it should be general enough to be used anywhere
@@ -111,7 +125,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		# set up the test
 		self.process_pool = Pool(self.num_requests)
 		method_grandparent = getattr(self.service, "{api}_endpoints".format(api=self.api))
-		method_parent = getattr(method_grandparent, "{resource}".format(resource=self.resoure))
+		method_parent = getattr(method_grandparent, "{resource}".format(resource=self.resource))
 		self.method_to_call = getattr(method_parent, "{method}".format(method=self.method_name))
 		self.create_method = getattr(method_parent, "{create_method}".format(create_method=self.create_method_name))
 		self.delete_method = getattr(method_parent, "{delete_method}".format(delete_method=self.delete_method_name))
@@ -119,7 +133,8 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		# if the operation type is "DELETE" create and configuration type is one of "minimal", "large_data" or "optional_params", create some items and store the item ids in the created_items array
 		if self.method_name == self.delete_method_name and self.config == "minimal" or self.config == "optional_params":
 			# create some items using the resource's create method's "minimal" configuration 
-			json_config = json.load("config/{api}/minimal/{method}.json".format(api=self.api, config_type=self.config, method=self.create_method))
+			with open("config/{api}/minimal/{method}.json".format(api=self.api, config_type=self.config, method=self.create_method)) as f:
+				json_config = json.load(f)
 			
 			for request in json_config["resource_requests"]:
 				response = self.create_item(request)
@@ -213,6 +228,9 @@ class IsbCgcApiTest(ParametrizedApiTest):
 
 
 	# helper methods
+	def _create_entity(self, type, format):
+		pass
+		
 	def _query_api(self):
 		def wrap_method_call(self, params):
 			self.method_to_call(**params).execute()
