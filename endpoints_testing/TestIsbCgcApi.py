@@ -130,11 +130,11 @@ def main():
 					
 	global CREATED_ITEMS
 	test_unauthorized.run()
-	del CREATED_ITEMS[:]
+	CREATED_ITEMS.clear()
 	test_authorized.run()
-	del CREATED_ITEMS[:]
+	CREATED_ITEMS.clear()
 	load_test_authorized.run()
-	del CREATED_ITEMS[:]
+	CREATED_ITEMS.clear()
 	
 if __name__ == "__main__":
 	main(sys.argv[1:])
