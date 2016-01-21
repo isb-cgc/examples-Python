@@ -1,0 +1,156 @@
+{
+	"version": "v1",
+	"resources": {
+		"cohort": {
+			"type": "object"
+			"create_method": "save",
+			"delete_method": "delete",
+			"delete_key": "cohort_id",
+			"endpoints": {
+				"save": {
+					"requires_auth": "true"
+					"test_config": {
+						"minimal": {
+							"request": {
+							
+							},
+							"expected_response": {
+							
+							}
+						},
+						"optional_params": {},
+						"undefined_param_names": {},
+						"undefined_param_values": {},
+						"incorrect_param_types": {},
+						"incorrect_permissions": {},
+						"missing_required_params": {},
+						"large_data": {}
+					}
+				},
+				"delete": {
+					"requires_auth": "true",
+					"test_config": {
+						"minimal": {
+							"request": {
+							
+							},
+							"expected_response": {
+							
+							}
+						},
+						"optional_params": {},
+						"undefined_param_names": {},
+						"undefined_param_values": {},
+						"incorrect_param_types": {},
+						"incorrect_permissions": {},
+						"missing_required_params": {},
+						"large_data": {}
+					}
+				}
+			}
+	},
+	"cohorts": {
+		"endpoints": {
+			"list": {
+				"requires_auth": "true",
+				"test_config": {
+					"minimal": {
+						"request": {
+							
+						},
+						"expected_response": {
+						
+						}
+					},
+					"optional_params": {},
+					"undefined_param_names": {},
+					"undefined_param_values": {},
+					"incorrect_param_types": {},
+					"incorrect_permissions": {},
+					"missing_required_params": {},
+					"large_data": {}
+				}
+			},
+			"patient_details": {
+				"requires_auth": "false",
+				"test_config": {
+					"minimal": {
+						"request": {
+							
+						},
+						"expected_response": {
+						
+						}
+					},
+					"optional_params": {},
+					"undefined_param_names": {},
+					"undefined_param_values": {},
+					"incorrect_param_types": {},
+					"incorrect_permissions": {},
+					"missing_required_params": {},
+					"large_data": {}
+				}
+			},
+			"sample_details": {
+				"requires_auth": "false",
+				"test_config": {
+					"minimal": {
+						"request": {
+							
+						},
+						"expected_response": {
+						
+						}
+					},
+					"optional_params": {},
+					"undefined_param_names": {},
+					"undefined_param_values": {},
+					"incorrect_param_types": {},
+					"incorrect_permissions": {},
+					"missing_required_params": {},
+					"large_data": {}
+				}
+			},
+			"datafilenamekey_list": {
+				"requires_auth": "false",
+				"test_config": {
+					"minimal": {
+						"request": {
+							
+						},
+						"expected_response": {
+						
+						}
+					},
+					"optional_params": {},
+					"undefined_param_names": {},
+					"undefined_param_values": {},
+					"incorrect_param_types": {},
+					"incorrect_permissions": {},
+					"missing_required_params": {},
+					"large_data": {}
+				}
+			},
+			"cohort_patients_samples_list": {
+				"requires_auth": "true",
+				"test_config": {
+					"minimal": {
+						"request": {
+							
+						},
+						"expected_response": {
+						
+						}
+					},
+					"optional_params": {},
+					"undefined_param_names": {},
+					"undefined_param_values": {},
+					"incorrect_param_types": {},
+					"incorrect_permissions": {},
+					"missing_required_params": {},
+					"large_data": {}
+				}
+			}
+		}
+	}
+}

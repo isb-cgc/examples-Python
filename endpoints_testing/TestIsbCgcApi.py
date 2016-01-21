@@ -50,14 +50,6 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		# need to keep track of any items that were created by the test so they can be deleted later
 		self.created_items = []
 		
-		self.resource = json_config["resource"]
-		self.method_name = json_config["resource_test_method"]
-		self.create_method_name = json_config["resource_create_method"]
-		self.delete_method_name = json_config["resource_delete_method"]
-		self.delete_key = json_config["resource_delete_key"]
-		self.requires_auth = json_config["requires_auth"]
-		self.request_params = json_config["resource_request_params"]
-		
 		self.requests = []
 		count = 0
 		while count < self.num_requests:
@@ -278,23 +270,36 @@ def main():
 	with open("config/{api_config}.json".format(api_config=args.api_name)) as f:
 		json_config = json.load(f)
 		
+		
 	suite = unittest.TestSuite()
 	
 	for test_user_credentials in args.test_user_credentials:
 		for endpoint_name, endpoint_config in json_config["endpoints"].iteritems():
+			resource = json_config[endpoint_name]["resource"] # need to resolve references in json config
+			create_method = resource["create_method"]
+			delete_method = resource["delete_method"]
+			delete_key = resource["delete_key"]
+			requires_auth = json_config[endpoint_name]["requires_auth"]
+			request_params = json_config[endpoint_config]["request_params"]
+			
+			if resource["type"] is object:
+				pass
+			elif resource["type"] is array:
+				pass
+				
 			for test_config_name, test_config in endpoint_config["test_config"].iteritems():
 				# create a test with authorization
-				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, config=test_config_name, num_requests=1, auth=test_user_credentials))
+				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, request_params=request_params, create_method=create_method, delete_method=delete_method, delete_key=delete_key, requires_auth=requires_auth, config=test_config_name, num_requests=1, auth=test_user_credentials))
 				
 				# create a test without authorization
-				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, config=test_config_name, num_requests=1, auth=None))
+				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, request_params=request_params, create_method=create_method, delete_method=delete_method, delete_key=delete_key, requires_auth=requires_auth, config=test_config_name, num_requests=1, auth=None))
 				
 				# create load tests (many requests/responses)
-				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, config=test_config_name, num_requests=10, auth=test_user_credentials))
-				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, config=test_config_name, num_requests=50, auth=test_user_credentials))
-				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, config=test_config_name, num_requests=100, auth=test_user_credentials))
-				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, config=test_config_name, num_requests=500, auth=test_user_credentials))
-				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, config=test_config_name, num_requests=1000, auth=test_user_credentials))
+				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, request_params=request_params, create_method=create_method, delete_method=delete_method, delete_key=delete_key, requires_auth=requires_auth, config=test_config_name, num_requests=10, auth=test_user_credentials))
+				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, request_params=request_params, create_method=create_method, delete_method=delete_method, delete_key=delete_key, requires_auth=requires_auth, config=test_config_name, num_requests=50, auth=test_user_credentials))
+				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, request_params=request_params, create_method=create_method, delete_method=delete_method, delete_key=delete_key, requires_auth=requires_auth, config=test_config_name, num_requests=100, auth=test_user_credentials))
+				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, request_params=request_params, create_method=create_method, delete_method=delete_method, delete_key=delete_key, requires_auth=requires_auth, config=test_config_name, num_requests=500, auth=test_user_credentials))
+				suite.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, request_params=request_params, create_method=create_method, delete_method=delete_method, delete_key=delete_key, requires_auth=requires_auth, config=test_config_name, num_requests=1000, auth=test_user_credentials))
 	
 	
 if __name__ == "__main__":
