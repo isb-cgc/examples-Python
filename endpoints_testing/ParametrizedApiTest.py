@@ -1,7 +1,7 @@
 import unittest
 
 class ParametrizedApiTest(unittest.TestCase):
-	def __init__(self, methodName="runTest", api=None, version=None, endpoint=None, config=None, num_requests=None, auth=None):
+	def __init__(self, methodName="runTest", api=None, version=None, endpoint=None, resource=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
 		super(ParametrizedTestCase, self).__init__(methodName)
 		self.api = api
 		self.config = config  
@@ -9,12 +9,12 @@ class ParametrizedApiTest(unittest.TestCase):
 		self.auth = auth 
 		
 	@staticmethod
-	def parametrize(testcase_class, api=None, version=None, endpoint=None, config=None, num_requests=None, auth=None):
+	def parametrize(testcase_class, api=None, version=None, endpoint=None, resource=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
 		testloader = unittest.TestLoader()
 		testnames = testloader.getTestCaseNames(testcase_class)
 		suite = unittest.TestSuite()
 		for name in testnames:
-			suite.addTest(testcase_class(name, api=api, version=version, endpoint=endpoint, config=config, num_requests=num_requests, auth=auth))
+			suite.addTest(testcase_class(name, api=api, version=version, endpoint=endpoint, resource=resource, item_delete_key=item_delete_key, deletes_resource=deletes_resource, request=request, expected_response=expected_response, expected_status_code=expected_status_code, num_requests=num_requests, auth=auth))
 		return suite
 		
 		# NOTES: 
