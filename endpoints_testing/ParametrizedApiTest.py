@@ -18,7 +18,7 @@ import unittest
 
 class ParametrizedApiTest(unittest.TestCase):
 	def __init__(self, methodName="runTest", api=None, version=None, endpoint=None, resource=None, discovery_url=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
-		super(ParametrizedTestCase, self).__init__(methodName)
+		super(ParametrizedApiTest, self).__init__(methodName)
 		self.api = api
 		self.version = version
 		self.resource = resource

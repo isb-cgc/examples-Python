@@ -66,14 +66,14 @@ class IsbCgcApiTest(ParametrizedApiTest):
 		for r in results:
 			self._check_response(r)
 			if self.item_delete_key is not None:
-				CREATED_ITEMS[self.resource].append(r[delete_key])
+				CREATED_ITEMS[self.resource].append(r[self.delete_key])
 			
 		# log execution time
 
 	# helper methods
 	def _query_api(self):
 		def wrap_method_call(self, params):
-			self.method_to_call.(**params).execute()
+			self.method_to_call(**params).execute()
 
 		start = time.time()
 		results = self.process_pool.map(wrap_method_call, self.requests)
@@ -98,63 +98,76 @@ class IsbCgcApiTest(ParametrizedApiTest):
 def main():
 	# final report should include length of all responses and time taken for each test
 	parser = argparse.ArgumentParser(description="Unit test module for ISB CGC endpoints")
-	parser.addArgument("api_name", help="The name of the API to run the unit tests against")
-	parser.addArgument("--test_user_credentials", help="A list of objects containing credentials for test users")
+	parser.add_argument("api_name", help="The name of the API to run the unit tests against")
+	parser.add_argument("--test_user_credentials", help="A list of objects containing credentials for test users", nargs = '+')
 	args = parser.parse_args()
 	
-	with open("config/{api_config}.json".format(api_config=args.api_name)) as f:
+	with open("endpoints_testing/config/{api_config}.json".format(api_config=args.api_name)) as f:
 		json_config = json.load(f)
 
 	endpoints_url_base = json_config["endpoints_url_base"]
-	api_config = json_config["apis"][args.api_name]
-	discovery_url = endpoints_url_base + api_config["discovery_uri"]
+	for api_name, api_config in json_config["apis"].iteritems():
+# 		api_config = json_config["apis"][args.api_name]
+		discovery_url = endpoints_url_base + api_config["discovery_uri"]
+			
+		# get the endpoints test order
+		endpoint_test_ordering = []
 		
-	# get the endpoints test order
-	endpoint_test_ordering = []
+		for reference in api_config["test_ordering"]:
+			# TODO: why bother with partition?  can just split and take [2] index
+			resource_name = reference.partition("resources")[2].split('/')[1]
+			endpoint_name = reference.split('/')[-1]
+			test_config = resolve(api_config, reference)
+			test_config["resource"] = resource_name
+			test_config["endpoint"] = endpoint_name
+			endpoint_test_ordering.append(test_config)
+		
+		test_unauthorized = unittest.TestSuite()
+		test_authorized = unittest.TestSuite()
+		load_test_authorized = unittest.TestSuite()
+		
+		for test_user_credentials in args.test_user_credentials:
+			# add tests without authorization first
+			for endpoints_test_config in endpoint_test_ordering:
+				resource = endpoints_test_config["resource"] 
+				endpoint_name = endpoints_test_config["endpoint"]
+				requires_auth = endpoints_test_config["requires_auth"]
+				
+				if endpoints_test_config["creates_resource"] == "true":
+					CREATED_ITEMS[resource] = []
+					item_delete_key = resolve(api_config, "#/resources/{resource}/delete_key".format(resource=resource))
+				else:
+					item_delete_key=None
+				
+				for test_config_name, test_config_dict in endpoints_test_config['test_config'].iteritems():
+					if test_config_name == "minimal":
+						test_unauthorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=1, auth=None))
+						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=10, auth=test_user_credentials))
+						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=50, auth=test_user_credentials))
+						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=100, auth=test_user_credentials))
+						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=500, auth=test_user_credentials))
+						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=1000, auth=test_user_credentials))
 	
-	for reference in api_config["test_ordering"]:
-		resource_name = reference.partition("resources")[2].split('/')[1]
-		endpoint_name = reference.split('/')[0]
-		test_config = resolve(api_config, reference)
-		test_config["resource"] = resource_name
-		test_config["endpoint"] = endpoint_name
-		endpoint_test_ordering.append(test_config)
-	
-	test_unauthorized = unittest.TestSuite()
-	test_authorized = unittest.TestSuite()
-	load_test_authorized = unittest.TestSuite()
-	
-	for test_user_credentials in args.test_user_credentials:
-		# add tests without authorization first
-		for endpoint_test_config in endpoint_test_ordering:
-			resource = endpoint_test_config["resource"] 
-			endpoint = endpoint_test_config["endpoint"]
-			requires_auth = test_config["requires_auth"]
-			
-			if endpoint_test_config["creates_resource"] == "true":
-				CREATED_ITEMS[resource] = []
-				item_delete_key = resolve(api_config, "#/resources/{resource}/delete_key".format(resource=resource))
-			else:
-				item_delete_key=None
-			
-			for test_config_name in endpoints_test_config.keys():
-				if test_config_name == "minimal":
-					test_unauthorized.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoint_test_config["deletes_resource"], request=test_config[test_config_name]["request"], expected_response=test_config[test_config_name]["expected_response"], expected_status_code=test_config[test_config_name]["expected_status_code"], num_requests=1, auth=None))
-					load_test_authorized.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoint_test_config["deletes_resource"], request=test_config[test_config_name]["request"], expected_response=test_config[test_config_name]["expected_response"], expected_status_code=test_config[test_config_name]["expected_status_code"], num_requests=10, auth=test_user_credentials))
-					load_test_authorized.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoint_test_config["deletes_resource"], request=test_config[test_config_name]["request"], expected_response=test_config[test_config_name]["expected_response"], expected_status_code=test_config[test_config_name]["expected_status_code"], num_requests=50, auth=test_user_credentials))
-					load_test_authorized.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoint_test_config["deletes_resource"], request=test_config[test_config_name]["request"], expected_response=test_config[test_config_name]["expected_response"], expected_status_code=test_config[test_config_name]["expected_status_code"], num_requests=100, auth=test_user_credentials))
-					load_test_authorized.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoint_test_config["deletes_resource"], request=test_config[test_config_name]["request"], expected_response=test_config[test_config_name]["expected_response"], expected_status_code=test_config[test_config_name]["expected_status_code"], num_requests=500, auth=test_user_credentials))
-					load_test_authorized.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoint_test_config["deletes_resource"], request=test_config[test_config_name]["request"], expected_response=test_config[test_config_name]["expected_response"], expected_status_code=test_config[test_config_name]["expected_status_code"], num_requests=1000, auth=test_user_credentials))
-
-				test_authorized.addTest(ParametrizedTestCase.parametrize(IsbCgcApiTest, api=args.api_name, version=json_config["version"], endpoint=endpointe, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoint_test_config["deletes_resource"], request=test_config[test_config_name]["request"], expected_response=test_config[test_config_name]["expected_response"], expected_status_code=test_config[test_config_name]["expected_status_code"], num_requests=1, auth=test_user_credentials))
+					test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=api_name, version=json_config["version"], endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], num_requests=1, auth=test_user_credentials))
 					
-	global CREATED_ITEMS
-	test_unauthorized.run()
+	results_unautherized = unittest.TextTestResult
+	results_unautherized.shouldStop = False
+	test_unauthorized.run(results_unautherized)
+	results_unautherized
 	CREATED_ITEMS.clear()
-	test_authorized.run()
+	
+	results_autherized = unittest.TextTestResult
+	results_autherized.shouldStop = False
+	test_authorized.run(results_autherized)
+	results_autherized
 	CREATED_ITEMS.clear()
-	load_test_authorized.run()
+
+	results_load_test_autherized = unittest.TextTestResult
+	load_test_authorized.run(results_load_test_autherized)
+	results_load_test_autherized.shouldStop = False
+	results_load_test_autherized
 	CREATED_ITEMS.clear()
 	
 if __name__ == "__main__":
-	main(sys.argv[1:])
+# 	main(sys.argv[1:])
+	main()

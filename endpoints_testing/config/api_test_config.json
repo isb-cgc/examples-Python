@@ -1,5 +1,6 @@
 {
 	"endpoints_url_base": "https://mvm-dot-isb-cgc.appspot.com/_ah/api/",
+	"version": "v1",
 	"apis": {
 		"cohort_api": {
 			"discovery_uri": "discovery/v1/cohort_api/v1/rest",
@@ -62,7 +63,8 @@
 									},
 									"expected_response": {
 							
-									}
+									},
+									"expected_status_code": 200
 								},
 								"optional_params": {},
 								"undefined_param_names": {},
@@ -74,117 +76,123 @@
 							}
 						}
 					}
-			},
-			"cohorts": {
-				"endpoints": {
-					"list": {
-						"requires_auth": "true",
-						"creates_resource": "false",
-						"deletes_resource": "false",
-						"test_config": {
-							"minimal": {
-								"request": {
+				},
+				"cohorts": {
+					"endpoints": {
+						"list": {
+							"requires_auth": "true",
+							"creates_resource": "false",
+							"deletes_resource": "false",
+							"test_config": {
+								"minimal": {
+									"request": {
+								
+									},
+									"expected_response": {
 							
+									},
+									"expected_status_code": 200
 								},
-								"expected_response": {
-						
-								}
-							},
-							"optional_params": {},
-							"undefined_param_names": {},
-							"undefined_param_values": {},
-							"incorrect_param_types": {},
-							"incorrect_permissions": {},
-							"missing_required_params": {},
-							"large_data": {}
-						}
-					},
-					"patient_details": {
-						"requires_auth": "false",
-						"creates_resource": "false",
-						"deletes_resource": "false",
-						"test_config": {
-							"minimal": {
-								"request": {
+								"optional_params": {},
+								"undefined_param_names": {},
+								"undefined_param_values": {},
+								"incorrect_param_types": {},
+								"incorrect_permissions": {},
+								"missing_required_params": {},
+								"large_data": {}
+							}
+						},
+						"patient_details": {
+							"requires_auth": "false",
+							"creates_resource": "false",
+							"deletes_resource": "false",
+							"test_config": {
+								"minimal": {
+									"request": {
+								
+									},
+									"expected_response": {
 							
+									},
+									"expected_status_code": 200
 								},
-								"expected_response": {
-						
-								}
-							},
-							"optional_params": {},
-							"undefined_param_names": {},
-							"undefined_param_values": {},
-							"incorrect_param_types": {},
-							"incorrect_permissions": {},
-							"missing_required_params": {},
-							"large_data": {}
-						}
-					},
-					"sample_details": {
-						"requires_auth": "false",
-						"creates_resource": "false",
-						"deletes_resource": "false",
-						"test_config": {
-							"minimal": {
-								"request": {
+								"optional_params": {},
+								"undefined_param_names": {},
+								"undefined_param_values": {},
+								"incorrect_param_types": {},
+								"incorrect_permissions": {},
+								"missing_required_params": {},
+								"large_data": {}
+							}
+						},
+						"sample_details": {
+							"requires_auth": "false",
+							"creates_resource": "false",
+							"deletes_resource": "false",
+							"test_config": {
+								"minimal": {
+									"request": {
+								
+									},
+									"expected_response": {
 							
+									},
+									"expected_status_code": 200
 								},
-								"expected_response": {
-						
-								}
-							},
-							"optional_params": {},
-							"undefined_param_names": {},
-							"undefined_param_values": {},
-							"incorrect_param_types": {},
-							"incorrect_permissions": {},
-							"missing_required_params": {},
-							"large_data": {}
-						}
-					},
-					"datafilenamekey_list": {
-						"requires_auth": "false",
-						"creates_resource": "false",
-						"deletes_resource": "false",
-						"test_config": {
-							"minimal": {
-								"request": {
+								"optional_params": {},
+								"undefined_param_names": {},
+								"undefined_param_values": {},
+								"incorrect_param_types": {},
+								"incorrect_permissions": {},
+								"missing_required_params": {},
+								"large_data": {}
+							}
+						},
+						"datafilenamekey_list": {
+							"requires_auth": "false",
+							"creates_resource": "false",
+							"deletes_resource": "false",
+							"test_config": {
+								"minimal": {
+									"request": {
+								
+									},
+									"expected_response": {
 							
+									},
+									"expected_status_code": 200
 								},
-								"expected_response": {
-						
-								}
-							},
-							"optional_params": {},
-							"undefined_param_names": {},
-							"undefined_param_values": {},
-							"incorrect_param_types": {},
-							"incorrect_permissions": {},
-							"missing_required_params": {},
-							"large_data": {}
-						}
-					},
-					"cohort_patients_samples_list": {
-						"requires_auth": "true",
-						"creates_resource": "false",
-						"deletes_resource": "false",
-						"test_config": {
-							"minimal": {
-								"request": {
+								"optional_params": {},
+								"undefined_param_names": {},
+								"undefined_param_values": {},
+								"incorrect_param_types": {},
+								"incorrect_permissions": {},
+								"missing_required_params": {},
+								"large_data": {}
+							}
+						},
+						"cohort_patients_samples_list": {
+							"requires_auth": "true",
+							"creates_resource": "false",
+							"deletes_resource": "false",
+							"test_config": {
+								"minimal": {
+									"request": {
+								
+									},
+									"expected_response": {
 							
+									},
+									"expected_status_code": 200
 								},
-								"expected_response": {
-						
-								}
-							},
-							"optional_params": {},
-							"undefined_param_names": {},
-							"undefined_param_values": {},
-							"incorrect_param_types": {},
-							"incorrect_permissions": {},
-							"missing_required_params": {},
-							"large_data": {}
+								"optional_params": {},
+								"undefined_param_names": {},
+								"undefined_param_values": {},
+								"incorrect_param_types": {},
+								"incorrect_permissions": {},
+								"missing_required_params": {},
+								"large_data": {}
+							}
 						}
 					}
 				}
