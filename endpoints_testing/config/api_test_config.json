@@ -1,9 +1,9 @@
 {
 	"endpoints_url_base": "https://mvm-dot-isb-cgc.appspot.com/_ah/api/",
-	"version": "v1",
 	"apis": {
 		"cohort_api": {
 			"discovery_uri": "discovery/v1/cohort_api/v1/rest",
+			"version": "v1",
 			"test_ordering": [ "#/resources/cohort/endpoints/save", "#/resources/cohorts/endpoints/list", "#/resources/cohorts/endpoints/cohort_patients_samples_list", "#/resources/cohorts/endpoints/patient_details", "#/resources/cohorts/endpoints/sample_details", "#/resources/cohorts/endpoints/datafilenamekey_list", "#/resources/cohort/endpoints/delete" ],
 			"resources": {
 				"cohort": {

@@ -17,13 +17,15 @@ limitations under the License.
 import unittest
 
 class ParametrizedApiTest(unittest.TestCase):
-	def __init__(self, methodName="runTest", api=None, version=None, endpoint=None, resource=None, discovery_url=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
+	def __init__(self, methodName="test_run", api=None, version=None, endpoint=None, resource=None, discovery_url=None, type_test=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
 		super(ParametrizedApiTest, self).__init__(methodName)
 		self.api = api
 		self.version = version
 		self.resource = resource
+		self.endpoint = endpoint
+		self.type_test = type_test
 		self.discovery_url = discovery_url
-		self.item_delete_key
+		self.item_delete_key = item_delete_key
 		self.deletes_resource = deletes_resource
 		self.request = request
 		self.expected_response = expected_response
@@ -31,10 +33,11 @@ class ParametrizedApiTest(unittest.TestCase):
 		self.auth = auth 
 		
 	@staticmethod
-	def parametrize(testcase_class, api=None, version=None, endpoint=None, resource=None, discovery_url=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
+	def parametrize(testcase_class, api=None, version=None, endpoint=None, resource=None, discovery_url=None, type_test=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
 		testloader = unittest.TestLoader()
 		testnames = testloader.getTestCaseNames(testcase_class)
 		suite = unittest.TestSuite()
 		for name in testnames:
-			suite.addTest(testcase_class(name, api=api, version=version, endpoint=endpoint, resource=resource, discovery_url=discovery_url, item_delete_key=item_delete_key, deletes_resource=deletes_resource, request=request, expected_response=expected_response, expected_status_code=expected_status_code, num_requests=num_requests, auth=auth))
+			print '!!!!!!!' + name + '!!!!!!!!'
+			suite.addTest(testcase_class(name, api=api, version=version, endpoint=endpoint, resource=resource, discovery_url=discovery_url, type_test=type_test, item_delete_key=item_delete_key, deletes_resource=deletes_resource, request=request, expected_response=expected_response, expected_status_code=expected_status_code, num_requests=num_requests, auth=auth))
 		return suite
