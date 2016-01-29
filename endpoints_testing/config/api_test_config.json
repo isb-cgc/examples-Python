@@ -1,26 +1,47 @@
 {
-	"endpoints_url_base": "https://mvm-dot-isb-cgc.appspot.com/_ah/api/",
+	"endpoints_url_base": "https://mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
+	"endpoints_url_base_prod": "https://isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
+	"version": "v1",
+	"log_dir_tag": "endpoints",
 	"apis": {
 		"cohort_api": {
-			"discovery_uri": "discovery/v1/cohort_api/v1/rest",
+			"endpoint_uri": "cohort_api/v1/rest",
 			"version": "v1",
-			"test_ordering": [ "#/resources/cohort/endpoints/save", "#/resources/cohorts/endpoints/list", "#/resources/cohorts/endpoints/cohort_patients_samples_list", "#/resources/cohorts/endpoints/patient_details", "#/resources/cohorts/endpoints/sample_details", "#/resources/cohorts/endpoints/datafilenamekey_list", "#/resources/cohort/endpoints/delete" ],
+			"base_resource_name": "cohort",
+			"test_ordering": [ 
+				"#/resources/cohorts/endpoints/list", 
+				"#/resources/cohort/endpoints/delete", 
+				"#/resources/cohort/endpoints/save", 
+				"#/resources/cohorts/endpoints/list", 
+				"#/resources/cohorts/endpoints/cohort_patients_samples_list", 
+				"#/resources/cohorts/endpoints/patient_details", 
+				"#/resources/cohorts/endpoints/sample_details", 
+				"#/resources/cohorts/endpoints/datafilenamekey_list", 
+				"#/resources/cohort/endpoints/delete" 
+			],
 			"resources": {
 				"cohort": {
-					"delete_key": "cohort_id",
 					"endpoints": {
 						"save": {
+							"test_name": "save_test",
 							"requires_auth": "true",
-							"creates_resource": "true",
 							"deletes_resource": "false",
 							"test_config": {
 								"minimal": {
 									"request": {
-										"name": "test_cohort_1"
+										"name": "test_cohort_1",
+										"body": {
+											"Study": "BLCA", 
+											"has_SNP6": "1", 
+											"SampleTypeCode": "01"
+										}
 									},
 									"expected_response": {
+										"etag": {
+											"type": "string"
+										},
 										"kind": {
-											"value": "cohort_api#cohortsItem"
+											"value": "cohort_api#cohortItem"
 										},
 										"id": {
 											"type": "string",
@@ -33,10 +54,12 @@
 											"type": "string"
 										},
 										"num_patients": {
+											"value": "25",
 											"type": "string",
 											"format": "int64"
 										},
 										"num_samples": {
+											"value": "26",
 											"type": "string",
 											"format": "int64"
 										}
@@ -53,6 +76,7 @@
 							}
 						},
 						"delete": {
+							"test_name": "delete_test",
 							"requires_auth": "true",
 							"creates_resource": "false",
 							"deletes_resource": "true",
@@ -80,6 +104,7 @@
 				"cohorts": {
 					"endpoints": {
 						"list": {
+							"test_name": "list_test",
 							"requires_auth": "true",
 							"creates_resource": "false",
 							"deletes_resource": "false",
@@ -103,6 +128,7 @@
 							}
 						},
 						"patient_details": {
+							"test_name": "patient_details_test",
 							"requires_auth": "false",
 							"creates_resource": "false",
 							"deletes_resource": "false",
@@ -126,6 +152,7 @@
 							}
 						},
 						"sample_details": {
+							"test_name": "sample_details_test",
 							"requires_auth": "false",
 							"creates_resource": "false",
 							"deletes_resource": "false",
@@ -149,6 +176,7 @@
 							}
 						},
 						"datafilenamekey_list": {
+							"test_name": "datafilenamekey_list_test",
 							"requires_auth": "false",
 							"creates_resource": "false",
 							"deletes_resource": "false",
@@ -172,6 +200,7 @@
 							}
 						},
 						"cohort_patients_samples_list": {
+							"test_name": "cohort_patients_samples_list_test",
 							"requires_auth": "true",
 							"creates_resource": "false",
 							"deletes_resource": "false",

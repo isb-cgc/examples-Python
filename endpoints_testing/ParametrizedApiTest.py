@@ -17,27 +17,25 @@ limitations under the License.
 import unittest
 
 class ParametrizedApiTest(unittest.TestCase):
-	def __init__(self, methodName="test_run", api=None, version=None, endpoint=None, resource=None, discovery_url=None, type_test=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
+	def __init__(self, methodName="test_run", test_config_dict=None, num_requests=None, auth=None):
 		super(ParametrizedApiTest, self).__init__(methodName)
-		self.api = api
-		self.version = version
-		self.resource = resource
-		self.endpoint = endpoint
-		self.type_test = type_test
-		self.discovery_url = discovery_url
-		self.item_delete_key = item_delete_key
-		self.deletes_resource = deletes_resource
-		self.request = request
-		self.expected_response = expected_response
+		self.api = test_config_dict['api']
+		self.version = test_config_dict['version']
+		self.base_resource = test_config_dict['base_resource']
+		self.resource = test_config_dict['resource']
+		self.endpoint = test_config_dict['endpoint']
+		self.type_test = test_config_dict['type_test']
+		self.discovery_url = test_config_dict['discovery_url']
+		self.deletes_resource = test_config_dict['deletes_resource']
+		self.request = test_config_dict['request']
+		self.expected_response = test_config_dict['expected_response']
 		self.num_requests = num_requests 
 		self.auth = auth 
 		
 	@staticmethod
-	def parametrize(testcase_class, api=None, version=None, endpoint=None, resource=None, discovery_url=None, type_test=None, item_delete_key=None, deletes_resource=None, request=None, expected_response=None, expected_status_code=None, num_requests=None, auth=None):
+	def parametrize(testcase_class, test_name, test_config_dict=None, num_requests=None, auth=None):
 		testloader = unittest.TestLoader()
 		testnames = testloader.getTestCaseNames(testcase_class)
 		suite = unittest.TestSuite()
-		for name in testnames:
-			print '!!!!!!!' + name + '!!!!!!!!'
-			suite.addTest(testcase_class(name, api=api, version=version, endpoint=endpoint, resource=resource, discovery_url=discovery_url, type_test=type_test, item_delete_key=item_delete_key, deletes_resource=deletes_resource, request=request, expected_response=expected_response, expected_status_code=expected_status_code, num_requests=num_requests, auth=auth))
+		suite.addTest(testcase_class(test_name, test_config_dict, num_requests=num_requests, auth=auth))
 		return suite

@@ -14,28 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 '''
-
+import argparse
+import copy
+import httplib2
+import json
+import multiprocessing
+import requests 
 import sys
 import time
-import json
-import pprint
-import argparse
-import httplib2
-import isb_auth
-import isb_curl
-import requests 
 import unittest
-from datetime import datetime
-from multiprocessing import Pool
 from apiclient import discovery
+from concurrent import futures
+from datetime import datetime
 from jsonspec.reference import resolve
+
+import isb_auth
 from ParametrizedApiTest import ParametrizedApiTest
 
 # TODO: Write browser automation with selenium modules (user login)
 
-CREATED_ITEMS = {}
-		
-# this hack resolves an issue with TextTestRunner where it expects a stream to have a writeln method
+cohort_ids = set()
+# TODO: modify stress test to have a request per count, rather than repeat the same request
+# TODO: run one save per six example saves, then for stress test, randomly pick one per count
+
+# this work around resolves an issue with TextTestRunner where it expects a stream to have a writeln method
 # from: http://svn.python.org/projects/python/trunk/Lib/unittest/runner.py
 # issue: https://bugs.python.org/issue16739
 class _WritelnDecorator(object):
@@ -54,69 +56,138 @@ class _WritelnDecorator(object):
 		self.write('\n') # text-mode streams translate to \r\n if needed
 
 class IsbCgcApiTest(ParametrizedApiTest):
+	def cohort_patients_samples_list_test(self):
+		return
+		self.test_run()
+		
+	def datafilenamekey_list_test(self):
+		return
+		self.test_run()
+		
+	def sample_details_test(self):
+		return
+		self.test_run()
+		
+	def patient_details_test(self):
+		return
+		self.test_run()
+		
+	def list_test(self):
+		responses = self.test_run()
+		cohort_count = responses[0]['count']
+		for item in responses[0]['items']:
+			cohort_ids.add(item['id'])
+		self.assertEqual(int(cohort_count), len(cohort_ids), '%s:%s:%s returned a count different than the number of items' % (self.resource, self.endpoint, self.type_test))
+		
+	def delete_test(self):
+		for cohort_id in cohort_ids:
+			self.request['cohort_id'] = cohort_id
+			self.num_requests = 1
+			self.test_run()
+		for cohort_id in cohort_ids:
+			cohort_ids.remove(cohort_id)
+		
+	def save_test(self):
+		self.test_run()
+		
 	def test_run(self):
-		# authenticate (or not, depending on whether the "auth" dict contains an entry or is None)
-		if self.auth is not None:
-			# simulate user login with selenium
-			pass
-		
-		print '%s: testing %s.%s as %s' % (datetime.now(), self.resource, self.endpoint, self.type_test)
-		# build an API service object for the testing
-		credentials = isb_auth.get_credentials()
-		http = httplib2.Http()
-		http = credentials.authorize(http)
-		
-		if credentials.access_token_expired:
-			credentials.refresh(http)
-		
-		self.service = discovery.build(
-      		self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)	
-
-		# set up and run the test
-		self.process_pool = Pool()
-		self.method_to_call = getattr(getattr(getattr(self.service, "{api}_endpoints".format(api=self.api)), "{resource}".format(resource=self.resource)), "{method}".format(method=self.endpoint))
-		self.requests = []
-		count = 0
-		while count < self.num_requests:
-			if self.deletes_resource == 'true':
-				self.request[self.delete_key] == CREATED_ITEMS[self.delete_key][count] 
-			self.requests.append(self.request)
-			count += 1
+		execution_time = 0
+		try:
+			# authenticate (or not, depending on whether the "auth" dict contains an entry or is None)
+			if self.auth is not None:
+				# simulate user login with selenium
+				pass
 			
-		results, execution_time = self._query_endpoint()
-		for r in results:
-			self._check_response(r)
-			if self.item_delete_key is not None:
-				CREATED_ITEMS[self.resource].append(r[self.delete_key])
+			print '\n%s: testing %s.%s as %s.  repeats: %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, self.num_requests)
+			self.assertTrue((self.request and 0 < len(self.request)) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
+			# build an API service object for the testing
+			credentials = isb_auth.get_credentials()
+			http = httplib2.Http()
+			http = credentials.authorize(http)
 			
-		# log execution time
-		print '%s: finished testing %s.%s as %s' % (datetime.now(), self.resource, self.endpoint, self.type_test)
+			if credentials.access_token_expired:
+				credentials.refresh(http)
+			
+			print '%s:\tbuild(%s)' % (datetime.now(), self.discovery_url)
+			self.service = discovery.build(
+				self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)	
+			print '%s:\tfinished build(%s)' % (datetime.now(), self.discovery_url)
+	
+			# set up and run the test
+			method_to_call = getattr(getattr(getattr(self.service, "{api}_endpoints".format(api=self.base_resource))(), "{resource}".format(resource=self.resource))(), "{method}".format(method=self.endpoint))
+			requests = []
+			count = 0
+			while count < self.num_requests:
+				requests.append(method_to_call(**self.request))
+				count += 1
+				
+			responses, execution_time = self._query_api(requests)
+			for r in responses:
+				self._check_response(r)
+			return responses
+		finally:
+			# log execution time
+			print '%s: finished testing %s.%s as %s.  took %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, execution_time)
 
 	# helper methods
-	def _query_api(self):
-		def wrap_method_call(self, params):
-			self.method_to_call(**params).execute()
+	def _query_api(self, requests):
+		def wrap_method_call(*method_to_call):
+			return method_to_call[0].execute()
+
+		executor = futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count() * 4)
 
 		start = time.time()
-		results = self.process_pool.map(wrap_method_call, self.requests)
-		end = time.time()
-		execution_time = end - start
-		return results, execution_time
+		responses = []
+		future2request = {}
+		count = 0
+		for request in requests:
+			future2request[executor.submit(wrap_method_call, request)] = [request, count, time.time()]
+			count += 1
+		responses = []
+		future_keys = future2request.keys()
+		while future_keys:
+			future_done, future_keys = futures.wait(future_keys, return_when = futures.FIRST_COMPLETED)
+			for future in future_done:
+				run_info = future2request.pop(future)
+				run_info[2] = time.time() - run_info[2]
+				if future.exception() is not None:
+					print '%s:\trun %s(%s) generated an exception--%s' % (datetime.now(), run_info[1], run_info[2], future.exception())
+					responses += [{'ERROR': future.exception()}]
+				else:
+					print '%s:\trun%s(%s) succeeded\n' % (datetime.now(), run_info[1], run_info[2])
+					responses += [future.result()]
+		execution_time = time.time() - start
+		return responses, execution_time
 		
 	def _check_response(self, response):
-		self.assertEqual(response.status_code, self.expected_status_code)
+# TODO, only have the json returned by the endpoint
+# 		self.assertEqual(response.status_code, self.expected_status_code)
+		# TODOD: take into account the nested dict in response
+		self.assertFalse('ERROR' in response, 'an error occurred for %s:%s:%s: %s' % (self.resource, self.endpoint, self.type_test, response['ERROR']) if 'ERROR' in response else 'no error???')
 		for key, details in self.expected_response.iteritems():
 			if "value" in details.keys():
-				self.assertEqual(response[key], details["value"])
+				self.assertEqual(response[key], details["value"], 'value in response isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
+					(self.resource, self.endpoint, self.type_test, response[key], details["value"]))
 			else:
 				if "format" in details.keys():
 					if details["format"] == "int64":
-						self.assertRegexpMatches(response[key], "[0-9]+")
+						self.assertRegexpMatches(response[key], "[0-9]+", 'value no in expected format(int64) for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
 					# probably will need to include other formats later
 						
 				else:
-					self.assertIsInstance(response[key], str)
-		
+					self.assertIsInstance(response[key], basestring, 'value not in expected format(str) for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
+
+def run_suite(test_suite, stream, test_name):
+	test_results = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
+	test_suite.run(test_results)
+	if test_results.wasSuccessful():
+		print '%s: SUCCESS' % (test_name)
+	else:
+		print '%s:' % (test_name)
+		test_results.printErrors()
+	if 0 < len(cohort_ids):
+		print '\t\tWARNING: cohort_ids still exist(%s)' % (','.join(cohort_ids))
+
 def main():
 	# final report should include length of all responses and time taken for each test
 	parser = argparse.ArgumentParser(description="Unit test module for ISB CGC endpoints")
@@ -130,15 +201,17 @@ def main():
 	endpoints_url_base = json_config["endpoints_url_base"]
 	for api_name, api_config in json_config["apis"].iteritems():
 # 		api_config = json_config["apis"][args.api_name]
-		discovery_url = endpoints_url_base + api_config["discovery_uri"]
+		discovery_url = endpoints_url_base + api_config["endpoint_uri"]
 		version = api_config["version"]
+		base_resource_name = api_config["base_resource_name"]
 		# get the endpoints test order
 		endpoint_test_ordering = []
 		
 		for reference in api_config["test_ordering"]:
-			# TODO: why bother with partition?  can just split and take [2] index
-			resource_name = reference.partition("resources")[2].split('/')[1]
-			endpoint_name = reference.split('/')[-1]
+			# TODO:  the tests may not be run in the order that they are set
+			fields = reference.split('/')
+			resource_name = fields[2]
+			endpoint_name = fields[-1]
 			test_config = resolve(api_config, reference)
 			test_config["resource"] = resource_name
 			test_config["endpoint"] = endpoint_name
@@ -155,42 +228,58 @@ def main():
 				endpoint_name = endpoints_test_config["endpoint"]
 				requires_auth = endpoints_test_config["requires_auth"]
 				
-				if endpoints_test_config["creates_resource"] == "true":
-					CREATED_ITEMS[resource] = []
-					item_delete_key = resolve(api_config, "#/resources/{resource}/delete_key".format(resource=resource))
-				else:
-					item_delete_key=None
-				
 				for test_config_name, test_config_dict in endpoints_test_config['test_config'].iteritems():
+					test_config_dict = {
+						'api': api_name, 
+						'version': version, 
+						'endpoint': endpoint_name, 
+						'base_resource': base_resource_name, 
+						'resource': resource, 
+						'discovery_url': discovery_url, 
+						'type_test': test_config_name, 
+						'deletes_resource': endpoints_test_config["deletes_resource"], 
+						'request': test_config_dict["request"] if "request" in test_config_dict else None, 
+						'expected_response': test_config_dict["expected_response"] if "expected_response" in test_config_dict else None, 
+						'expected_status_code': test_config_dict["expected_status_code"] if "expected_status_code" in test_config_dict else None
+					}
+					test_name = endpoints_test_config['test_name'] if 'test_name' in endpoints_test_config else 'test_run'
 					if test_config_name == "minimal":
-						test_unauthorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=version, endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, type_test=test_config_name, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=1, auth=None))
-						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=version, endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, type_test=test_config_name, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=10, auth=test_user_credentials))
-						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=version, endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, type_test=test_config_name, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=50, auth=test_user_credentials))
-						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=version, endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, type_test=test_config_name, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=100, auth=test_user_credentials))
-						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=version, endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, type_test=test_config_name, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=500, auth=test_user_credentials))
-						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=args.api_name, version=version, endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, type_test=test_config_name, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=test_config_dict["request"], expected_response=test_config_dict["expected_response"], expected_status_code=test_config_dict["expected_status_code"], num_requests=1000, auth=test_user_credentials))
-						
-					# set these up so the test can at least run unsuccessfully until these are added to the config file 
-					request=test_config_dict["request"] if "request" in test_config_dict else None
-					expected_response=test_config_dict["expected_response"] if "expected_response" in test_config_dict else None
-					expected_status_code=test_config_dict["expected_status_code"] if "expected_status_code" in test_config_dict else None
-					test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, api=api_name, version=version, endpoint=endpoint_name, resource=resource, discovery_url=discovery_url, type_test=test_config_name, item_delete_key=item_delete_key, deletes_resource=endpoints_test_config["deletes_resource"], request=request, expected_response=expected_response, expected_status_code=expected_status_code, num_requests=1, auth=test_user_credentials))
-					
-	stream = _WritelnDecorator(sys.stdout)
-	results_unautherized = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
-	test_unauthorized.run(results_unautherized)
-	results_unautherized
-	CREATED_ITEMS.clear()
-	
-	results_autherized = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
-	test_authorized.run(results_autherized)
-	results_autherized
-	CREATED_ITEMS.clear()
+						test_unauthorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=1, auth=None))
+# 						test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=1, auth=test_user_credentials))
+# 						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=10, auth=test_user_credentials))
+# 						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=50, auth=test_user_credentials))
+# 						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=100, auth=test_user_credentials))
+# 						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=500, auth=test_user_credentials))
+# 						load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=1000, auth=test_user_credentials))
+# 					else:
+# 						test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=1, auth=test_user_credentials))
 
-	results_load_test_autherized = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
-	load_test_authorized.run(results_load_test_autherized)
-	results_load_test_autherized
-	CREATED_ITEMS.clear()
+	stream = _WritelnDecorator(sys.stdout)
+	run_suite(test_unauthorized, stream, 'unauthorized')
+# 	run_suite(test_authorized, stream, 'authorized')
+# 	cohort_ids = []
+# 	run_suite(load_test_authorized, stream, 'load_authorized')
+# 	cohort_ids = []
+	
+# 	results_autherized = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
+# 	test_authorized.run(results_autherized)
+# 	results_autherized
+# 	if results_unautherized.wasSuccessful():
+# 		print 'authorized: SUCCESS'
+# 	else:
+# 		print 'authorized:'
+# 		results_unautherized.printErrors()
+# 	cohort_ids.clear()
+# 
+# 	results_load_test_autherized = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
+# 	load_test_authorized.run(results_load_test_autherized)
+# 	results_load_test_autherized
+# 	if results_unautherized.wasSuccessful():
+# 		print 'load test: SUCCESS'
+# 	else:
+# 		print 'load test:'
+# 		results_unautherized.printErrors()
+# 	cohort_ids.clear()
 	
 if __name__ == "__main__":
 # 	main(sys.argv[1:])
