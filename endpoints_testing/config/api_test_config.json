@@ -111,12 +111,105 @@
 							"test_config": {
 								"minimal": {
 									"request": {
-								
 									},
 									"expected_response": {
-							
+										"count": {
+											"type": "string",
+											"format": "int64"
+										},
+										"kind": {
+											"value": "cohort_api#cohorts"
+										},
+										"items": {
+											"type": "map_list",
+											"key": "expected_items_response"
+										}
 									},
-									"expected_status_code": 200
+									"expected_items_response": {
+										"name": {
+											"type": "from list",
+											"values": [
+												"test_cohort_1",
+												"sample_counts_1",
+												"sample_counts_2",
+												"clinical_status_1",
+												"clinical_status_2",
+												"clinical_vital_1",
+												"clinical_vital_2"
+											]
+										},
+										"comments": {
+											"value": "None"
+										},
+										"id": {
+											"type": "string",
+											"format": "int64"
+										},
+										"perm": {
+											"type": "from list",
+											"values": [
+												"READER",
+												"OWNER"
+											]
+										},
+										"filters": {
+											"type": "map_list",
+											"key": "expected_filters_response"
+										},
+										"last_date_saved": {
+											"type": "string",
+											"format": "date"
+										},
+										"email": {
+											"type": "string",
+											"format": "test_user_credentials"
+										},
+										"kind": {
+											"value": "cohort_api#cohortsItem"
+										}
+									},
+									"expected_filters_response": {
+										"name": {
+											"type": "from list",
+											"values": [
+												"Study", 
+												"has_SNP6", 
+												"SampleTypeCode", 
+												"has_HiSeq_miRNASeq", 
+												"new_tumor_event_after_initial_treatment", 
+												"pathologic_stage", 
+												"prior_dx", 
+												"residual_tumor", 
+												"vital_status", 
+												"race", 
+												"country", 
+												"gender"
+											]
+										},
+										"value": {
+											"type": "from list",
+											"values": [
+												"BLCA", 
+												"PRAD", 
+												"1", 
+												"01", 
+												"11", 
+												"NO", 
+												"YES", 
+												"Stage I", 
+												"None", 
+												"No", 
+												"R0", 
+												"R1", 
+												"Alive", 
+												"Dead", 
+												"WHITE", 
+												"MALE", 
+												"FEMALE",
+												"United States"
+											]
+										}
+									}
 								},
 								"optional_params": {},
 								"undefined_param_names": {},

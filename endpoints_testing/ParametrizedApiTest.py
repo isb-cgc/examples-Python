@@ -17,25 +17,24 @@ limitations under the License.
 import unittest
 
 class ParametrizedApiTest(unittest.TestCase):
-	def __init__(self, methodName="test_run", test_config_dict=None, num_requests=None, auth=None):
+	def __init__(self, methodName="test_run", test_config=None, num_requests=None, auth=None):
 		super(ParametrizedApiTest, self).__init__(methodName)
-		self.api = test_config_dict['api']
-		self.version = test_config_dict['version']
-		self.base_resource = test_config_dict['base_resource']
-		self.resource = test_config_dict['resource']
-		self.endpoint = test_config_dict['endpoint']
-		self.type_test = test_config_dict['type_test']
-		self.discovery_url = test_config_dict['discovery_url']
-		self.deletes_resource = test_config_dict['deletes_resource']
-		self.request = test_config_dict['request']
-		self.expected_response = test_config_dict['expected_response']
+		self.api = test_config['api']
+		self.version = test_config['version']
+		self.base_resource = test_config['base_resource']
+		self.resource = test_config['resource']
+		self.endpoint = test_config['endpoint']
+		self.type_test = test_config['type_test']
+		self.discovery_url = test_config['discovery_url']
+		self.deletes_resource = test_config['deletes_resource']
+		self.test_config_dict = test_config['test_config_dict']
 		self.num_requests = num_requests 
 		self.auth = auth 
 		
 	@staticmethod
-	def parametrize(testcase_class, test_name, test_config_dict=None, num_requests=None, auth=None):
+	def parametrize(testcase_class, test_name, test_config=None, num_requests=None, auth=None):
 		testloader = unittest.TestLoader()
 		testnames = testloader.getTestCaseNames(testcase_class)
 		suite = unittest.TestSuite()
-		suite.addTest(testcase_class(test_name, test_config_dict, num_requests=num_requests, auth=auth))
+		suite.addTest(testcase_class(test_name, test_config, num_requests=num_requests, auth=auth))
 		return suite
