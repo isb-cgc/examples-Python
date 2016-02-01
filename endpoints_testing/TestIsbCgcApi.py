@@ -64,11 +64,9 @@ class IsbCgcApiTest(ParametrizedApiTest):
         self.test_run()
         
     def sample_details_test(self):
-        return
         self.test_run()
         
     def patient_details_test(self):
-        return
         self.test_run()
         
     def list_test(self):
@@ -90,7 +88,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
                 self.test_config_dict['request']['cohort_id'] = cohort_id
                 self.num_requests = 1
                 time.sleep(3)
-                self.test_run()
+                self.test_run(**{"cohort_id": cohort_id})
         finally:
             print 'deleted %s cohorts out of %s' % (count, len(cohort_ids))
         for cohort_id in cohort_ids:
@@ -99,7 +97,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
     def save_test(self):
         self.test_run()
         
-    def test_run(self):
+    def test_run(self, **kwargs):
         execution_time = 0
         try:
             # authenticate (or not, depending on whether the 'auth' dict contains an entry or is None)
@@ -132,8 +130,10 @@ class IsbCgcApiTest(ParametrizedApiTest):
                 
             responses, execution_time = self._query_api(requests)
             for r in responses:
-                self._check_response(r)
+                self._check_response(r, **kwargs)
             return responses
+        except Exception as e:
+            self.assertTrue(False, 'exception %s raised for %s:%s:%s' % (e, self.resource, self.endpoint, self.type_test))
         finally:
             # log execution time
             print '%s: finished testing %s.%s as %s.  took %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, execution_time)
@@ -169,7 +169,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
         return responses, execution_time
         
 
-    def _check_expected_map_list(self, response, expected_response, key, indent):
+    def _check_expected_map_list(self, response, expected_response, key, indent, **kwargs):
         count = 0
         for nextmap in response:
             if 0 == count % 32:
@@ -178,7 +178,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
             self._check_expected(nextmap, expected_response, indent + '\t')
         print '%schecked %s total maps for %s' % (indent, count, key)
 
-    def _check_expected(self, response, expected_response, indent):
+    def _check_expected(self, response, expected_response, indent, **kwargs):
         for key, details in expected_response.iteritems():
             if 'value' in details.keys():
                 self.assertEqual(response[key], details['value'], 'value in response isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
@@ -195,23 +195,31 @@ class IsbCgcApiTest(ParametrizedApiTest):
                         self.assertIsInstance(response[key], basestring, 'value not in expected format(str) for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'map':
                     if 'key' in details.keys():
-                        self._check_expected(response[key], self.test_config_dict[details['key']])
+                        self._check_expected(response[key], self.test_config_dict[details['key']], indent, **kwargs)
+                elif details['type'] == 'list':
+                    values = set(response[key])
+                    expected_values = set(self.test_config_dict[details['key']])
+                    self.assertSetEqual(values, expected_values)
+#                    self.assertSetEqual(values, expected_values, 'value(%s) not in expected values(%s) for %s:%s:%s' % (response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'from list':
                     values = details['values']
                     self.assertIn(response[key], values, 'value(%s) not in expected values(%s) for %s:%s:%s' % (response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'map_list':
-                    self._check_expected_map_list(response[key], self.test_config_dict[details['key']], details['key'], indent)
+                    self._check_expected_map_list(response[key], self.test_config_dict[details['key']], details['key'], indent, **kwargs)
                 else:
                     self.assertTrue(False, 'unrecognized type(%s) for %s:%s:%s' % (details['type'], self.resource, self.endpoint, self.type_test))
+            elif 'value_replace' in details.keys():
+                self.assertEqual(response[key], details['value_replace'].format(**kwargs), 'value in response isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
+                    (self.resource, self.endpoint, self.type_test, response[key], details['value_replace'].format(**kwargs)))
             else:
                 self.assertTrue(False, 'unrecognized details for key(%s) for %s:%s:%s' % (key, self.resource, self.endpoint, self.type_test))
 
-    def _check_response(self, response):
+    def _check_response(self, response, **kwargs):
 # TODO, only have the json returned by the endpoint
 #         self.assertEqual(response.status_code, self.expected_status_code)
         # TODOD: take into account the nested dict in response
         self.assertFalse('ERROR' in response, 'an error occurred for %s:%s:%s: %s' % (self.resource, self.endpoint, self.type_test, response['ERROR']) if 'ERROR' in response else 'no error???')
-        self._check_expected(response, self.test_config_dict['expected_response'], '\t')
+        self._check_expected(response, self.test_config_dict['expected_response'], '\t', **kwargs)
 
 def run_suite(test_suite, stream, test_name):
     test_results = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
@@ -222,7 +230,7 @@ def run_suite(test_suite, stream, test_name):
         print '%s:' % (test_name)
         test_results.printErrors()
     if 0 < len(cohort_ids):
-        print '\t\tWARNING: cohort_ids still exist(%s)' % (','.join(cohort_ids))
+        print '\t\tWARNING: cohort_ids(%s) still exist(%s)' % (len(cohort_ids), ','.join(cohort_ids))
 
 def main():
     # final report should include length of all responses and time taken for each test

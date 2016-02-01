@@ -87,7 +87,10 @@
                   },
                   "expected_response": {
                     "msg": {
-                      "value": "Cohort %s successfully deactivated."
+                      "value_replace": "Cohort {cohort_id} successfully deactivated.",
+                      "replace": [
+                        "cohort_id"
+                      ]
                     },
                     "kind": {
                       "value": "cohort_api#cohortItem"
@@ -233,11 +236,225 @@
               "test_config": {
                 "minimal": {
                   "request": {
-                
+                    "patient_barcode": "TCGA-W5-AA30"
                   },
                   "expected_response": {
-              
+                    "kind": {
+                      "value": "cohort_api#cohortsItem"
+                    },
+                    "clinical_data": {
+                      "type": "map",
+                      "key": "expected_clinical_response"
+                    },
+                    "samples": {
+                      "type": "list",
+                      "key": "expected_samples_response"
+                    },
+                    "aliquots": {
+                      "type": "list",
+                      "key": "expected_aliquots_response"
+                    }
                   },
+                  "expected_clinical_response": {
+                    "weiss_venous_invasion": {
+                      "value": "None"
+                    },
+                    "weight": {
+                      "value": "102"
+                    },
+                    "pregnancies": {
+                      "value": "None"
+                    },
+                    "lymphatic_invasion": {
+                      "value": "None"
+                    },
+                    "height": {
+                      "value": "188"
+                    },
+                    "neoplasm_histologic_grade": {
+                      "value": "G3"
+                    },
+                    "icd_o_3_site": {
+                      "value": "C22.1"
+                    },
+                    "icd_10": {
+                      "value": "C22.1"
+                    },
+                    "vital_status": {
+                      "value": "Alive"
+                    },
+                    "colorectal_cancer": {
+                      "value": "None"
+                    },
+                    "ethnicity": {
+                      "value": "NOT HISPANIC OR LATINO"
+                    },
+                    "person_neoplasm_cancer_status": {
+                      "value": "TUMOR FREE"
+                    },
+                    "primary_therapy_outcome_success": {
+                      "value": "None"
+                    },
+                    "new_tumor_event_after_initial_treatment": {
+                      "value": "NO"
+                    },
+                    "days_to_initial_pathologic_diagnosis": {
+                      "value": "0"
+                    },
+                    "mononucleotide_marker_panel_analysis_status": {
+                      "value": "None"
+                    },
+                    "icd_o_3_histology": {
+                      "value": "8160/3"
+                    },
+                    "history_of_prior_malignancy": {
+                      "value": "None"
+                    },
+                    "history_of_neoadjuvant_treatment": {
+                      "value": "No"
+                    },
+                    "history_of_colon_polyps": {
+                      "value": "None"
+                    },
+                    "prior_dx": {
+                      "value": "No"
+                    },
+                    "menopause_status": {
+                      "value": "None"
+                    },
+                    "residual_tumor": {
+                      "value": "R0"
+                    },
+                    "histological_type": {
+                      "value": "Cholangiocarcinoma; intrahepatic"
+                    },
+                    "days_to_last_followup": {
+                      "value": "1079"
+                    },
+                    "Study": {
+                      "value": "CHOL"
+                    },
+                    "clinical_M": {
+                      "value": "None"
+                    },
+                    "clinical_N": {
+                      "value": "None"
+                    },
+                    "Project": {
+                      "value": "TCGA"
+                    },
+                    "clinical_stage": {
+                      "value": "None"
+                    },
+                    "lymphovascular_invasion_present": {
+                      "value": "None"
+                    },
+                    "clinical_T": {
+                      "value": "None"
+                    },
+                    "pathologic_stage": {
+                      "value": "Stage I"
+                    },
+                    "ParticipantBarcode": {
+                      "value": "TCGA-W5-AA30"
+                    },
+                    "tobacco_smoking_history": {
+                      "value": "None"
+                    },
+                    "hpv_status": {
+                      "value": "None"
+                    },
+                    "year_of_initial_pathologic_diagnosis": {
+                      "value": "2010"
+                    },
+                    "pathologic_N": {
+                      "value": "N0"
+                    },
+                    "pathologic_M": {
+                      "value": "M0"
+                    },
+                    "hpv_calls": {
+                      "value": "None"
+                    },
+                    "gender": {
+                      "value": "MALE"
+                    },
+                    "age_at_initial_pathologic_diagnosis": {
+                      "value": "82"
+                    },
+                    "batch_number": {
+                      "value": "428"
+                    },
+                    "anatomic_neoplasm_subdivision": {
+                      "value": "None"
+                    },
+                    "frozen_specimen_anatomic_site": {
+                      "value": "None"
+                    },
+                    "primary_neoplasm_melanoma_dx": {
+                      "value": "None"
+                    },
+                    "mononucleotide_and_dinucleotide_marker_panel_analysis_status": {
+                      "value": "None"
+                    },
+                    "tumor_type": {
+                      "value": "None"
+                    },
+                    "race": {
+                      "value": "WHITE"
+                    },
+                    "country": {
+                      "value": "United States"
+                    },
+                    "tumor_tissue_site": {
+                      "value": "Bile duct"
+                    },
+                    "days_to_birth": {
+                      "value": "-30039"
+                    },
+                    "pathologic_T": {
+                      "value": "T1"
+                    },
+                    "lymphnodes_examined": {
+                      "value": "None"
+                    },
+                    "bcr": {
+                      "value": "Nationwide Children's Hospital"
+                    }
+                  },
+                  "expected_samples_response": [
+                    "TCGA-W5-AA30-10A",
+                    "TCGA-W5-AA30-11A",
+                    "TCGA-W5-AA30-01A"
+                  ],
+                  "expected_aliquots_response_switched": [
+                    "TCGA-W5-AA30-01A-21-A45N-20",
+                    "TCGA-W5-AA30-01A-31D-A416-01",
+                    "TCGA-W5-AA30-01A-31D-A417-09",
+                    "TCGA-W5-AA30-01A-31D-A418-05",
+                    "TCGA-W5-AA30-01A-31R-A41D-13",
+                    "TCGA-W5-AA30-01A-31R-A41I-07",
+                    "TCGA-W5-AA30-10A-01D-A419-01",
+                    "TCGA-W5-AA30-10A-01D-A41A-09",
+                    "TCGA-W5-AA30-11A-11D-A416-01",
+                    "TCGA-W5-AA30-11A-11D-A417-09",
+                    "TCGA-W5-AA30-11A-11D-A418-05",
+                    "TCGA-W5-AA30-11A-11R-A41D-13",
+                    "TCGA-W5-AA30-11A-11R-A41I-07"
+                  ],
+                  "expected_aliquots_response": [
+                    "TCGA-W5-AA30-01A-31D-A416-01-01",
+                    "TCGA-W5-AA30-01A-31D-A417-09",
+                    "TCGA-W5-AA30-01A-31D-A418-05",
+                    "TCGA-W5-AA30-01A-31R-A41D-13",
+                    "TCGA-W5-AA30-01A-31R-A41I-07",
+                    "TCGA-W5-AA30-10A-01D-A41A-09-09",
+                    "TCGA-W5-AA30-11A-11D-A416-01",
+                    "TCGA-W5-AA30-11A-11D-A417-09",
+                    "TCGA-W5-AA30-11A-11D-A418-05",
+                    "TCGA-W5-AA30-11A-11R-A41D-13-13",
+                    "TCGA-W5-AA30-11A-11R-A41I-07"
+                  ],
                   "expected_status_code": 200
                 },
                 "optional_params": {},
@@ -257,10 +474,195 @@
               "test_config": {
                 "minimal": {
                   "request": {
-                
+                    "sample_barcode": "TCGA-W5-AA30-01A",
+                    "platform": "HumanMethylation450"
                   },
                   "expected_response": {
-              
+                    "patient": {
+                      "value": "TCGA-W5-AA30"
+                    },
+                    "data_details_count": {
+                      "value": "4"
+                    },
+                    "kind": {
+                      "value": "cohort_api#cohortsItem"
+                    },
+                    "biospecimen_data": {
+                      "type": "map",
+                      "key": "expected_biospecimen_response"
+                    },
+                    "data_details": {
+                      "type": "map_list",
+                      "key": "expected_data_details_response"
+                    }
+                  },
+                  "expected_biospecimen_response": {
+                    "avg_percent_tumor_nuclei": {
+                      "value": 75
+                    },
+                    "min_percent_neutrophil_infiltration": {
+                      "value": "3"
+                    },
+                    "avg_percent_necrosis": {
+                      "value": 0
+                    },
+                    "max_percent_normal_cells": {
+                      "value": "0"
+                    },
+                    "min_percent_monocyte_infiltration": {
+                      "value": "1"
+                    },
+                    "avg_percent_stromal_cells": {
+                      "value": 25
+                    },
+                    "SampleBarcode": {
+                      "value": "TCGA-W5-AA30-01A"
+                    },
+                    "max_percent_lymphocyte_infiltration": {
+                      "value": "3"
+                    },
+                    "min_percent_tumor_cells": {
+                      "value": "75"
+                    },
+                    "avg_percent_monocyte_infiltration": {
+                      "value": 1
+                    },
+                    "min_percent_necrosis": {
+                      "value": "0"
+                    },
+                    "max_percent_stromal_cells": {
+                      "value": "25"
+                    },
+                    "max_percent_necrosis": {
+                      "value": "0"
+                    },
+                    "min_percent_lymphocyte_infiltration": {
+                      "value": "3"
+                    },
+                    "avg_percent_neutrophil_infiltration": {
+                      "value": 3
+                    },
+                    "Study": {
+                      "value": "CHOL"
+                    },
+                    "max_percent_monocyte_infiltration": {
+                      "value": "1"
+                    },
+                    "Project": {
+                      "value": "TCGA"
+                    },
+                    "ParticipantBarcode": {
+                      "value": "TCGA-W5-AA30"
+                    },
+                    "min_percent_tumor_nuclei": {
+                      "value": "75"
+                    },
+                    "min_percent_normal_cells": {
+                      "value": "0"
+                    },
+                    "max_percent_tumor_nuclei": {
+                      "value": "75"
+                    },
+                    "avg_percent_lymphocyte_infiltration": {
+                      "value": 3
+                    },
+                    "batch_number": {
+                      "value": "428"
+                    },
+                    "avg_percent_tumor_cells": {
+                      "value": 75
+                    },
+                    "days_to_collection": {
+                      "value": "1134"
+                    },
+                    "min_percent_stromal_cells": {
+                      "value": "25"
+                    },
+                    "bcr": {
+                      "value": "Nationwide Children's Hospital"
+                    },
+                    "max_percent_neutrophil_infiltration": {
+                      "value": "3"
+                    },
+                    "max_percent_tumor_cells": {
+                      "value": "75"
+                    },
+                    "avg_percent_normal_cells": {
+                      "value": 0
+                    }
+                  },
+                  "expected_data_details_response": {
+                    "Project": {
+                      "value": "TCGA"
+                    },
+                    "Pipeline": {
+                      "value": "jhu-usc.edu__methylation"
+                    },
+                    "SampleBarcode": {
+                      "value": "TCGA-W5-AA30-01A"
+                    },
+                    "Repository": {
+                      "value": "DCC"
+                    },
+                    "DatafileUploaded": {
+                      "type": "from list",
+                      "values": [
+                        "false",
+                        "true"
+                      ]
+                    },
+                    "Datatype": {
+                      "value": "DNA Methylation"
+                    },
+                    "platform_full_name": {
+                      "value": "None"
+                    },
+                    "DataCenterType": {
+                      "value": "cgcc"
+                    },
+                    "DataCenterName": {
+                      "value": "jhu-usc.edu"
+                    },
+                    "Platform": {
+                      "value": "HumanMethylation450"
+                    },
+                    "DataFileNameKey": {
+                      "type": "from list",
+                      "values": [
+                        "",
+                        "/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
+                      ]
+                    },
+                    "SDRFFileName": {
+                      "value": "jhu-usc.edu_CHOL.HumanMethylation450.1.1.0.sdrf.txt"
+                    },
+                    "DataFileName": {
+                      "type": "from list",
+                      "values": [
+                        "jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-2.TCGA-W5-AA30-01A-31D-A418-05.txt",
+                        "9996247047_R03C02_Red.idat",
+                        "9996247047_R03C02_Grn.idat",
+                        "jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
+                      ]
+                    },
+                    "SecurityProtocol": {
+                      "value": "dbGap open-access"
+                    },
+                    "GenomeReference": {
+                      "type": "from list",
+                      "values": [
+                        "None",
+                        "HG19"
+                      ]
+                    },
+                    "DataLevel": {
+                      "type": "from list",
+                      "values": [
+                        "Level 1",
+                        "Level 2",
+                        "Level 3"
+                      ]
+                    }
                   },
                   "expected_status_code": 200
                 },
