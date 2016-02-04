@@ -27,7 +27,7 @@ class ParametrizedApiTest(unittest.TestCase):
 		self.type_test = test_config['type_test']
 		self.discovery_url = test_config['discovery_url']
 		self.deletes_resource = test_config['deletes_resource']
-		self.test_config_dict = test_config['test_config_dict']
+		self.test_config_list = test_config['test_config_dict']
 		self.num_requests = num_requests 
 		self.auth = auth 
 		

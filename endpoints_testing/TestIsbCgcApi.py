@@ -21,18 +21,20 @@ import multiprocessing
 import requests 
 import sys
 import time
+import traceback
 import unittest
 from apiclient import discovery
 from concurrent import futures
 from datetime import datetime
-from jsonspec.reference import resolve
+from jsonspec.reference import resolve, Registry
 
 import isb_auth
 from ParametrizedApiTest import ParametrizedApiTest
 
 # TODO: Write browser automation with selenium modules (user login)
 
-cohort_ids = set()
+cohort_id2cohort_name = {} 
+
 # TODO: modify stress test to have a request per count, rather than repeat the same request
 # TODO: run one save per six example saves, then for stress test, randomly pick one per count
 
@@ -55,13 +57,28 @@ class _WritelnDecorator(object):
         self.write('\n') # text-mode streams translate to \r\n if needed
 
 class IsbCgcApiTest(ParametrizedApiTest):
+    def set_cohort_id(self, test_config_dict):
+        if 'cohort_id' in test_config_dict['request']:
+            notfound = True
+            for cohort_id, cohort_name in cohort_id2cohort_name.iteritems():
+                if cohort_name == test_config_dict['cohort_name_lookup']:
+                    notfound = False
+                    test_config_dict['request']['cohort_id'] = cohort_id
+            
+            if notfound:
+                self.assertTrue(False, 'didn\'t find a cohort id for %s' % (test_config_dict['cohort_name_lookup']))
+
     def cohort_patients_samples_list_test(self):
-        return
-        self.test_run()
-        
+        # based on the cohort name in the config file, need to get an id
+        for test_config_dict in self.test_config_list:
+            self.set_cohort_id(test_config_dict)
+            self.test_run()
+
     def datafilenamekey_list_test(self):
-        return
-        self.test_run()
+        # based on the cohort name in the config file, need to get an id
+        for test_config_dict in self.test_config_list:
+            self.set_cohort_id(test_config_dict)
+            self.test_run()
         
     def sample_details_test(self):
         self.test_run()
@@ -71,28 +88,34 @@ class IsbCgcApiTest(ParametrizedApiTest):
         
     def list_test(self):
         responses = self.test_run()
+        if not responses:
+            return
         cohort_count = responses[0]['count']
         print '\tfound %s cohorts' % (cohort_count)
-        global cohort_ids
-        cohort_ids = set()
-        for item in responses[0]['items']:
-            if 'OWNER' == item['perm']:
-                cohort_ids.add(item['id'])
-        self.assertEqual(int(cohort_count), len(cohort_ids), '%s:%s:%s returned a count different than the number of items' % (self.resource, self.endpoint, self.type_test))
+        global cohort_id2cohort_name
+        cohort_id2cohort_name = {}
+        if 'items' in responses[0]:
+            for item in responses[0]['items']:
+                if 'OWNER' == item['perm']:
+                    cohort_id2cohort_name[item['id']] = item['name']
+        self.assertEqual(int(cohort_count), len(cohort_id2cohort_name), '%s:%s:%s returned a count(%s) different than the number of items(%s)' % 
+            (self.resource, self.endpoint, self.type_test, cohort_count, len(responses[0]['items']) if 'items' in responses[0] else 0))
         
     def delete_test(self):
         count = 0
         try:
-            for cohort_id in cohort_ids:
+            cohort_ids = []
+            for cohort_id in cohort_id2cohort_name:
                 count += 1
-                self.test_config_dict['request']['cohort_id'] = cohort_id
+                cohort_ids += [cohort_id]
+                # TODO: think about how to make this more general
+                self.test_config_list[0]['request']['cohort_id'] = cohort_id
                 self.num_requests = 1
-                time.sleep(3)
                 self.test_run(**{"cohort_id": cohort_id})
         finally:
-            print 'deleted %s cohorts out of %s' % (count, len(cohort_ids))
+            print 'deleted %s cohorts out of %s' % (count, len(cohort_id2cohort_name))
         for cohort_id in cohort_ids:
-            cohort_ids.remove(cohort_id)
+            cohort_id2cohort_name.pop(cohort_id)
         
     def save_test(self):
         self.test_run()
@@ -106,34 +129,45 @@ class IsbCgcApiTest(ParametrizedApiTest):
                 pass
             
             print '\n%s: testing %s.%s as %s.  repeats: %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, self.num_requests)
-            self.assertTrue((self.test_config_dict['request'] and 0 < len(self.test_config_dict['request'])) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
-            # build an API service object for the testing
-            credentials = isb_auth.get_credentials()
-            http = httplib2.Http()
-            http = credentials.authorize(http)
-            
-            if credentials.access_token_expired:
-                credentials.refresh(http)
-            
-            print '%s:\tbuild(%s)' % (datetime.now(), self.discovery_url)
-            self.service = discovery.build(
-                self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)    
-            print '%s:\tfinished build(%s)' % (datetime.now(), self.discovery_url)
-    
-            # set up and run the test
-            method_to_call = getattr(getattr(getattr(self.service, '{api}_endpoints'.format(api=self.base_resource))(), '{resource}'.format(resource=self.resource))(), '{method}'.format(method=self.endpoint))
-            requests = []
-            count = 0
-            while count < self.num_requests:
-                requests.append(method_to_call(**self.test_config_dict['request']))
-                count += 1
+            all_responses = []
+            for test_config_dict in self.test_config_list:
+                self.assertTrue((test_config_dict['request'] and 0 < len(test_config_dict['request'])) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
+                # build an API service object for the testing
+                credentials = isb_auth.get_credentials()
+                http = httplib2.Http()
+                http = credentials.authorize(http)
                 
-            responses, execution_time = self._query_api(requests)
-            for r in responses:
-                self._check_response(r, **kwargs)
-            return responses
+                if credentials.access_token_expired:
+                    credentials.refresh(http)
+                
+                print '%s:\tbuild(%s)' % (datetime.now(), self.discovery_url)
+                self.service = discovery.build(
+                    self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)    
+                print '%s:\tfinished build(%s)' % (datetime.now(), self.discovery_url)
+        
+                # set up and run the test
+                print '%s:\tget the http request' % (datetime.now())
+                method_to_call = getattr(getattr(getattr(self.service, '{api}_endpoints'.format(api=self.base_resource))(), '{resource}'.format(resource=self.resource))(), '{method}'.format(method=self.endpoint))
+                print '%s:\tgot the http request' % (datetime.now())
+                requests = []
+                count = 0
+                while count < self.num_requests:
+                    requests.append(method_to_call(**test_config_dict['request']))
+                    count += 1
+                    
+                print '%s:\texecute the requests' % (datetime.now())
+                responses, execution_time = self._query_api(requests)
+                print '%s:\tfinished executing the requests' % (datetime.now())
+                for r in responses:
+                    self._check_response(r, test_config_dict, **kwargs)
+                all_responses += responses
+            return all_responses
+        except AssertionError as ae:
+            traceback.print_exc()
+            raise ae
         except Exception as e:
-            self.assertTrue(False, 'exception %s raised for %s:%s:%s' % (e, self.resource, self.endpoint, self.type_test))
+            traceback.print_exc()
+            self.assertTrue(False, 'exception %s raised for %s:%s:%s.  exception is type %s' % (e, self.resource, self.endpoint, self.type_test, type(e)))
         finally:
             # log execution time
             print '%s: finished testing %s.%s as %s.  took %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, execution_time)
@@ -146,7 +180,6 @@ class IsbCgcApiTest(ParametrizedApiTest):
         executor = futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count() * 4)
 
         start = time.time()
-        responses = []
         future2request = {}
         count = 0
         for request in requests:
@@ -169,16 +202,28 @@ class IsbCgcApiTest(ParametrizedApiTest):
         return responses, execution_time
         
 
-    def _check_expected_map_list(self, response, expected_response, key, indent, **kwargs):
+    def _check_expected_map_list(self, response, expected_response, key, test_config_dict, matchup_key, indent, **kwargs):
         count = 0
-        for nextmap in response:
-            if 0 == count % 32:
-                print '%schecking the %s map on the list for %s' % (indent, count, key)
-            count += 1
-            self._check_expected(nextmap, expected_response, indent + '\t')
-        print '%schecked %s total maps for %s' % (indent, count, key)
+        if matchup_key:
+            name2maps = {}
+            for listmap in response:
+                cohorts = name2maps.setdefault(listmap[matchup_key], [])
+                cohorts += [listmap]
+            name2expected = dict([(expected_map_response['value'], [expected_map_response, expected_map_response[expected_map_response['response_key']]]) for expected_map_response in expected_response])
+            for name, maps in name2maps.iteritems():
+                self.assertIn(name, name2expected, 'name %s not found as key into the map list for %s:%s:%s' % (name, self.resource, self.endpoint, self.type_test))
+                expected_nested_response = name2expected[name]
+                for nestedmap in maps:
+                    self._check_expected(nestedmap, expected_nested_response[1], expected_nested_response[0], indent + '\t', **kwargs)
+        else:
+            for nextmap in response:
+                if 0 == count % 32:
+                    print '%schecking the %s map on the list for %s' % (indent, count, key)
+                count += 1
+                self._check_expected(nextmap, expected_response, test_config_dict, indent + '\t', **kwargs)
+            print '%schecked %s total maps for %s' % (indent, count, key)
 
-    def _check_expected(self, response, expected_response, indent, **kwargs):
+    def _check_expected(self, response, expected_response, test_config_dict, indent, **kwargs):
         for key, details in expected_response.iteritems():
             if 'value' in details.keys():
                 self.assertEqual(response[key], details['value'], 'value in response isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
@@ -189,23 +234,26 @@ class IsbCgcApiTest(ParametrizedApiTest):
                         if details['format'] == 'int64':
                             self.assertRegexpMatches(response[key], '^[+-]?[0-9]+$', 'value not in expected format(int64) for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
                         elif details['format'] == 'date':
-                            self.assertRegexpMatches(response[key], '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$', 'value not in expected format(date) for %s:%s:%s' % 
+                            self.assertRegexpMatches(response[key], '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{6})?$', 'value not in expected format(date) for %s:%s:%s' % 
                                 (self.resource, self.endpoint, self.type_test))
                     else:
                         self.assertIsInstance(response[key], basestring, 'value not in expected format(str) for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'map':
                     if 'key' in details.keys():
-                        self._check_expected(response[key], self.test_config_dict[details['key']], indent, **kwargs)
+                        self._check_expected(response[key], test_config_dict[details['key']], test_config_dict, indent, **kwargs)
                 elif details['type'] == 'list':
                     values = set(response[key])
-                    expected_values = set(self.test_config_dict[details['key']])
+                    expected_values = set(test_config_dict[details['key']])
                     self.assertSetEqual(values, expected_values)
 #                    self.assertSetEqual(values, expected_values, 'value(%s) not in expected values(%s) for %s:%s:%s' % (response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'from list':
                     values = details['values']
                     self.assertIn(response[key], values, 'value(%s) not in expected values(%s) for %s:%s:%s' % (response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'map_list':
-                    self._check_expected_map_list(response[key], self.test_config_dict[details['key']], details['key'], indent, **kwargs)
+                    if 'optional' not in details or not details['optional']:
+                        self._check_expected_map_list(response[key], test_config_dict[details['key']], details['key'], test_config_dict, details['matchup_key'], indent, **kwargs)
+                    elif key in response:
+                        self._check_expected_map_list(response[key], test_config_dict[details['key']], details['key'], test_config_dict, details['matchup_key'], indent, **kwargs)
                 else:
                     self.assertTrue(False, 'unrecognized type(%s) for %s:%s:%s' % (details['type'], self.resource, self.endpoint, self.type_test))
             elif 'value_replace' in details.keys():
@@ -214,26 +262,28 @@ class IsbCgcApiTest(ParametrizedApiTest):
             else:
                 self.assertTrue(False, 'unrecognized details for key(%s) for %s:%s:%s' % (key, self.resource, self.endpoint, self.type_test))
 
-    def _check_response(self, response, **kwargs):
+    def _check_response(self, response, test_config_dict, **kwargs):
 # TODO, only have the json returned by the endpoint
 #         self.assertEqual(response.status_code, self.expected_status_code)
         # TODOD: take into account the nested dict in response
         self.assertFalse('ERROR' in response, 'an error occurred for %s:%s:%s: %s' % (self.resource, self.endpoint, self.type_test, response['ERROR']) if 'ERROR' in response else 'no error???')
-        self._check_expected(response, self.test_config_dict['expected_response'], '\t', **kwargs)
+        self._check_expected(response, test_config_dict['expected_response'], test_config_dict, '\t', **kwargs)
 
-def run_suite(test_suite, stream, test_name):
+def _run_suite(test_suite, stream, test_name):
     test_results = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
     test_suite.run(test_results)
+    print '\n============================================='
     if test_results.wasSuccessful():
-        print '%s: SUCCESS' % (test_name)
+        print 'results from the %s test: SUCCESS' % (test_name)
     else:
-        print '%s:' % (test_name)
+        print 'results from the %s test:' % (test_name)
         test_results.printErrors()
-    if 0 < len(cohort_ids):
-        print '\t\tWARNING: cohort_ids(%s) still exist(%s)' % (len(cohort_ids), ','.join(cohort_ids))
+    print '============================================='
+    if 0 < len(cohort_id2cohort_name):
+        print '\t\tWARNING: cohort_ids(%s) still exist(%s)' % (len(cohort_id2cohort_name), ','.join(cohort_id2cohort_name))
 
 def main():
-    # final report should include length of all responses and time taken for each test
+    # TODO: final report should include length of all responses and time taken for each test
     parser = argparse.ArgumentParser(description='Unit test module for ISB CGC endpoints')
     parser.add_argument('api_name', help='The name of the API to run the unit tests against')
     parser.add_argument('--test_user_credentials', help='A list of objects containing credentials for test users', nargs = '+')
@@ -250,9 +300,7 @@ def main():
         base_resource_name = api_config['base_resource_name']
         # get the endpoints test order
         endpoint_test_ordering = []
-        
-        for reference in api_config['test_ordering']:
-            # TODO:  the tests may not be run in the order that they are set
+        for reference in api_config['cohort_test_ordering']:
             fields = reference.split('/')
             resource_name = fields[2]
             endpoint_name = fields[-1]
@@ -289,20 +337,20 @@ def main():
                     test_name = endpoints_test_config['test_name'] if 'test_name' in endpoints_test_config else 'test_run'
                     if test_config_name == 'minimal':
                         test_unauthorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=None))
-#                         test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=1, auth=test_user_credentials))
-#                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=10, auth=test_user_credentials))
-#                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=50, auth=test_user_credentials))
-#                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=100, auth=test_user_credentials))
-#                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=500, auth=test_user_credentials))
-#                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=1000, auth=test_user_credentials))
-#                     else:
-#                         test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config_dict, num_requests=1, auth=test_user_credentials))
+                        test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=test_user_credentials))
+                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=10, auth=test_user_credentials))
+                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=50, auth=test_user_credentials))
+                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=100, auth=test_user_credentials))
+                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=500, auth=test_user_credentials))
+                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1000, auth=test_user_credentials))
+                    else:
+                        test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=test_user_credentials))
 
     stream = _WritelnDecorator(sys.stdout)
-    run_suite(test_unauthorized, stream, 'unauthorized')
+    _run_suite(test_unauthorized, stream, 'unauthorized')
 #     run_suite(test_authorized, stream, 'authorized')
 #     cohort_ids = []
-#     run_suite(load_test_authorized, stream, 'load_authorized')
+#     run_suite(load_test_authorized, stream, 'load authorized')
 #     cohort_ids = []
     
 if __name__ == '__main__':
