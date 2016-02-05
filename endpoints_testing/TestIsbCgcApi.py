@@ -64,6 +64,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
                 if cohort_name == test_config_dict['cohort_name_lookup']:
                     notfound = False
                     test_config_dict['request']['cohort_id'] = cohort_id
+                    break
             
             if notfound:
                 self.assertTrue(False, 'didn\'t find a cohort id for %s' % (test_config_dict['cohort_name_lookup']))
@@ -72,13 +73,21 @@ class IsbCgcApiTest(ParametrizedApiTest):
         # based on the cohort name in the config file, need to get an id
         for test_config_dict in self.test_config_list:
             self.set_cohort_id(test_config_dict)
-            self.test_run()
+        self.test_run()
 
     def datafilenamekey_list_test(self):
         # based on the cohort name in the config file, need to get an id
         for test_config_dict in self.test_config_list:
             self.set_cohort_id(test_config_dict)
-            self.test_run()
+        self.test_run()
+        
+    def datafilenamekey_list_from_cohort_test(self):
+        # based on the cohort name in the config file, need to get an id
+        self.datafilenamekey_list_test()
+        
+    def datafilenamekey_list_from_sample_test(self):
+        # based on the cohort name in the config file, need to get an id
+        self.test_run()
         
     def sample_details_test(self):
         self.test_run()
@@ -226,8 +235,8 @@ class IsbCgcApiTest(ParametrizedApiTest):
     def _check_expected(self, response, expected_response, test_config_dict, indent, **kwargs):
         for key, details in expected_response.iteritems():
             if 'value' in details.keys():
-                self.assertEqual(response[key], details['value'], 'value in response isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
-                    (self.resource, self.endpoint, self.type_test, response[key], details['value']))
+                self.assertEqual(response[key], details['value'], 'value in response for %s isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
+                    (key, self.resource, self.endpoint, self.type_test, response[key], details['value']))
             elif 'type' in details.keys():
                 if details['type'] == 'string':
                     if 'format' in details.keys():
@@ -236,11 +245,17 @@ class IsbCgcApiTest(ParametrizedApiTest):
                         elif details['format'] == 'date':
                             self.assertRegexpMatches(response[key], '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{6})?$', 'value not in expected format(date) for %s:%s:%s' % 
                                 (self.resource, self.endpoint, self.type_test))
+                        elif details['format'] == 'email':
+                            self.assertRegexpMatches(response[key], '^.+@.+$', 'value not in expected format(email) for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
+                        else:
+                            self.assertTrue(False, 'for %s found unexpected format for type string of %s for %s:%s:%s' % (key, details['format'], self.resource, self.endpoint, self.type_test))
                     else:
                         self.assertIsInstance(response[key], basestring, 'value not in expected format(str) for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'map':
                     if 'key' in details.keys():
                         self._check_expected(response[key], test_config_dict[details['key']], test_config_dict, indent, **kwargs)
+                    else:
+                        self.assertTrue(False, 'for %s expected key for map for %s:%s:%s' % (key, details['type'], self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'list':
                     values = set(response[key])
                     expected_values = set(test_config_dict[details['key']])
@@ -248,7 +263,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
 #                    self.assertSetEqual(values, expected_values, 'value(%s) not in expected values(%s) for %s:%s:%s' % (response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'from list':
                     values = details['values']
-                    self.assertIn(response[key], values, 'value(%s) not in expected values(%s) for %s:%s:%s' % (response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
+                    self.assertIn(response[key], values, 'for key %s value(%s) not in expected values(%s) for %s:%s:%s' % (key, response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'map_list':
                     if 'optional' not in details or not details['optional']:
                         self._check_expected_map_list(response[key], test_config_dict[details['key']], details['key'], test_config_dict, details['matchup_key'], indent, **kwargs)
@@ -270,14 +285,20 @@ class IsbCgcApiTest(ParametrizedApiTest):
         self._check_expected(response, test_config_dict['expected_response'], test_config_dict, '\t', **kwargs)
 
 def _run_suite(test_suite, stream, test_name):
+    print '\n============================================='
+    print '%s: running %s test' % (datetime.now(), test_name)
+    print '============================================='
     test_results = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
+    start = time.time()
     test_suite.run(test_results)
+    total_time = time.time() - start
     print '\n============================================='
     if test_results.wasSuccessful():
-        print 'results from the %s test: SUCCESS' % (test_name)
+        print '%s: results from the %s test: SUCCESS' % (datetime.now(), test_name)
     else:
-        print 'results from the %s test:' % (test_name)
+        print '%s: results from the %s test:' % (datetime.now(), test_name)
         test_results.printErrors()
+    print 'test took %s secs' % (total_time)
     print '============================================='
     if 0 < len(cohort_id2cohort_name):
         print '\t\tWARNING: cohort_ids(%s) still exist(%s)' % (len(cohort_id2cohort_name), ','.join(cohort_id2cohort_name))
