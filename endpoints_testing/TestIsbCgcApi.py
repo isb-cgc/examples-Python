@@ -26,7 +26,8 @@ import unittest
 from apiclient import discovery
 from concurrent import futures
 from datetime import datetime
-from jsonspec.reference import resolve, Registry
+from jsonspec.reference import resolve
+from jsonspec.reference.providers import FilesystemProvider
 
 import isb_auth
 from ParametrizedApiTest import ParametrizedApiTest
@@ -313,6 +314,7 @@ def main():
     with open('endpoints_testing/config/{api_config}.json'.format(api_config=args.api_name)) as f:
         json_config = json.load(f)
 
+    provider = FilesystemProvider(json_config['api_config_dir'], 'cur:config', aliases = {':cohort_api_test_config': 'cohort_api_test_config'})
     endpoints_url_base = json_config['endpoints_url_base']
     for api_name, api_config in json_config['apis'].iteritems():
 #         api_config = json_config['apis'][args.api_name]
@@ -321,13 +323,12 @@ def main():
         base_resource_name = api_config['base_resource_name']
         # get the endpoints test order
         endpoint_test_ordering = []
-        for reference in api_config['cohort_test_ordering']:
-            fields = reference.split('/')
-            resource_name = fields[2]
-            endpoint_name = fields[-1]
-            test_config = resolve(api_config, reference)
-            test_config['resource'] = resource_name
-            test_config['endpoint'] = endpoint_name
+        for index, reference in enumerate(api_config['test_ordering']):
+            ref = '#/test_ordering/%s' % index
+            test_config = resolve(api_config, ref, provider)
+            fields = reference['$ref'].split('/')
+            test_config['resource'] = fields[2]
+            test_config['endpoint'] = fields[-1]
             endpoint_test_ordering.append(test_config)
         
         test_unauthorized = unittest.TestSuite()
@@ -352,7 +353,6 @@ def main():
                         'type_test': test_config_name, 
                         'deletes_resource': endpoints_test_config['deletes_resource'], 
                         'test_config_dict': test_config_dict, 
-#                         'expected_response': test_config_dict['expected_response'] if 'expected_response' in test_config_dict else None, 
                         'expected_status_code': test_config_dict['expected_status_code'] if 'expected_status_code' in test_config_dict else None
                     }
                     test_name = endpoints_test_config['test_name'] if 'test_name' in endpoints_test_config else 'test_run'
