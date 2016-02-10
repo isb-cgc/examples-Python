@@ -76,15 +76,11 @@ class IsbCgcApiTest(ParametrizedApiTest):
             self.set_cohort_id(test_config_dict)
         self.test_run()
 
-    def datafilenamekey_list_test(self):
+    def datafilenamekey_list_from_cohort_test(self):
         # based on the cohort name in the config file, need to get an id
         for test_config_dict in self.test_config_list:
             self.set_cohort_id(test_config_dict)
         self.test_run()
-        
-    def datafilenamekey_list_from_cohort_test(self):
-        # based on the cohort name in the config file, need to get an id
-        self.datafilenamekey_list_test()
         
     def datafilenamekey_list_from_sample_test(self):
         # based on the cohort name in the config file, need to get an id
@@ -126,6 +122,10 @@ class IsbCgcApiTest(ParametrizedApiTest):
             print 'deleted %s cohorts out of %s' % (count, len(cohort_id2cohort_name))
         for cohort_id in cohort_ids:
             cohort_id2cohort_name.pop(cohort_id)
+    
+    def preview_test(self):
+        responses = self.test_run()
+        self.assertTrue(4 == len(responses))
         
     def save_test(self):
         self.test_run()

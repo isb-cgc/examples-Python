@@ -2,6 +2,248 @@
       "resources": {
         "cohort": {
           "endpoints": {
+            "preview": {
+              "test_name": "preview_test",
+              "requires_auth": "false",
+              "deletes_resource": "false",
+              "test_config": {
+                "minimal": [
+                  {
+                    "request": {
+                      "body": {
+                        "Study": "STAD", 
+                        "country": "Russia"
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "patient_count": {
+                        "value": "5"
+                      }, 
+                      "sample_count": {
+                        "value": "13"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "expected_patients_response": [
+                      "TCGA-BR-A4CS",
+                      "TCGA-BR-7704",
+                      "TCGA-BR-A4CR",
+                      "TCGA-BR-7717",
+                      "TCGA-BR-7716"
+                    ],
+                    "expected_samples_response": [
+                      "TCGA-BR-7704-01A",
+                      "TCGA-BR-7704-10A",
+                      "TCGA-BR-7704-11A",
+                      "TCGA-BR-7716-01A",
+                      "TCGA-BR-7716-10A",
+                      "TCGA-BR-7716-11A",
+                      "TCGA-BR-7717-01A",
+                      "TCGA-BR-7717-10A",
+                      "TCGA-BR-7717-11A",
+                      "TCGA-BR-A4CR-01A",
+                      "TCGA-BR-A4CR-10A",
+                      "TCGA-BR-A4CS-01A",
+                      "TCGA-BR-A4CS-10A"
+                    ],
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "body": {
+                        "icd_10": "C69.30"
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "patient_count": {
+                        "value": "7"
+                      }, 
+                      "sample_count": {
+                        "value": "14"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "expected_patients_response": [
+                      "TCGA-VD-A8KO",
+                      "TCGA-VD-AA8R",
+                      "TCGA-V4-A9ES",
+                      "TCGA-VD-AA8O",
+                      "TCGA-WC-AA9A",
+                      "TCGA-VD-AA8P",
+                      "TCGA-V4-A9ET"
+                    ],
+                    "expected_samples_response": [
+                      "TCGA-V4-A9ES-01A",
+                      "TCGA-V4-A9ES-10A",
+                      "TCGA-V4-A9ET-01A",
+                      "TCGA-V4-A9ET-10A",
+                      "TCGA-VD-A8KO-01A",
+                      "TCGA-VD-A8KO-10A",
+                      "TCGA-VD-AA8O-01A",
+                      "TCGA-VD-AA8O-10A",
+                      "TCGA-VD-AA8P-01A",
+                      "TCGA-VD-AA8P-10A",
+                      "TCGA-VD-AA8R-01A",
+                      "TCGA-VD-AA8R-10A",
+                      "TCGA-WC-AA9A-01A",
+                      "TCGA-WC-AA9A-10A"
+                    ],
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "body": {
+                        "height": "165", 
+                        "weight": "66"
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "patient_count": {
+                        "value": "2"
+                      }, 
+                      "sample_count": {
+                        "value": "5"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "expected_patients_response": [
+                      "TCGA-A6-2679",
+                      "TCGA-FD-A43X"
+                    ],
+                    "expected_samples_response": [
+                      "TCGA-A6-2679-01A",
+                      "TCGA-A6-2679-10A",
+                      "TCGA-A6-2679-11A",
+                      "TCGA-FD-A43X-01A",
+                      "TCGA-FD-A43X-10A"
+                    ],
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "body": {
+                        "age_at_initial_pathologic_diagnosis": "40 to 49,60 to 69",
+                        "Study": "BRCA",
+                        "batch_number": [
+                          "80",
+                          "117"
+                        ]
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "patient_count": {
+                        "value": "1"
+                      }, 
+                      "sample_count": {
+                        "value": "3"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "expected_patients_response": [
+                      "TCGA-E9-A1N8"
+                    ],
+                    "expected_samples_response": [
+                      "TCGA-E9-A1N8-11A",
+                      "TCGA-E9-A1N8-10A",
+                      "TCGA-E9-A1N8-01A"
+                    ],
+                    "correct_expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "patient_count": {
+                        "value": "2"
+                      }, 
+                      "sample_count": {
+                        "value": "5"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "correct_expected_patients_response": [
+                      "TCGA-AQ-A04L",
+                      "TCGA-E9-A1N8"
+                    ],
+                    "correct_expected_samples_response": [
+                      "TCGA-AQ-A04L-01B",
+                      "TCGA-AQ-A04L-10A",
+                      "TCGA-E9-A1N8-11A",
+                      "TCGA-E9-A1N8-10A",
+                      "TCGA-E9-A1N8-01A"
+                    ],
+                    "expected_status_code": 200
+                  }
+                ],
+                "optional_params": [],
+                "undefined_param_names": [],
+                "undefined_param_values": [],
+                "incorrect_param_types": [],
+                "incorrect_permissions": [],
+                "missing_required_params": [],
+                "large_data": []
+              }
+            },
             "save": {
               "test_name": "save_test",
               "requires_auth": "true",
@@ -246,6 +488,185 @@
                       },
                       "num_samples": {
                         "value": "193",
+                        "type": "string",
+                        "format": "int64"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "name": "sample_list_1",
+                      "body": {
+                        "SampleBarcode": "TCGA-BR-7704-01A,TCGA-BR-7704-10A,TCGA-BR-7704-11A,TCGA-BR-7716-01A,TCGA-BR-7716-10A,TCGA-BR-7716-11A,TCGA-BR-7717-01A,TCGA-BR-7717-10A,TCGA-BR-7717-11A,TCGA-BR-A4CR-01A,TCGA-BR-A4CR-10A,TCGA-BR-A4CS-01A,TCGA-BR-A4CS-10A"
+                      }
+                    },
+                    "request_list": {
+                      "name": "sample_list_1",
+                      "body": {
+                        "SampleBarcode": [
+                          "TCGA-BR-7704-01A", 
+                          "TCGA-BR-7704-10A", 
+                          "TCGA-BR-7704-11A", 
+                          "TCGA-BR-7716-01A", 
+                          "TCGA-BR-7716-10A", 
+                          "TCGA-BR-7716-11A", 
+                          "TCGA-BR-7717-01A", 
+                          "TCGA-BR-7717-10A", 
+                          "TCGA-BR-7717-11A", 
+                          "TCGA-BR-A4CR-01A", 
+                          "TCGA-BR-A4CR-10A", 
+                          "TCGA-BR-A4CS-01A", 
+                          "TCGA-BR-A4CS-10A"
+                        ]
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "name": {
+                        "value": "sample_list_1"
+                      }, 
+                      "last_date_saved": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "num_patients": {
+                        "value": "5",
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "num_samples": {
+                        "value": "13",
+                        "type": "string",
+                        "format": "int64"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "name": "sample_list_2",
+                      "body": {
+                        "ParticipantBarcode": "TCGA-VD-A8KO,TCGA-VD-AA8R,TCGA-V4-A9ES,TCGA-VD-AA8O,TCGA-WC-AA9A,TCGA-VD-AA8P,TCGA-V4-A9ET"
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "name": {
+                        "value": "sample_list_2"
+                      }, 
+                      "last_date_saved": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "num_patients": {
+                        "value": "7",
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "num_samples": {
+                        "value": "14",
+                        "type": "string",
+                        "format": "int64"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "name": "sample_list_3",
+                      "body": {
+                        "SampleBarcode": "TCGA-A6-2679-01A,TCGA-A6-2679-10A,TCGA-A6-2679-11A,TCGA-FD-A43X-01A,TCGA-FD-A43X-10A"
+                      }
+                    },
+                    "request_list": {
+                      "name": "",
+                      "body": {
+                        "SampleBarcode": [
+                        ]
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "name": {
+                        "value": "sample_list_3"
+                      }, 
+                      "last_date_saved": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "num_patients": {
+                        "value": "2",
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "num_samples": {
+                        "value": "5",
+                        "type": "string",
+                        "format": "int64"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "name": "sample_list_4",
+                      "body": {
+                        "ParticipantBarcode": "TCGA-AQ-A04L,TCGA-E9-A1N8"
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortItem"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "name": {
+                        "value": "sample_list_4"
+                      }, 
+                      "last_date_saved": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "num_patients": {
+                        "value": "2",
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "num_samples": {
+                        "value": "5",
                         "type": "string",
                         "format": "int64"
                       }
@@ -653,6 +1074,178 @@
                               "FEMALE", 
                               "None"
                             ]
+                          }
+                        }
+                      },
+                      {
+                        "value": "sample_list_1",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "sample_list_1"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "value": "SampleBarcode"
+                          },
+                          "value": {
+                            "value": "TCGA-BR-7704-01A,TCGA-BR-7704-10A,TCGA-BR-7704-11A,TCGA-BR-7716-01A,TCGA-BR-7716-10A,TCGA-BR-7716-11A,TCGA-BR-7717-01A,TCGA-BR-7717-10A,TCGA-BR-7717-11A,TCGA-BR-A4CR-01A,TCGA-BR-A4CR-10A,TCGA-BR-A4CS-01A,TCGA-BR-A4CS-10A"
+                          }
+                        }
+                      },
+                      {
+                        "value": "sample_list_2",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "sample_list_2"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "value": "ParticipantBarcode"
+                          },
+                          "value": {
+                            "value": "TCGA-VD-A8KO,TCGA-VD-AA8R,TCGA-V4-A9ES,TCGA-VD-AA8O,TCGA-WC-AA9A,TCGA-VD-AA8P,TCGA-V4-A9ET"
+                          }
+                        }
+                      },
+                      {
+                        "value": "sample_list_3",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "sample_list_3"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "value": "SampleBarcode"
+                          },
+                          "value": {
+                            "value": "TCGA-A6-2679-01A,TCGA-A6-2679-10A,TCGA-A6-2679-11A,TCGA-FD-A43X-01A,TCGA-FD-A43X-10A"
+                          }
+                        }
+                      },
+                      {
+                        "value": "sample_list_4",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "sample_list_4"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "value": "ParticipantBarcode"
+                          },
+                          "value": {
+                            "value": "TCGA-AQ-A04L,TCGA-E9-A1N8"
                           }
                         }
                       }
