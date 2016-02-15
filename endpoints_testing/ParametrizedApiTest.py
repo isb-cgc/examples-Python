@@ -34,7 +34,6 @@ class ParametrizedApiTest(unittest.TestCase):
 	@staticmethod
 	def parametrize(testcase_class, test_name, test_config=None, num_requests=None, auth=None):
 		testloader = unittest.TestLoader()
-		testnames = testloader.getTestCaseNames(testcase_class)
 		suite = unittest.TestSuite()
 		suite.addTest(testcase_class(test_name, test_config, num_requests=num_requests, auth=auth))
 		return suite

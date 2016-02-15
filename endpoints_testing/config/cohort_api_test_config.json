@@ -1,13 +1,14 @@
 {
-      "resources": {
-        "cohort": {
-          "endpoints": {
-            "preview": {
-              "test_name": "preview_test",
-              "requires_auth": "false",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+    "resources": {
+      "cohort": {
+        "endpoints": {
+          "preview": {
+            "requires_auth": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "preview_test",
+                "tests": [
                   {
                     "request": {
                       "body": {
@@ -234,22 +235,39 @@
                     ],
                     "expected_status_code": 200
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
-            },
-            "save": {
-              "test_name": "save_test",
-              "requires_auth": "true",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+                ]
+              },
+              "bad_requests": {
+                "test_name": "preview_error_test",
+                "tests": [
+                  {
+                    "request": {
+                      "bad_idea": "..."
+                    },
+                    "expected_error_response": {
+                      "error_msg": "Got an unexpected keyword argument \"bad_idea\""
+                    }
+                  },
+                  {
+                    "request": {
+                      "body": "..."
+                    },
+                    "expected_error_response": {
+                      "error_msg": "Got an unexpected keyword argument \"bad_idea\""
+                    }
+                  }
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "save": {
+            "requires_auth": "true",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "save_test",
+                "tests": [
                   {
                     "request": {
                       "name": "sample_counts_1",
@@ -673,23 +691,19 @@
                     },
                     "expected_status_code": 200
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
-            },
-            "delete": {
-              "test_name": "delete_test",
-              "requires_auth": "true",
-              "creates_resource": "false",
-              "deletes_resource": "true",
-              "test_config": {
-                "minimal": [
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "delete": {
+            "requires_auth": "true",
+            "creates_resource": "false",
+            "deletes_resource": "true",
+            "test_config": {
+              "minimal": {
+                "test_name": "delete_test",
+                "tests": [
                   {
                     "request": {
                       "cohort_id": ""
@@ -707,27 +721,23 @@
                     },
                     "expected_status_code": 200
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
+                ]
+              },
+              "large_data": {}
             }
           }
-        },
-        "cohorts": {
-          "endpoints": {
-            "list": {
-              "test_name": "list_test",
-              "requires_auth": "true",
-              "creates_resource": "false",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+        }
+      },
+      "cohorts": {
+        "endpoints": {
+          "list": {
+            "requires_auth": "true",
+            "creates_resource": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "list_test",
+                "tests": [
                   {
                     "request": {
                     },
@@ -1251,23 +1261,19 @@
                       }
                     ]
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
-            },
-            "patient_details": {
-              "test_name": "patient_details_test",
-              "requires_auth": "false",
-              "creates_resource": "false",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "patient_details": {
+            "requires_auth": "false",
+            "creates_resource": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "patient_details_test",
+                "tests": [
                   {
                     "request": {
                       "patient_barcode": "TCGA-W5-AA30"
@@ -1878,23 +1884,19 @@
                       "TCGA-46-6026-01A"
                     ]
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
-            },
-            "sample_details": {
-              "test_name": "sample_details_test",
-              "requires_auth": "false",
-              "creates_resource": "false",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "sample_details": {
+            "requires_auth": "false",
+            "creates_resource": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "sample_details_test",
+                "tests": [
                   {
                     "request": {
                       "sample_barcode": "TCGA-W5-AA30-01A",
@@ -2405,23 +2407,19 @@
                     },
                     "expected_status_code": 200
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
-            },
-            "datafilenamekey_list_from_cohort": {
-              "test_name": "datafilenamekey_list_from_cohort_test",
-              "requires_auth": "false",
-              "creates_resource": "false",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "datafilenamekey_list_from_cohort": {
+            "requires_auth": "false",
+            "creates_resource": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "datafilenamekey_list_from_cohort_test",
+                "tests": [
                   {
                     "cohort_name_lookup": "sample_counts_1",
                     "request": {
@@ -2884,23 +2882,19 @@
                       "gs://isb-cgc-open/tcga/thca/MDA_RPPA_Core/mdanderson.org__protein_exp/Level_3/mdanderson.org_THCA.MDA_RPPA_Core.protein_expression.Level_3.424205F2-EE11-4238-942E-8A7A1BCA2FA6.txt"
                     ]
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
-            },
-            "datafilenamekey_list_from_sample": {
-              "test_name": "datafilenamekey_list_from_sample_test",
-              "requires_auth": "false",
-              "creates_resource": "false",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "datafilenamekey_list_from_sample": {
+            "requires_auth": "false",
+            "creates_resource": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "datafilenamekey_list_from_sample_test",
+                "tests": [
                   {
                     "request": {
                       "sample_barcode": "TCGA-W5-AA30-01A"
@@ -3027,23 +3021,19 @@
                     ],
                     "expected_status_code": 200
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
-            },
-            "cohort_patients_samples_list": {
-              "test_name": "cohort_patients_samples_list_test",
-              "requires_auth": "true",
-              "creates_resource": "false",
-              "deletes_resource": "false",
-              "test_config": {
-                "minimal": [
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "cohort_patients_samples_list": {
+            "requires_auth": "true",
+            "creates_resource": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "cohort_patients_samples_list_test",
+                "tests": [
                   {
                     "cohort_name_lookup": "sample_counts_1",
                     "request": {
@@ -3995,17 +3985,12 @@
                     ],
                     "expected_status_code": 200
                   }
-                ],
-                "optional_params": [],
-                "undefined_param_names": [],
-                "undefined_param_values": [],
-                "incorrect_param_types": [],
-                "incorrect_permissions": [],
-                "missing_required_params": [],
-                "large_data": []
-              }
+                ]
+              },
+              "large_data": {}
             }
           }
         }
       }
+    }
 }

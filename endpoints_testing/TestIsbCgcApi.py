@@ -68,17 +68,17 @@ class IsbCgcApiTest(ParametrizedApiTest):
                     break
             
             if notfound:
-                self.assertTrue(False, 'didn\'t find a cohort id for %s' % (test_config_dict['cohort_name_lookup']))
+                self.assertTrue(False, 'didn\'t find a cohort id for %s' % (test_config_dict['tests']['cohort_name_lookup']))
 
     def cohort_patients_samples_list_test(self):
         # based on the cohort name in the config file, need to get an id
-        for test_config_dict in self.test_config_list:
+        for test_config_dict in self.test_config_list['tests']:
             self.set_cohort_id(test_config_dict)
         self.test_run()
 
     def datafilenamekey_list_from_cohort_test(self):
         # based on the cohort name in the config file, need to get an id
-        for test_config_dict in self.test_config_list:
+        for test_config_dict in self.test_config_list['tests']:
             self.set_cohort_id(test_config_dict)
         self.test_run()
         
@@ -91,7 +91,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
         
     def patient_details_test(self):
         self.test_run()
-        
+    
     def list_test(self):
         responses = self.test_run()
         if not responses:
@@ -115,7 +115,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
                 count += 1
                 cohort_ids += [cohort_id]
                 # TODO: think about how to make this more general
-                self.test_config_list[0]['request']['cohort_id'] = cohort_id
+                self.test_config_list['tests'][0]['request']['cohort_id'] = cohort_id
                 self.num_requests = 1
                 self.test_run(**{"cohort_id": cohort_id})
         finally:
@@ -126,6 +126,9 @@ class IsbCgcApiTest(ParametrizedApiTest):
     def preview_test(self):
         responses = self.test_run()
         self.assertTrue(4 == len(responses))
+        
+    def preview_error_test(self):
+        responses = self.test_run()
         
     def save_test(self):
         self.test_run()
@@ -140,7 +143,7 @@ class IsbCgcApiTest(ParametrizedApiTest):
             
             print '\n%s: testing %s.%s as %s.  repeats: %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, self.num_requests)
             all_responses = []
-            for test_config_dict in self.test_config_list:
+            for test_config_dict in self.test_config_list['tests']:
                 self.assertTrue((test_config_dict['request'] and 0 < len(test_config_dict['request'])) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
                 # build an API service object for the testing
                 credentials = isb_auth.get_credentials()
@@ -161,13 +164,19 @@ class IsbCgcApiTest(ParametrizedApiTest):
                 print '%s:\tgot the http request' % (datetime.now())
                 requests = []
                 count = 0
+                bad_requests = []
                 while count < self.num_requests:
-                    requests.append(method_to_call(**test_config_dict['request']))
+                    try:
+                        requests.append(method_to_call(**test_config_dict['request']))
+                    except Exception as e:
+                        bad_requests += [{'ERROR': e, 'pos': count}]
                     count += 1
                     
                 print '%s:\texecute the requests' % (datetime.now())
                 responses, execution_time = self._query_api(requests)
                 print '%s:\tfinished executing the requests' % (datetime.now())
+                for bad_request in bad_requests:
+                    responses.insert(bad_request['pos'], bad_request)
                 for r in responses:
                     self._check_response(r, test_config_dict, **kwargs)
                 all_responses += responses
@@ -282,25 +291,51 @@ class IsbCgcApiTest(ParametrizedApiTest):
 # TODO, only have the json returned by the endpoint
 #         self.assertEqual(response.status_code, self.expected_status_code)
         # TODOD: take into account the nested dict in response
-        self.assertFalse('ERROR' in response, 'an error occurred for %s:%s:%s: %s' % (self.resource, self.endpoint, self.type_test, response['ERROR']) if 'ERROR' in response else 'no error???')
-        self._check_expected(response, test_config_dict['expected_response'], test_config_dict, '\t', **kwargs)
+        if 'ERROR' in response:
+            assertmsg = 'an error occurred for %s:%s:%s: \'%s\'.' % (self.resource, self.endpoint, self.type_test, response['ERROR'])
+            if 'expected_error_response' in test_config_dict:
+                self.assertTrue(str(response['ERROR']) == test_config_dict['expected_error_response']['error_msg'], 
+                    assertmsg + '  expected \'%s\'' % (test_config_dict['expected_error_response']['error_msg']))
+            else:
+                self.assertFalse(True, assertmsg)
+        else:
+            self._check_expected(response, test_config_dict['expected_response'], test_config_dict, '\t', **kwargs)
+
+
+def print_other_results(test_results):
+    if 0 < len(test_results.expectedFailures):
+        failure_results = '\texpected failures:\n'
+        for failure in test_results.expectedFailures:
+            test_name = failure[0]._testMethodName
+            except_info = failure[1][failure[1].index('Error: ') + 7:]
+            failure_results += '\t\t%s: %s\n' % (test_name, except_info)
+        
+        print failure_results + test_results.separator1 + '\n'
+    if 0 < len(test_results.unexpectedSuccesses):
+        failure_results = ''
+        for failure in test_results.unexpectedSuccesses:
+            failure_results += (',' if 0 < len(failure_results) else '\t\t') + failure._testMethodName
+        
+        print '\tunexpected successes:\n%s\n%s\n' % (failure_results, test_results.separator1)
 
 def _run_suite(test_suite, stream, test_name):
-    print '\n============================================='
-    print '%s: running %s test' % (datetime.now(), test_name)
-    print '============================================='
     test_results = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
+    print '\n%s' % (test_results.separator1)
+    print '%s: running %s test' % (datetime.now(), test_name)
+    print '%s' % (test_results.separator1)
     start = time.time()
     test_suite.run(test_results)
     total_time = time.time() - start
-    print '\n============================================='
+    print '\n%s' % (test_results.separator1)
     if test_results.wasSuccessful():
         print '%s: results from the %s test: SUCCESS' % (datetime.now(), test_name)
+        print_other_results(test_results)
     else:
         print '%s: results from the %s test:' % (datetime.now(), test_name)
         test_results.printErrors()
+        print_other_results(test_results)
     print 'test took %s secs' % (total_time)
-    print '============================================='
+    print '%s' % (test_results.separator1)
     if 0 < len(cohort_id2cohort_name):
         print '\t\tWARNING: cohort_ids(%s) still exist(%s)' % (len(cohort_id2cohort_name), ','.join(cohort_id2cohort_name))
 
@@ -331,8 +366,8 @@ def main():
             test_config['endpoint'] = fields[-1]
             endpoint_test_ordering.append(test_config)
         
-        test_unauthorized = unittest.TestSuite()
-        test_authorized = unittest.TestSuite()
+        test_minimal = unittest.TestSuite()
+        test_bad_requests = unittest.TestSuite()
         load_test_authorized = unittest.TestSuite()
         
         for test_user_credentials in args.test_user_credentials:
@@ -355,23 +390,21 @@ def main():
                         'test_config_dict': test_config_dict, 
                         'expected_status_code': test_config_dict['expected_status_code'] if 'expected_status_code' in test_config_dict else None
                     }
-                    test_name = endpoints_test_config['test_name'] if 'test_name' in endpoints_test_config else 'test_run'
+                    test_name = test_config_dict['test_name'] if 'test_name' in test_config_dict else ''
                     if test_config_name == 'minimal':
-                        test_unauthorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=None))
-                        test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=test_user_credentials))
+                        test_minimal.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=None))
                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=10, auth=test_user_credentials))
                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=50, auth=test_user_credentials))
                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=100, auth=test_user_credentials))
                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=500, auth=test_user_credentials))
                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1000, auth=test_user_credentials))
-                    else:
-                        test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=test_user_credentials))
+                    elif test_config_name == 'bad_requests':
+                        test_bad_requests.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=test_user_credentials))
 
     stream = _WritelnDecorator(sys.stdout)
-    _run_suite(test_unauthorized, stream, 'unauthorized')
-#     run_suite(test_authorized, stream, 'authorized')
-#     cohort_ids = []
-#     run_suite(load_test_authorized, stream, 'load authorized')
+#     _run_suite(test_minimal, stream, 'minimal')
+    _run_suite(test_bad_requests, stream, 'bad requests')
+#     _run_suite(load_test_authorized, stream, 'load authorized')
 #     cohort_ids = []
     
 if __name__ == '__main__':
