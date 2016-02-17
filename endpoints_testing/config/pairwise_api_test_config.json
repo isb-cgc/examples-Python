@@ -1,0 +1,32 @@
+{
+  "resources": {
+    "": {
+      "endpoints": {
+        "precomputed": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        },
+        "run": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        }
+      }
+    }
+  }
+}

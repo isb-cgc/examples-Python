@@ -1,0 +1,32 @@
+{
+  "resources": {
+    "feature_access": {
+      "endpoints": {
+        "FeatureSearch": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        },
+        "getFeatureFieldSearch": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        }
+      }
+    }
+  }
+}

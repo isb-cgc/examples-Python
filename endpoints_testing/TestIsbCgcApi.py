@@ -155,12 +155,16 @@ class IsbCgcApiTest(ParametrizedApiTest):
                 
                 print '%s:\tbuild(%s)' % (datetime.now(), self.discovery_url)
                 self.service = discovery.build(
-                    self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)    
+                    self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)
                 print '%s:\tfinished build(%s)' % (datetime.now(), self.discovery_url)
         
                 # set up and run the test
                 print '%s:\tget the http request' % (datetime.now())
-                method_to_call = getattr(getattr(getattr(self.service, '{api}_endpoints'.format(api=self.base_resource))(), '{resource}'.format(resource=self.resource))(), '{method}'.format(method=self.endpoint))
+                # TODO: test adjust for pairwise 'missing' field
+                if self.resource:
+                    method_to_call = getattr(getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{resource}'.format(resource=self.resource))(), '{method}'.format(method=self.endpoint))
+                else:
+                    method_to_call = getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{method}'.format(method=self.endpoint))
                 print '%s:\tgot the http request' % (datetime.now())
                 requests = []
                 count = 0
@@ -349,9 +353,13 @@ def main():
     with open('endpoints_testing/config/{api_config}.json'.format(api_config=args.api_name)) as f:
         json_config = json.load(f)
 
-    provider = FilesystemProvider(json_config['api_config_dir'], 'cur:config', aliases = {':cohort_api_test_config': 'cohort_api_test_config'})
+    provider = FilesystemProvider(json_config['api_config_dir'], 'cur:config', aliases = json_config['aliases'])
     endpoints_url_base = json_config['endpoints_url_base']
+    test_minimal = unittest.TestSuite()
+    test_bad_requests = unittest.TestSuite()
+    load_test_authorized = unittest.TestSuite()
     for api_name, api_config in json_config['apis'].iteritems():
+        print 'start adding tests for %s' % (api_name)
 #         api_config = json_config['apis'][args.api_name]
         discovery_url = endpoints_url_base + api_config['endpoint_uri']
         version = api_config['version']
@@ -362,13 +370,10 @@ def main():
             ref = '#/test_ordering/%s' % index
             test_config = resolve(api_config, ref, provider)
             fields = reference['$ref'].split('/')
+            # TODO: adjust for pairwise 'missing' field
             test_config['resource'] = fields[2]
             test_config['endpoint'] = fields[-1]
             endpoint_test_ordering.append(test_config)
-        
-        test_minimal = unittest.TestSuite()
-        test_bad_requests = unittest.TestSuite()
-        load_test_authorized = unittest.TestSuite()
         
         for test_user_credentials in args.test_user_credentials:
             # add tests without authorization first
@@ -390,7 +395,9 @@ def main():
                         'test_config_dict': test_config_dict, 
                         'expected_status_code': test_config_dict['expected_status_code'] if 'expected_status_code' in test_config_dict else None
                     }
-                    test_name = test_config_dict['test_name'] if 'test_name' in test_config_dict else ''
+                    test_name = test_config_dict['test_name'] if 'test_name' in test_config_dict else 'test_run'
+                    if 'tests' not in test_config_dict:
+                        test_config_dict['tests'] = {}
                     if test_config_name == 'minimal':
                         test_minimal.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=None))
                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=10, auth=test_user_credentials))
@@ -400,9 +407,10 @@ def main():
                         load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1000, auth=test_user_credentials))
                     elif test_config_name == 'bad_requests':
                         test_bad_requests.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=test_user_credentials))
+        print 'finished adding tests for %s' % (api_name)
 
     stream = _WritelnDecorator(sys.stdout)
-#     _run_suite(test_minimal, stream, 'minimal')
+    _run_suite(test_minimal, stream, 'minimal')
     _run_suite(test_bad_requests, stream, 'bad requests')
 #     _run_suite(load_test_authorized, stream, 'load authorized')
 #     cohort_ids = []

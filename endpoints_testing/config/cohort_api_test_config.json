@@ -242,7 +242,7 @@
                 "tests": [
                   {
                     "request": {
-                      "bad_idea": "..."
+                      "body": "..."
                     },
                     "expected_error_response": {
                       "error_msg": "Got an unexpected keyword argument \"bad_idea\""
@@ -250,7 +250,7 @@
                   },
                   {
                     "request": {
-                      "body": "..."
+                      "bad_idea": "..."
                     },
                     "expected_error_response": {
                       "error_msg": "Got an unexpected keyword argument \"bad_idea\""

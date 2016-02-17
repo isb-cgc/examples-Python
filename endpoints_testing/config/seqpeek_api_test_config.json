@@ -1,0 +1,24 @@
+{
+  "resources": {
+    "seqpeek": {
+      "endpoints": {
+        "getViewData": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+                "test_name": "test_run"
+            },
+            "bad_requests": {
+                "test_name": "test_run"
+            },
+            "large_data": {
+                "test_name": "test_run"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

@@ -4,11 +4,20 @@
   "endpoints_url_base_prod": "https://isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
   "version": "v1",
   "api_config_dir": "endpoints_testing/config",
+  "aliases": {
+    ":cohort_api_test_config": "cohort_api_test_config",
+    ":feature_data_api_test_config": "feature_data_api_test_config",
+    ":feature_type_api_test_config": "feature_type_api_test_config",
+    ":meta_api_test_config": "meta_api_test_config",
+    ":pairwise_api_test_config": "pairwise_api_test_config",
+    ":seqpeek_api_test_config": "seqpeek_api_test_config",
+    ":user_api_test_config": "user_api_test_config"
+  },
   "apis": {
     "cohort_api": {
       "endpoint_uri": "cohort_api/v1/rest",
       "version": "v1",
-      "base_resource_name": "cohort",
+      "base_resource_name": "cohort_endpoints",
       "test_ordering": [ 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohort/endpoints/delete"}, 
@@ -21,6 +30,59 @@
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/datafilenamekey_list_from_cohort"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/datafilenamekey_list_from_sample"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohort/endpoints/delete"} 
+      ]
+    },
+    "feature_data_api": {
+      "endpoint_uri": "feature_data_api/v1/rest",
+      "version": "v1",
+      "base_resource_name": "feature_data_endpoints",
+      "test_ordering": [ 
+        {"$ref": "cur:config:feature_data_api_test_config#/resources/feature_access/endpoints/getFeatureData"}, 
+        {"$ref": "cur:config:feature_data_api_test_config#/resources/feature_access/endpoints/getFeatureDataForPlot"}
+      ]
+    },
+    "feature_type_api": {
+      "endpoint_uri": "feature_type_api/v1/rest",
+      "version": "v1",
+      "base_resource_name": "feature_type_endpoints",
+      "test_ordering": [ 
+        {"$ref": "cur:config:feature_type_api_test_config#/resources/feature_access/endpoints/FeatureSearch"}, 
+        {"$ref": "cur:config:feature_type_api_test_config#/resources/feature_access/endpoints/getFeatureFieldSearch"}
+      ]
+    },
+    "meta_api": {
+      "endpoint_uri": "meta_api/v1/rest",
+      "version": "v1",
+      "base_resource_name": "meta_endpoints",
+      "test_ordering": [ 
+        {"$ref": "cur:config:meta_api_test_config#/resources/meta/endpoints/attr_list"}, 
+        {"$ref": "cur:config:meta_api_test_config#/resources/meta/endpoints/metadata_counts"}, 
+        {"$ref": "cur:config:meta_api_test_config#/resources/meta/endpoints/metadata_sample_lists"}
+      ]
+    },
+    "pairwise_api": {
+      "endpoint_uri": "pairwise/v1/rest",
+      "version": "v1",
+      "base_resource_name": "pairwise_api",
+      "test_ordering": [ 
+        {"$ref": "cur:config:pairwise_api_test_config#/resources//endpoints/precomputed"}, 
+        {"$ref": "cur:config:pairwise_api_test_config#/resources//endpoints/run"}
+      ]
+    },
+    "seqpeek_data_api": {
+      "endpoint_uri": "seqpeek_data_api/v1/rest",
+      "version": "v1",
+      "base_resource_name": "data_endpoints",
+      "test_ordering": [ 
+        {"$ref": "cur:config:seqpeek_api_test_config#/resources/seqpeek/endpoints/getViewData"}
+      ]
+    },
+    "user_api": {
+      "endpoint_uri": "user_api/v1/rest",
+      "version": "v1",
+      "base_resource_name": "user_endpoints",
+      "test_ordering": [ 
+        {"$ref": "cur:config:user_api_test_config#/resources/user/endpoints/amiauthorized"}
       ]
     }
   }

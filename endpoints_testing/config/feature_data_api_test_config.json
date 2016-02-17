@@ -1,0 +1,32 @@
+{
+  "resources": {
+    "feature_access": {
+      "endpoints": {
+        "getFeatureData": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        },
+        "getFeatureDataForPlot": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        }
+      }
+    }
+  }
+}

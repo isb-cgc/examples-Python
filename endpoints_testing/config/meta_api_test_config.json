@@ -1,0 +1,44 @@
+{
+  "resources": {
+    "meta": {
+      "endpoints": {
+        "attr_list": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        },
+        "metadata_counts": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        },
+        "metadata_sample_lists": {
+          "requires_auth": "false",
+          "deletes_resource": "false",
+          "test_config": {
+            "minimal": {
+            },
+            "bad_requests": {
+            },
+            "large_data": {
+            }
+          }
+        }
+      }
+    }
+  }
+}
