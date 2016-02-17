@@ -7,6 +7,7 @@
           "deletes_resource": "false",
           "test_config": {
             "minimal": {
+              "test_name": "getFeatureData_test"
             },
             "bad_requests": {
             },
@@ -19,6 +20,7 @@
           "deletes_resource": "false",
           "test_config": {
             "minimal": {
+              "test_name": "getFeatureDataForPlot_test"
             },
             "bad_requests": {
             },
