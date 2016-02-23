@@ -38,6 +38,7 @@ from TestIsbCgcApiPairwise import IsbCgcApiTestPairwise
 from TestIsbCgcApiSeqpeek import IsbCgcApiTestSeqpeek
 from TestIsbCgcApiUser import IsbCgcApiTestUser
 from ParametrizedApiTest import ParametrizedApiTest
+from pprint import pprint
 
 # TODO: Write browser automation with selenium modules (user login)
 
@@ -72,30 +73,26 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                 pass
             
             print '\n%s: testing %s.%s as %s.  repeats: %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, self.num_requests)
+            # build an API service object for the testing
+            credentials = isb_auth.get_credentials()
+            http = httplib2.Http()
+            http = credentials.authorize(http)
+            
+            if credentials.access_token_expired:
+                credentials.refresh(http)
+            
+            self.service = discovery.build(
+                self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)
+    
+            # set up and run the test
+            # TODO: test adjust for pairwise 'missing' field
+            if self.resource:
+                method_to_call = getattr(getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{resource}'.format(resource=self.resource))(), '{method}'.format(method=self.endpoint))
+            else:
+                method_to_call = getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{method}'.format(method=self.endpoint))
             all_responses = []
             for test_config_dict in self.test_config_list['tests']:
                 self.assertTrue((test_config_dict['request'] and 0 < len(test_config_dict['request'])) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
-                # build an API service object for the testing
-                credentials = isb_auth.get_credentials()
-                http = httplib2.Http()
-                http = credentials.authorize(http)
-                
-                if credentials.access_token_expired:
-                    credentials.refresh(http)
-                
-                print '%s:\tbuild(%s)' % (datetime.now(), self.discovery_url)
-                self.service = discovery.build(
-                    self.api, self.version, discoveryServiceUrl=self.discovery_url, http=http)
-                print '%s:\tfinished build(%s)' % (datetime.now(), self.discovery_url)
-        
-                # set up and run the test
-                print '%s:\tget the http request' % (datetime.now())
-                # TODO: test adjust for pairwise 'missing' field
-                if self.resource:
-                    method_to_call = getattr(getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{resource}'.format(resource=self.resource))(), '{method}'.format(method=self.endpoint))
-                else:
-                    method_to_call = getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{method}'.format(method=self.endpoint))
-                print '%s:\tgot the http request' % (datetime.now())
                 requests = []
                 count = 0
                 bad_requests = []
@@ -106,7 +103,7 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                         bad_requests += [{'ERROR': e, 'pos': count}]
                     count += 1
                     
-                print '%s:\texecute the requests' % (datetime.now())
+                print '%s:\texecute the requests:\n\t\t%s' % (datetime.now(), test_config_dict['request'])
                 responses, execution_time = self._query_api(requests)
                 print '%s:\tfinished executing the requests' % (datetime.now())
                 for bad_request in bad_requests:
@@ -179,8 +176,11 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
     def _check_expected(self, response, expected_response, test_config_dict, indent, **kwargs):
         for key, details in expected_response.iteritems():
             if 'value' in details.keys():
-                self.assertEqual(response[key], details['value'], 'value in response for %s isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
-                    (key, self.resource, self.endpoint, self.type_test, response[key], details['value']))
+                if key in response:
+                    self.assertEqual(response[key], details['value'], 'value in response for %s isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
+                        (key, self.resource, self.endpoint, self.type_test, response[key], details['value']))
+                else:
+                    self.assertTrue(False, 'expected key \'%s\' not found in the response for %s:%s:%s' % (key, self.resource, self.endpoint, self.type_test))
             elif 'type' in details.keys():
                 if details['type'] == 'string':
                     if 'format' in details.keys():
@@ -199,7 +199,7 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                     if 'key' in details.keys():
                         self._check_expected(response[key], test_config_dict[details['key']], test_config_dict, indent, **kwargs)
                     else:
-                        self.assertTrue(False, 'for %s expected key for map for %s:%s:%s' % (key, details['type'], self.resource, self.endpoint, self.type_test))
+                        self.assertTrue(False, 'for %s expected key for map for %s:%s:%s' % (key, self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'list':
                     values = set(response[key])
                     expected_values = set(test_config_dict[details['key']])
@@ -210,7 +210,10 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                     self.assertIn(response[key], values, 'for key %s value(%s) not in expected values(%s) for %s:%s:%s' % (key, response[key], ','.join(values), self.resource, self.endpoint, self.type_test))
                 elif details['type'] == 'map_list':
                     if 'optional' not in details or not details['optional']:
-                        self._check_expected_map_list(response[key], test_config_dict[details['key']], details['key'], test_config_dict, details['matchup_key'], indent, **kwargs)
+                        if key in response:
+                            self._check_expected_map_list(response[key], test_config_dict[details['key']], details['key'], test_config_dict, details['matchup_key'], indent, **kwargs)
+                        else:
+                            self.assertTrue(False, 'didn\'t find expected key, \'%s\' in the response for %s:%s:%s' % (key, self.resource, self.endpoint, self.type_test))
                     elif key in response:
                         self._check_expected_map_list(response[key], test_config_dict[details['key']], details['key'], test_config_dict, details['matchup_key'], indent, **kwargs)
                 else:
@@ -226,14 +229,18 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
 #         self.assertEqual(response.status_code, self.expected_status_code)
         # TODOD: take into account the nested dict in response
         if 'ERROR' in response:
-            assertmsg = 'an error occurred for %s:%s:%s: \'%s\'.' % (self.resource, self.endpoint, self.type_test, response['ERROR'])
+            assertmsg = '\tan error occurred for %s:%s:%s: \'%s\'.' % (self.resource, self.endpoint, self.type_test, response['ERROR'])
             if 'expected_error_response' in test_config_dict:
                 self.assertTrue(str(response['ERROR']) == test_config_dict['expected_error_response']['error_msg'], 
                     assertmsg + '  expected \'%s\'' % (test_config_dict['expected_error_response']['error_msg']))
+                print '\tfound expected error response, \'%s\', for %s:%s:%s' % (response['ERROR'], self.resource, self.endpoint, self.type_test)
             else:
                 self.assertFalse(True, assertmsg)
         else:
-            self._check_expected(response, test_config_dict['expected_response'], test_config_dict, '\t', **kwargs)
+            if 'expected_response' in test_config_dict:
+                self._check_expected(response, test_config_dict['expected_response'], test_config_dict, '\t', **kwargs)
+            else:
+                self._check_expected(response, test_config_dict['expected_error_response'], test_config_dict, '\t', **kwargs)
 
 def print_other_results(test_results):
     if 0 < len(test_results.expectedFailures):
@@ -341,6 +348,7 @@ def main():
     _run_suite(test_bad_requests, stream, 'bad requests')
 #     _run_suite(load_test_authorized, stream, 'load authorized')
 #     cohort_ids = []
+    print '%s: finished running tests' % (datetime.now())
     
 if __name__ == '__main__':
 #     main(sys.argv[1:])

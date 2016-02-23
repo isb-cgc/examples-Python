@@ -20,16 +20,18 @@
       "base_resource_name": "cohort_endpoints",
       "test_ordering": [ 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/list"}, 
-        {"$ref": "cur:config:cohort_api_test_config#/resources/cohort/endpoints/delete"}, 
-        {"$ref": "cur:config:cohort_api_test_config#/resources/cohort/endpoints/save"}, 
-        {"$ref": "cur:config:cohort_api_test_config#/resources/cohort/endpoints/preview"}, 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/delete"}, 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/save"}, 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/preview"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/cohort_patients_samples_list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/patient_details"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/sample_details"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/datafilenamekey_list_from_cohort"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/datafilenamekey_list_from_sample"}, 
-        {"$ref": "cur:config:cohort_api_test_config#/resources/cohort/endpoints/delete"} 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/google_genomics_from_cohort"}, 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/google_genomics_from_sample"}, 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/delete"}
       ]
     },
     "feature_data_api": {
@@ -51,13 +53,13 @@
       ]
     },
     "meta_api": {
-      "endpoint_uri": "meta_api/v1/rest",
-      "version": "v1",
+      "endpoint_uri": "meta_api/v2/rest",
+      "version": "v2",
       "base_resource_name": "meta_endpoints",
       "test_ordering": [ 
         {"$ref": "cur:config:meta_api_test_config#/resources/meta/endpoints/attr_list"}, 
         {"$ref": "cur:config:meta_api_test_config#/resources/meta/endpoints/metadata_counts"}, 
-        {"$ref": "cur:config:meta_api_test_config#/resources/meta/endpoints/metadata_sample_lists"}
+        {"$ref": "cur:config:meta_api_test_config#/resources/meta/endpoints/metadata_sample_list"}
       ]
     },
     "pairwise_api": {

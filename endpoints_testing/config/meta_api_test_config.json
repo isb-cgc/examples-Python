@@ -26,7 +26,7 @@
             }
           }
         },
-        "metadata_sample_lists": {
+        "metadata_sample_list": {
           "requires_auth": "false",
           "deletes_resource": "false",
           "test_config": {
