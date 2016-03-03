@@ -38,7 +38,6 @@ from TestIsbCgcApiPairwise import IsbCgcApiTestPairwise
 from TestIsbCgcApiSeqpeek import IsbCgcApiTestSeqpeek
 from TestIsbCgcApiUser import IsbCgcApiTestUser
 from ParametrizedApiTest import ParametrizedApiTest
-from pprint import pprint
 
 # TODO: Write browser automation with selenium modules (user login)
 

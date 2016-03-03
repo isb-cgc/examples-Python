@@ -11,10 +11,10 @@
                 "tests": [
                   {
                     "request": {
-                      "body": {
-                        "Study": "STAD", 
-                        "country": "Russia"
-                      }
+                        "body": {
+                          "Study": "STAD", 
+                          "country": "Russia"
+                        }
                     },
                     "expected_response": {
                       "etag": {
@@ -59,6 +59,78 @@
                       "TCGA-BR-A4CR-10A",
                       "TCGA-BR-A4CS-01A",
                       "TCGA-BR-A4CS-10A"
+                    ],
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                        "body": {
+                          "Study": ["STAD"], 
+                          "country": ["Russia", "United States"]
+                        }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      },
+                      "patient_count": {
+                        "value": "10"
+                      }, 
+                      "sample_count": {
+                        "value": "26"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "expected_patients_response": [
+                      "TCGA-EW-A6SD",
+                      "TCGA-B6-A0IK",
+                      "TCGA-AQ-A1H2",
+                      "TCGA-A2-A3XU",
+                      "TCGA-AQ-A04L",
+                      "TCGA-S3-AA12",
+                      "TCGA-EW-A2FW",
+                      "TCGA-E2-A56Z",
+                      "TCGA-OL-A5RZ",
+                      "TCGA-AO-A1KT",
+                      "TCGA-AR-A2LJ",
+                      "TCGA-E9-A1N8"
+                    ],
+                    "expected_samples_response": [
+                      "TCGA-A2-A3XU-01A",
+                      "TCGA-A2-A3XU-10A",
+                      "TCGA-AO-A1KT-01A",
+                      "TCGA-AO-A1KT-10A",
+                      "TCGA-AQ-A04L-01B",
+                      "TCGA-AQ-A04L-10A",
+                      "TCGA-AQ-A1H2-01A",
+                      "TCGA-AQ-A1H2-10A",
+                      "TCGA-AR-A2LJ-01A",
+                      "TCGA-AR-A2LJ-10A",
+                      "TCGA-B6-A0IK-01A",
+                      "TCGA-B6-A0IK-10A",
+                      "TCGA-E2-A56Z-01A",
+                      "TCGA-E2-A56Z-10A",
+                      "TCGA-E9-A1N8-01A",
+                      "TCGA-E9-A1N8-10A",
+                      "TCGA-E9-A1N8-11A",
+                      "TCGA-EW-A2FW-01A",
+                      "TCGA-EW-A2FW-10A",
+                      "TCGA-EW-A6SD-01A",
+                      "TCGA-EW-A6SD-10A",
+                      "TCGA-OL-A5RZ-01A",
+                      "TCGA-OL-A5RZ-10A",
+                      "TCGA-S3-AA12-01A",
+                      "TCGA-S3-AA12-10A"
                     ],
                     "expected_status_code": 200
                   },
@@ -216,7 +288,10 @@
                     "request": {
                       "body": {
                         "height": "179", 
-                        "weight": "70, 104"
+                        "weight": [
+                          "70", 
+                          "104"
+                        ]
                       }
                     },
                     "expected_response": {
@@ -447,7 +522,7 @@
                       "name": "sample_counts_2",
                       "body": {
                         "Study": "PRAD", 
-                        "has_HiSeq_miRNASeq": "1", 
+                        "has_HiSeq_miRnaSeq": "1", 
                         "SampleTypeCode": "11"
                       }
                     },
@@ -984,7 +1059,7 @@
                             "values": [
                               "Study", 
                               "SampleTypeCode", 
-                              "has_HiSeq_miRNASeq" 
+                              "has_HiSeq_miRnaSeq" 
                             ]
                           },
                           "value": {
@@ -2756,6 +2831,51 @@
                           "Level 3"
                         ]
                       }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "request": {
+                      "sample_barcode": "TCGA-W5-AA30-01A",
+                      "fields": "patient, kind, data_details_count, etag, biospecimen_data"
+                    },
+                    "expected_response": {
+                      "patient": {
+                        "value": "TCGA-W5-AA30"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      },
+                      "data_details_count": {
+                        "value": "28"
+                      },
+                      "etag": {
+                        "type": "string"
+                      },
+                      "biospecimen_data": {
+                        "type": "map",
+                        "key": "expected_biospecimen_response"
+                      }
+                    },
+                    "expected_biospecimen_response": {
+                       "SampleBarcode": {
+                         "value": "TCGA-W5-AA30-01A"
+                       },
+                       "Study":  {
+                         "value": "CHOL"
+                       },
+                       "batch_number":  {
+                         "value": "428"
+                       },
+                       "Project":  {
+                         "value": "TCGA"
+                       },
+                       "ParticipantBarcode":  {
+                         "value": "TCGA-W5-AA30"
+                       },
+                       "bcr":  {
+                         "value": "Nationwide Children's Hospital"
+                       }
                     },
                     "expected_status_code": 200
                   },
@@ -4772,7 +4892,7 @@
                 "tests": [
                   {
                     "request": {
-                      "sample_barcode": "CCLE-SU-DHL-5-RNA-08"
+                      "sample_barcode": " CCLE-LUDLU-1-DNA-08, CCLE-NCI-H2087-RNA-08, CCLE-NCI-H727-RNA-08"
                     },
                     "expected_response": {
                       "etag": {
@@ -4783,6 +4903,86 @@
                       },
                       "count": {
                         "value": "0"
+                      }
+                    }
+                  },
+                  {
+                    "request": {
+                      "sample_barcode": "CCLE-LUDLU-1-DNA-08"
+                    },
+                    "expected_response": {
+                      "etag": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohorts"
+                      },
+                      "count": {
+                        "value": "1"
+                      },
+                      "items": {
+                        "type": "map_list",
+                        "matchup_key": "",
+                        "key": "expected_items_response"
+                      }
+                    },
+                    "expected_items_response": {
+                      "GG_dataset_id": {
+                        "value": "1175112317461194900"
+                      },
+                      "GG_readgroupset_id": {
+                        "value": "CJKPhaq1GhCjsYv4_8ntnyA"
+                      },
+                      "SampleBarcode": {
+                        "value": "CCLE-LUDLU-1-DNA-08"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      }
+                    }
+                  },
+                  {
+                    "request": {
+                      "sample_barcode": "CCLE-NCI-H2087-RNA-08",
+                      "fields": "items(GG_dataset_id,GG_readgroupset_id)"
+                    },
+                    "expected_response": {
+                      "items": {
+                        "type": "map_list",
+                        "matchup_key": "",
+                        "key": "expected_items_response"
+                      }
+                    },
+                    "expected_items_response": {
+                      "GG_dataset_id": {
+                        "value": "2592944257098811032"
+                      },
+                      "GG_readgroupset_id": {
+                        "value": "CJKPhaq1GhCa0YyNtMSIstYB"
+                      }
+                    }
+                  },
+                  {
+                    "request": {
+                      "sample_barcode": "CCLE-NCI-H727-RNA-08",
+                      "fields": "count,kind , items(SampleBarcode)"
+                    },
+                    "expected_response": {
+                      "kind": {
+                        "value": "cohort_api#cohorts"
+                      },
+                      "count": {
+                        "value": "1"
+                      },
+                      "items": {
+                        "type": "map_list",
+                        "matchup_key": "",
+                        "key": "expected_items_response"
+                      }
+                    },
+                    "expected_items_response": {
+                      "SampleBarcode": {
+                        "value": "CCLE-NCI-H727-RNA-08"
                       }
                     }
                   },
