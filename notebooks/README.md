@@ -12,4 +12,4 @@ You can find an overview of the BigQuery tables in this [notebook](https://githu
 4. Import the ISB-CGC notebooks into your Cloud Datalab instance by navigating to the notebook list page and uploading them.
 
 ### Important Note
-If you are running in the cloud, a typical Google Cloud Datalab VM will cost your project approximately **$1/day**, so be sure to **shut down** Cloud Datalab when you are no longer using it. Shut down instructions and other tips are [here](https://cloud.google.com/datalab/getting-started) -- look for the section called **Stopping/Starting VM Instances**.
+If you are running in the cloud, a typical Google Cloud Datalab VM will cost your project approximately **$1/day**, so be sure to **shut down** Cloud Datalab when you are no longer using it.  (Shutting down a "session" within IPython sessions does *not* shut down the VM.)  Shut down instructions and other tips are [here](https://cloud.google.com/datalab/getting-started) -- look for the section called **Stopping/Starting VM Instances**.
