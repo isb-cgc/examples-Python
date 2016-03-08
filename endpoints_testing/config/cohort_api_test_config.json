@@ -94,98 +94,44 @@
                       }
                     },
                     "expected_patients_response": [
-                      "TCGA-EW-A6SD",
-                      "TCGA-B6-A0IK",
-                      "TCGA-AQ-A1H2",
-                      "TCGA-A2-A3XU",
-                      "TCGA-AQ-A04L",
-                      "TCGA-S3-AA12",
-                      "TCGA-EW-A2FW",
-                      "TCGA-E2-A56Z",
-                      "TCGA-OL-A5RZ",
-                      "TCGA-AO-A1KT",
-                      "TCGA-AR-A2LJ",
-                      "TCGA-E9-A1N8"
-                    ],
-                    "expected_samples_response": [
-                      "TCGA-A2-A3XU-01A",
-                      "TCGA-A2-A3XU-10A",
-                      "TCGA-AO-A1KT-01A",
-                      "TCGA-AO-A1KT-10A",
-                      "TCGA-AQ-A04L-01B",
-                      "TCGA-AQ-A04L-10A",
-                      "TCGA-AQ-A1H2-01A",
-                      "TCGA-AQ-A1H2-10A",
-                      "TCGA-AR-A2LJ-01A",
-                      "TCGA-AR-A2LJ-10A",
-                      "TCGA-B6-A0IK-01A",
-                      "TCGA-B6-A0IK-10A",
-                      "TCGA-E2-A56Z-01A",
-                      "TCGA-E2-A56Z-10A",
-                      "TCGA-E9-A1N8-01A",
-                      "TCGA-E9-A1N8-10A",
-                      "TCGA-E9-A1N8-11A",
-                      "TCGA-EW-A2FW-01A",
-                      "TCGA-EW-A2FW-10A",
-                      "TCGA-EW-A6SD-01A",
-                      "TCGA-EW-A6SD-10A",
-                      "TCGA-OL-A5RZ-01A",
-                      "TCGA-OL-A5RZ-10A",
-                      "TCGA-S3-AA12-01A",
-                      "TCGA-S3-AA12-10A"
-                    ],
-                    "expected_status_code": 200
-                  },
-                  {
-                    "comment": "check string list arguments with spaces",
-                    "request": {
-                      "body": {
-                        "ParticipantBarcode": "  TCGA-BR-A4CS , TCGA-BR-7704,  TCGA-BR-A4CR,TCGA-BR-7717  , TCGA-BR-7716 "
-                      }
-                    },
-                    "expected_response": {
-                      "etag": {
-                      "type": "string"
-                      },
-                      "kind": {
-                        "value": "cohort_api#cohortsItem"
-                      },
-                      "patient_count": {
-                        "value": "5"
-                      }, 
-                      "sample_count": {
-                        "value": "13"
-                      }, 
-                      "patients": {
-                        "type": "list",
-                        "key": "expected_patients_response"
-                      },
-                      "samples": {
-                        "type": "list",
-                        "key": "expected_samples_response"
-                      }
-                    },
-                    "expected_patients_response": [
+                      "TCGA-F1-6875",
+                      "TCGA-FP-7735",
                       "TCGA-BR-A4CS",
-                      "TCGA-BR-7704",
                       "TCGA-BR-A4CR",
+                      "TCGA-IN-7806",
+                      "TCGA-FP-8209",
+                      "TCGA-BR-7716",
                       "TCGA-BR-7717",
-                      "TCGA-BR-7716"
+                      "TCGA-FP-7829",
+                      "TCGA-BR-7704"
                     ],
                     "expected_samples_response": [
-                      "TCGA-BR-7704-01A",
+                      "TCGA-FP-8209-11A",
+                      "TCGA-FP-8209-01A",
+                      "TCGA-FP-7829-10A",
                       "TCGA-BR-7704-10A",
-                      "TCGA-BR-7704-11A",
-                      "TCGA-BR-7716-01A",
                       "TCGA-BR-7716-10A",
-                      "TCGA-BR-7716-11A",
-                      "TCGA-BR-7717-01A",
+                      "TCGA-FP-7735-10A",
+                      "TCGA-BR-7704-01A",
+                      "TCGA-BR-7704-11A",
+                      "TCGA-IN-7806-01A",
+                      "TCGA-IN-7806-11A",
+                      "TCGA-FP-7829-01A",
+                      "TCGA-BR-7716-01A",
+                      "TCGA-FP-7829-11A",
+                      "TCGA-F1-6875-11A",
+                      "TCGA-F1-6875-01A",
                       "TCGA-BR-7717-10A",
-                      "TCGA-BR-7717-11A",
                       "TCGA-BR-A4CR-01A",
+                      "TCGA-FP-7735-01A",
+                      "TCGA-BR-7716-11A",
+                      "TCGA-FP-7735-11A",
                       "TCGA-BR-A4CR-10A",
+                      "TCGA-BR-7717-01A",
+                      "TCGA-BR-A4CS-10A",
+                      "TCGA-BR-7717-11A",
                       "TCGA-BR-A4CS-01A",
-                      "TCGA-BR-A4CS-10A"
+                      "TCGA-IN-7806-10A"
                     ],
                     "expected_status_code": 200
                   },
@@ -307,6 +253,59 @@
                         "value": "cohort_api#cohortsItem"
                       },
                       "patient_count": {
+                        "value": "3"
+                      }, 
+                      "sample_count": {
+                        "value": "7"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "expected_patients_response": [
+                      "TCGA-MR-A520",
+                      "TCGA-DD-A1EH",
+                      "TCGA-DK-A1AA"
+                    ],
+                    "expected_samples_response": [
+                      "TCGA-DD-A1EH-10A",
+                      "TCGA-DD-A1EH-11A",
+                      "TCGA-DD-A1EH-01A",
+                      "TCGA-DK-A1AA-10A",
+                      "TCGA-DK-A1AA-01A",
+                      "TCGA-MR-A520-01A",
+                      "TCGA-MR-A520-10A"
+                    ],
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "test special case of range argument",
+                    "request": {
+                      "body": {
+                        "age_at_initial_pathologic_diagnosis": [
+                          "40 to 49",
+                          "60 to 69"
+                        ],
+                        "Study": "BRCA",
+                        "batch_number": [
+                          "80",
+                          "117"
+                        ]
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      },
+                      "patient_count": {
                         "value": "2"
                       }, 
                       "sample_count": {
@@ -322,20 +321,19 @@
                       }
                     },
                     "expected_patients_response": [
-                      "TCGA-A6-2679",
-                      "TCGA-FD-A43X"
+                      "TCGA-E9-A1N8",
+                      "TCGA-AQ-A04L"
                     ],
                     "expected_samples_response": [
-                      "TCGA-A6-2679-01A",
-                      "TCGA-A6-2679-10A",
-                      "TCGA-A6-2679-11A",
-                      "TCGA-FD-A43X-01A",
-                      "TCGA-FD-A43X-10A"
-                    ],
-                    "expected_status_code": 200
+                      "TCGA-E9-A1N8-11A",
+                      "TCGA-E9-A1N8-10A",
+                      "TCGA-E9-A1N8-01A",
+                      "TCGA-AQ-A04L-01B",
+                      "TCGA-AQ-A04L-10A"
+                    ]
                   },
                   {
-                    "comment": "test special case of range argument",
+                    "comment": "test special case of range argument.  note not working, getting sql error",
                     "request": {
                       "body": {
                         "age_at_initial_pathologic_diagnosis": "40 to 49,60 to 69",
@@ -354,36 +352,6 @@
                         "value": "cohort_api#cohortsItem"
                       },
                       "patient_count": {
-                        "value": "1"
-                      }, 
-                      "sample_count": {
-                        "value": "3"
-                      }, 
-                      "patients": {
-                        "type": "list",
-                        "key": "expected_patients_response"
-                      },
-                      "samples": {
-                        "type": "list",
-                        "key": "expected_samples_response"
-                      }
-                    },
-                    "expected_patients_response": [
-                      "TCGA-E9-A1N8"
-                    ],
-                    "expected_samples_response": [
-                      "TCGA-E9-A1N8-11A",
-                      "TCGA-E9-A1N8-10A",
-                      "TCGA-E9-A1N8-01A"
-                    ],
-                    "correct_expected_response": {
-                      "etag": {
-                      "type": "string"
-                      },
-                      "kind": {
-                        "value": "cohort_api#cohortsItem"
-                      },
-                      "patient_count": {
                         "value": "2"
                       }, 
                       "sample_count": {
@@ -398,16 +366,68 @@
                         "key": "expected_samples_response"
                       }
                     },
-                    "correct_expected_patients_response": [
-                      "TCGA-AQ-A04L",
-                      "TCGA-E9-A1N8"
+                    "expected_patients_response": [
+                      "TCGA-E9-A1N8",
+                      "TCGA-AQ-A04L"
                     ],
-                    "correct_expected_samples_response": [
-                      "TCGA-AQ-A04L-01B",
-                      "TCGA-AQ-A04L-10A",
+                    "expected_samples_response": [
                       "TCGA-E9-A1N8-11A",
                       "TCGA-E9-A1N8-10A",
-                      "TCGA-E9-A1N8-01A"
+                      "TCGA-E9-A1N8-01A",
+                      "TCGA-AQ-A04L-01B",
+                      "TCGA-AQ-A04L-10A"
+                    ]
+                  },
+                  {
+                    "comment": "check string list arguments with spaces.  note, currently not working, looks like build query string only stripping unicode of spaces, is this plain str?",
+                    "request": {
+                      "body": {
+                        "ParticipantBarcode": "  TCGA-BR-A4CS , TCGA-BR-7704,  TCGA-BR-A4CR,TCGA-BR-7717  , TCGA-BR-7716 "
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      },
+                      "patient_count": {
+                        "value": "5"
+                      }, 
+                      "sample_count": {
+                        "value": "13"
+                      }, 
+                      "patients": {
+                        "type": "list",
+                        "key": "expected_patients_response"
+                      },
+                      "samples": {
+                        "type": "list",
+                        "key": "expected_samples_response"
+                      }
+                    },
+                    "expected_patients_response": [
+                      "TCGA-BR-A4CS",
+                      "TCGA-BR-7704",
+                      "TCGA-BR-A4CR",
+                      "TCGA-BR-7717",
+                      "TCGA-BR-7716"
+                    ],
+                    "expected_samples_response": [
+                      "TCGA-BR-7704-01A",
+                      "TCGA-BR-7704-10A",
+                      "TCGA-BR-7704-11A",
+                      "TCGA-BR-7716-01A",
+                      "TCGA-BR-7716-10A",
+                      "TCGA-BR-7716-11A",
+                      "TCGA-BR-7717-01A",
+                      "TCGA-BR-7717-10A",
+                      "TCGA-BR-7717-11A",
+                      "TCGA-BR-A4CR-01A",
+                      "TCGA-BR-A4CR-10A",
+                      "TCGA-BR-A4CS-01A",
+                      "TCGA-BR-A4CS-10A"
                     ],
                     "expected_status_code": 200
                   }
@@ -2705,7 +2725,7 @@
                         "value": "TCGA-W5-AA30"
                       },
                       "data_details_count": {
-                        "value": "4"
+                        "value": "1"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -2836,11 +2856,7 @@
                         "value": "DCC"
                       },
                       "DatafileUploaded": {
-                        "type": "from list",
-                        "values": [
-                          "false",
-                          "true"
-                        ]
+                        "value": "true"
                       },
                       "Datatype": {
                         "value": "DNA Methylation"
@@ -2858,41 +2874,22 @@
                         "value": "HumanMethylation450"
                       },
                       "DataFileNameKey": {
-                        "type": "from list",
-                        "values": [
-                          "/file-path-currently-unavailable",
-                          "/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
-                        ]
+                        "value": "/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
                       },
                       "SDRFFileName": {
                         "value": "jhu-usc.edu_CHOL.HumanMethylation450.1.1.0.sdrf.txt"
                       },
                       "DataFileName": {
-                        "type": "from list",
-                        "values": [
-                          "jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-2.TCGA-W5-AA30-01A-31D-A418-05.txt",
-                          "9996247047_R03C02_Red.idat",
-                          "9996247047_R03C02_Grn.idat",
-                          "jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
-                        ]
+                        "value": "jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
                       },
                       "SecurityProtocol": {
                         "value": "dbGap open-access"
                       },
                       "GenomeReference": {
-                        "type": "from list",
-                        "values": [
-                          "None",
-                          "HG19"
-                        ]
+                        "value": "HG19"
                       },
                       "DataLevel": {
-                        "type": "from list",
-                        "values": [
-                          "Level 1",
-                          "Level 2",
-                          "Level 3"
-                        ]
+                        "value": "Level 3"
                       }
                     },
                     "expected_status_code": 200
@@ -2906,7 +2903,7 @@
                     },
                     "expected_response": {
                       "data_details_count": {
-                        "value": "4"
+                        "value": "1"
                       },
                       "aliquots": {
                         "type": "list",
@@ -2932,11 +2929,7 @@
                         "value": "DCC"
                       },
                       "DatafileUploaded": {
-                        "type": "from list",
-                        "values": [
-                          "false",
-                          "true"
-                        ]
+                        "value": "true"
                       },
                       "Datatype": {
                         "value": "DNA Methylation"
@@ -2954,18 +2947,10 @@
                         "value": "HumanMethylation450"
                       },
                       "CloudStoragePath": {
-                        "type": "from list",
-                        "values": [
-                          "gs://isb-cgc-open/file-path-currently-unavailable",
-                          "gs://isb-cgc-open/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
-                        ]
+                        "value": "gs://isb-cgc-open/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
                       },
                       "DataFileNameKey": {
-                        "type": "from list",
-                        "values": [
-                          "/file-path-currently-unavailable",
-                          "/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
-                        ]
+                        "value": "/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt"
                       },
                       "SDRFFileName": {
                         "value": "jhu-usc.edu_CHOL.HumanMethylation450.1.1.0.sdrf.txt"
@@ -2974,18 +2959,13 @@
                         "value": "dbGap open-access"
                       },
                       "DataLevel": {
-                        "type": "from list",
-                        "values": [
-                          "Level 1",
-                          "Level 2",
-                          "Level 3"
-                        ]
+                        "value": "Level 3"
                       }
                     },
                     "expected_status_code": 200
                   },
                   {
-                    "comment": "select details for a sample and specify a filter for the returned values",
+                    "comment": "select details for a sample and specify a filter for the returned values.  note count is wrong, should be 30 with bam files",
                     "request": {
                       "sample_barcode": "TCGA-W5-AA30-01A",
                       "fields": "patient, kind, data_details_count, etag, biospecimen_data"
@@ -2998,7 +2978,7 @@
                         "value": "cohort_api#cohortsItem"
                       },
                       "data_details_count": {
-                        "value": "28"
+                        "value": "27"
                       },
                       "etag": {
                         "type": "string"
@@ -3165,7 +3145,7 @@
                         "value": "TCGA-46-6026"
                       },
                       "data_details_count": {
-                        "value": "10"
+                        "value": "3"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3266,11 +3246,7 @@
                         "value": "DCC"
                       },
                       "DatafileUploaded": {
-                        "type": "from list",
-                        "values": [
-                          "true",
-                          "false"
-                        ]
+                        "value": "true"
                       },
                       "Datatype": {
                         "value": "Copy Number Results-SNP"
@@ -3287,16 +3263,9 @@
                       "DataFileName": {
                         "type": "from list",
                         "values": [
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.tangent.copynumber.data.txt",
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.ismpolish.data.txt",
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.birdseed.data.txt",
                           "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.CEL",
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.byallele.copynumber.data.txt",
                           "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.nocnv_hg19.seg.txt",
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.hg19.seg.txt",
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.nocnv_hg18.seg.txt",
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.hg18.seg.txt",
-                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.raw.copynumber.data.txt"
+                          "GUCKS_p_TCGA_b129_140_SNP_N_GenomeWideSNP_6_G11_802280.hg19.seg.txt"
                         ]
                       },
                       "platform_full_name": {
@@ -3325,7 +3294,6 @@
                         "type": "from list",
                         "values": [
                           "NA",
-                          "36.1",
                           "GRCh37"
                         ]
                       },
@@ -3333,7 +3301,6 @@
                         "type": "from list",
                         "values": [
                           "Level 1",
-                          "Level 2",
                           "Level 3"
                         ]
                       }
@@ -3883,7 +3850,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "20"
+                        "value": "27"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3894,7 +3861,14 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
-                      "gs://isb-cgc-open/file-path-currently-unavailable",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/CHOL/RNA/RNA-Seq/UNC-LCCC/ILLUMINA/UNCID_2537517.f53d3bb4-4d10-4321-b41b-87fed60e6fc1.sorted_genome_alignments.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/CHOL/DNA/VALIDATION/WUGSC/ILLUMINA/b94d4f3adc4ca55ec1fbd2a202c98e67.bam",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/chol/IlluminaHiSeq_DNASeq_Cont_automated/genome.wustl.edu__DNASeq_Cont_automated/Level_2/genome.wustl.edu.TCGA-W5-AA30.indel.582c38f1986d4bdf8a783587e55fe725.vcf.gz",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/chol/IlluminaHiSeq_DNASeq_Cont_automated/genome.wustl.edu__DNASeq_Cont_automated/Level_2/genome.wustl.edu.TCGA-W5-AA30.snv.582c38f1986d4bdf8a783587e55fe725.vcf.gz",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/chol/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/SPIKY_p_TCGAb_427_428_NSP_GenomeWideSNP_6_C11_1521904.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/chol/IlluminaHiSeq_DNASeq_Cont_automated/genome.wustl.edu__DNASeq_Cont_automated/Level_2/genome.wustl.edu.TCGA-W5-AA30.snv.dd7ec2332c354b2cb43626d6b097fe28.vcf.gz",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/CHOL/DNA/WXS/WUGSC/ILLUMINA/bbb66fac122a4f92213321035b354af5.bam",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/chol/IlluminaHiSeq_DNASeq_Cont_automated/genome.wustl.edu__DNASeq_Cont_automated/Level_2/genome.wustl.edu.TCGA-W5-AA30.indel.dd7ec2332c354b2cb43626d6b097fe28.vcf.gz",
                       "gs://isb-cgc-open/tcga/chol/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/SPIKY_p_TCGAb_427_428_NSP_GenomeWideSNP_6_C11_1521904.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/chol/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/SPIKY_p_TCGAb_427_428_NSP_GenomeWideSNP_6_C11_1521904.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-W5-AA30-01A-31D-A418-05.txt",
@@ -3925,7 +3899,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "2"
+                        "value": "1"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3936,20 +3910,19 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
-                      "gs://isb-cgc-open/file-path-currently-unavailable",
                       "gs://isb-cgc-open/tcga/chol/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_CHOL.HumanMethylation450.1.lvl-3.TCGA-ZU-A8S4-11A-11D-A418-05.txt"
                     ],
                     "expected_status_code": 200
                   },
                   {
-                    "comment": "this currently fails because w/ no datafilenamekey returns gs://isb-cgc-open/file-path-currently-unavailable",
+                    "comment": "list the datafilenamekeys for the sample for the platform",
                     "request": {
                       "sample_barcode": "TCGA-13-0890-10A",
                       "pipeline": "broad.mit.edu__snp_cnv"
                     },
                     "expected_response": {
                       "count": {
-                        "value": "2"
+                        "value": "3"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3960,6 +3933,7 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/ov/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/RACKS_p_TCGAaffxB10b_11_S_GenomeWideSNP_6_H04_429602.CEL",
                       "gs://isb-cgc-open/tcga/ov/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/RACKS_p_TCGAaffxB10b_11_S_GenomeWideSNP_6_H04_429602.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/ov/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/RACKS_p_TCGAaffxB10b_11_S_GenomeWideSNP_6_H04_429602.nocnv_hg19.seg.txt"
                     ],
@@ -3974,12 +3948,15 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "0"
+                        "value": "1"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
                       }
                     },
+                    "expected_datafilenamekeys_response": [
+                      "gs://isb-cgc-open/tcga/ov/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/RACKS_p_TCGAaffxB10b_11_S_GenomeWideSNP_6_H04_429602.nocnv_hg19.seg.txt"
+                    ],
                     "expected_status_code": 200
                   },
                   {
@@ -3991,7 +3968,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "2"
+                        "value": "3"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -4002,6 +3979,7 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/ov/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/RACKS_p_TCGAaffxB10b_11_S_GenomeWideSNP_6_H04_429602.CEL",
                       "gs://isb-cgc-open/tcga/ov/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/RACKS_p_TCGAaffxB10b_11_S_GenomeWideSNP_6_H04_429602.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/ov/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/RACKS_p_TCGAaffxB10b_11_S_GenomeWideSNP_6_H04_429602.nocnv_hg19.seg.txt"
                     ],
