@@ -230,7 +230,7 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
         if 'ERROR' in response:
             assertmsg = '\tan error occurred for %s:%s:%s: \'%s\'.' % (self.resource, self.endpoint, self.type_test, response['ERROR'])
             if 'expected_error_response' in test_config_dict:
-                self.assertTrue(str(response['ERROR']) == test_config_dict['expected_error_response']['error_msg'], 
+                self.assertTrue(str(response['ERROR']) == str(test_config_dict['expected_error_response']['error_msg']), 
                     assertmsg + '  expected \'%s\'' % (test_config_dict['expected_error_response']['error_msg']))
                 print '\tfound expected error response, \'%s\', for %s:%s:%s' % (response['ERROR'], self.resource, self.endpoint, self.type_test)
             else:

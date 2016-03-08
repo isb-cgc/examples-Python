@@ -10,6 +10,7 @@
                 "test_name": "preview_test",
                 "tests": [
                   {
+                    "comment": "simple arguments",
                     "request": {
                         "body": {
                           "Study": "STAD", 
@@ -63,6 +64,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "test argument lists",
                     "request": {
                         "body": {
                           "Study": ["STAD"], 
@@ -135,6 +137,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "check string list arguments with spaces",
                     "request": {
                       "body": {
                         "ParticipantBarcode": "  TCGA-BR-A4CS , TCGA-BR-7704,  TCGA-BR-A4CR,TCGA-BR-7717  , TCGA-BR-7716 "
@@ -187,6 +190,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "check catagorical clinical argument",
                     "request": {
                       "body": {
                         "icd_10": "C69.30"
@@ -242,6 +246,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "check argument combination",
                     "request": {
                       "body": {
                         "height": "165", 
@@ -284,7 +289,7 @@
                     "expected_status_code": 200
                   },
                   {
-                    "comment": "this fails because weight is an int, so can't, like for a string type, specify a list this way",
+                    "comment": "check combination of arguments with one as a list",
                     "request": {
                       "body": {
                         "height": "179", 
@@ -330,6 +335,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "test special case of range argument",
                     "request": {
                       "body": {
                         "age_at_initial_pathologic_diagnosis": "40 to 49,60 to 69",
@@ -411,22 +417,25 @@
                 "test_name": "preview_error_test",
                 "tests": [
                   {
+                    "comment": "check body map argument sent to a string",
                     "request": {
                       "body": "..."
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   },
                   {
+                    "comment": "check body map argument sent to a string set to an empty map",
                     "request": {
                       "body": {}
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   },
                   {
+                    "comment": "check float argument set to a sting",
                     "request": {
                       "body": {
                         "avg_percent_monocyte_infiltration": "a word"
@@ -437,6 +446,7 @@
                     }
                   },
                   {
+                    "comment": "check unknown argument",
                     "request": {
                       "bad_idea": "..."
                     },
@@ -445,16 +455,18 @@
                     }
                   },
                   {
+                    "comment": "check unknown argument set in body",
                     "request": {
                       "body": {
                         "bad_idea": "..."
                       }
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   },
                   {
+                    "comment": "check unknown argument set in body with valid argument",
                     "request": {
                       "body": {
                         "avg_percent_monocyte_infiltration": "21",
@@ -462,7 +474,7 @@
                       }
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   }
                 ]
@@ -478,6 +490,7 @@
                 "test_name": "save_test",
                 "tests": [
                   {
+                    "comment": "save cohort based on data and type attributes",
                     "request": {
                       "name": "sample_counts_1",
                       "body": {
@@ -518,6 +531,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on data and type attributes",
                     "request": {
                       "name": "sample_counts_2",
                       "body": {
@@ -558,6 +572,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on tumor characteristics",
                     "request": {
                       "name": "clinical_status_1",
                       "body": {
@@ -599,6 +614,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on tumor characteristics",
                     "request": {
                       "name": "clinical_status_2",
                       "body": {
@@ -640,6 +656,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on physical attributes",
                     "request": {
                       "name": "clinical_vital_1",
                       "body": {
@@ -681,6 +698,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on physical attributes",
                     "request": {
                       "name": "clinical_vital_2",
                       "body": {
@@ -722,6 +740,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on a sample barcode list",
                     "request": {
                       "name": "sample_list_1",
                       "body": {
@@ -780,6 +799,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on a participant barcode list",
                     "request": {
                       "name": "sample_list_2",
                       "body": {
@@ -818,6 +838,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on a sample barcode list",
                     "request": {
                       "name": "sample_list_3",
                       "body": {
@@ -863,6 +884,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "save cohort based on a sample barcode list",
                     "request": {
                       "name": "sample_list_4",
                       "body": {
@@ -914,6 +936,7 @@
                 "test_name": "delete_test",
                 "tests": [
                   {
+                    "comment": "generic delete request, cohort ids obtained from list test replaced by test code",
                     "request": {
                       "cohort_id": ""
                     },
@@ -944,6 +967,7 @@
                 "test_name": "list_test",
                 "tests": [
                   {
+                    "comment": "list all cohorts created for test user",
                     "request": {
                     },
                     "expected_response": {
@@ -1465,6 +1489,120 @@
                         }
                       }
                     ]
+                  },
+                  {
+                    "comment": "list a selected cohort",
+                    "cohort_name_lookup": "clinical_vital_1",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "clinical_vital_1"
+                      },
+                      "comments": {
+                        "value": "None"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "perm": {
+                        "value": "OWNER"
+                      },
+                      "filters": {
+                        "type": "map_list",
+                        "matchup_key": "",
+                        "key": "expected_filters_response"
+                      },
+                      "last_date_saved": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      }
+                    },
+                    "expected_filters_response": {
+                      "name": {
+                        "type": "from list",
+                        "values": [
+                          "vital_status", 
+                          "race", 
+                          "country", 
+                          "gender"
+                        ]
+                      },
+                      "value": {
+                        "type": "from list",
+                        "values": [
+                          "Alive", 
+                          "WHITE", 
+                          "MALE", 
+                          "United States"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list a selected cohort",
+                    "cohort_name_lookup": "sample_counts_1",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "sample_counts_1"
+                      },
+                      "comments": {
+                        "value": "None"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "perm": {
+                        "value": "OWNER"
+                      },
+                      "filters": {
+                        "type": "map_list",
+                        "matchup_key": "",
+                        "key": "expected_filters_response"
+                      },
+                      "last_date_saved": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      }
+                    },
+                    "expected_filters_response": {
+                      "name": {
+                        "type": "from list",
+                        "values": [
+                          "Study", 
+                          "has_SNP6", 
+                          "SampleTypeCode"
+                        ]
+                      },
+                      "value": {
+                        "type": "from list",
+                        "values": [
+                          "BLCA", 
+                          "1", 
+                          "01"
+                        ]
+                      }
+                    }
                   }
                 ]
               },
@@ -1480,6 +1618,7 @@
                 "test_name": "patient_details_test",
                 "tests": [
                   {
+                    "comment": "request patient details for a participant",
                     "request": {
                       "patient_barcode": "TCGA-W5-AA30"
                     },
@@ -1690,6 +1829,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "request patient details for a participant, filter returned fields",
                     "request": {
                       "patient_barcode": "TCGA-W5-AA30",
                       "fields": "aliquots,samples,kind"
@@ -1730,6 +1870,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "request patient details for a participant",
                     "request": {
                       "patient_barcode": "TCGA-EW-A6SD"
                     },
@@ -1933,6 +2074,7 @@
                     ]
                   },
                   {
+                    "comment": "request patient details for a participant, filtered on clinical_data",
                     "request": {
                       "patient_barcode": "TCGA-EW-A6SD",
                       "fields": "clinical_data"
@@ -2112,6 +2254,7 @@
                     }
                   },
                   {
+                    "comment": "",
                     "request": {
                       "patient_barcode": "TCGA-46-6026"
                     },
@@ -2309,6 +2452,7 @@
                     ]
                   },
                   {
+                    "comment": "request patient details for a participant, filter on returned fields",
                     "request": {
                       "patient_barcode": "TCGA-46-6026",
                       "fields": " clinical_data ,  aliquots "
@@ -2501,6 +2645,7 @@
                 "test_name": "patient_details_error_test",
                 "tests": [
                   {
+                    "comment": "test keyword valid for some endpoints but not this one, without required argument",
                     "request": {
                       "platform": "HumanMethylation450"
                     },
@@ -2509,6 +2654,7 @@
                     }
                   },
                   {
+                    "comment": "teest invalid argument with required argument",
                     "request": {
                       "patient_barcode": "TCGA-46-6026",
                       "bad_idea": "HumanMethylation450"
@@ -2518,14 +2664,16 @@
                     }
                   },
                   {
+                    "comment": "test invalid fields in filter.  note that this succeeds but returns nothing",
                     "request": {
                       "patient_barcode": "TCGA-W5-AA30",
                       "fields": "one,two"
                     },
-                    "expected_error_response": {
+                    "expected_response": {
                     }
                   },
                   {
+                    "comment": "test specifying filter but without required argument",
                     "request": {
                       "fields": "aliquots"
                     },
@@ -2547,6 +2695,7 @@
                 "test_name": "sample_details_test",
                 "tests": [
                   {
+                    "comment": "select the details for a sample based on a platform",
                     "request": {
                       "sample_barcode": "TCGA-W5-AA30-01A",
                       "platform": "HumanMethylation450"
@@ -2749,6 +2898,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "select details for a sample based on a platform and specify a filter for the returned values",
                     "request": {
                       "fields": "aliquots,data_details(CloudStoragePath,DataCenterName,DataCenterType,DataFileNameKey,DataLevel,DatafileUploaded,Datatype,Pipeline,Platform,Repository,SDRFFileName,SampleBarcode,SecurityProtocol,platform_full_name),data_details_count",
                       "platform": "HumanMethylation450",
@@ -2835,6 +2985,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "select details for a sample and specify a filter for the returned values",
                     "request": {
                       "sample_barcode": "TCGA-W5-AA30-01A",
                       "fields": "patient, kind, data_details_count, etag, biospecimen_data"
@@ -3004,6 +3155,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "select the details for a sample based on a pipeline",
                     "request": {
                       "sample_barcode": "TCGA-46-6026-01A",
                       "pipeline": "broad.mit.edu__snp_cnv"
@@ -3194,15 +3346,16 @@
                 "test_name": "sample_details_error_test",
                 "tests": [
                   {
+                    "comment": "select the details for a sample based on a non-existent platform.  note that this succeeds and returns an empty response",
                     "request": {
                       "sample_barcode": "TCGA-46-6026-01A",
                       "platform": "Nonsense"
                     },
-                    "expected_error_response": {
-                      "error_msg": "Got an unexpected keyword argument \"bad_idea\""
+                    "expected_response": {
                     }
                   },
                   {
+                    "comment": "select the details for a sample with specifying invalid fields.  note that this succeeds and returns an empty response",
                     "request": {
                       "sample_barcode": "TCGA-W5-AA30-11A",
                       "fields": "one,two"
@@ -3211,19 +3364,21 @@
                     }
                   },
                   {
+                    "comment": "omit required parameter but specify optional platform",
                     "request": {
                       "platform": "HumanMethylation450"
                     },
                     "expected_error_response": {
-                      "error_msg": "Got an unexpected keyword argument \"platform\""
+                      "error_msg": "Missing required parameter \"sample_barcode\""
                     }
                   },
                   {
+                    "comment": "omit required parameter but specify optional filter",
                     "request": {
                       "fields": "aliquots"
                     },
                     "expected_error_response": {
-                      "error_msg": "Missing required parameter \"patient_barcode\""
+                      "error_msg": "Missing required parameter \"sample_barcode\""
                     }
                   }
                 ]
@@ -3241,6 +3396,7 @@
                 "test_name": "datafilenamekey_list_from_cohort_test",
                 "tests": [
                   {
+                    "comment": "list the datafilenamekeys for the specified cohort and platform",
                     "cohort_name_lookup": "sample_counts_1",
                     "request": {
                       "cohort_id": "{cohort_id}",
@@ -3269,6 +3425,7 @@
                     ]
                   },
                   {
+                    "comment": "list the datafilenamekeys for the specified cohort and pipeline",
                     "cohort_name_lookup": "sample_counts_2",
                     "request": {
                       "cohort_id": "{cohort_id}",
@@ -3341,6 +3498,7 @@
                     ]
                   },
                   {
+                    "comment": "list the datafilenamekeys for the specified cohort and platform",
                     "cohort_name_lookup": "clinical_status_1",
                     "request": {
                       "cohort_id": "{cohort_id}",
@@ -3424,6 +3582,7 @@
                     ]
                   },
                   {
+                    "comment": "list the datafilenamekeys for the specified cohort and pipeline",
                     "cohort_name_lookup": "clinical_status_2",
                     "request": {
                       "cohort_id": "{cohort_id}",
@@ -3460,6 +3619,7 @@
                     ]
                   },
                   {
+                    "comment": "",
                     "cohort_name_lookup": "clinical_vital_2",
                     "request": {
                       "cohort_id": "{cohort_id}",
@@ -3610,6 +3770,7 @@
                     ]
                   },
                   {
+                    "comment": "list the datafilenamekeys for the specified cohort and platform",
                     "cohort_name_lookup": "clinical_vital_1",
                     "request": {
                       "cohort_id": "{cohort_id}",
@@ -3716,6 +3877,7 @@
                 "test_name": "datafilenamekey_list_from_sample_test",
                 "tests": [
                   {
+                    "comment": "list the datafilenamekeys for the sample",
                     "request": {
                       "sample_barcode": "TCGA-W5-AA30-01A"
                     },
@@ -3756,6 +3918,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "list the datafilenamekeys for the sample for the platform",
                     "request": {
                       "sample_barcode": "TCGA-ZU-A8S4-11A",
                       "platform": "HumanMethylation450"
@@ -3803,6 +3966,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "list the datafilenamekeys for the sample for the platform and pipeline combination",
                     "request": {
                       "sample_barcode": "TCGA-13-0890-10A",
                       "pipeline": "genome.wustl.edu__DNASeq",
@@ -3819,6 +3983,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "list the datafilenamekeys for the sample for the platform and pipeline combination",
                     "request": {
                       "sample_barcode": "TCGA-13-0890-10A",
                       "pipeline": "broad.mit.edu__snp_cnv",
@@ -3845,61 +4010,44 @@
                 ]
               },
               "bad_requests": {
-                "test_name": "datafilenamekey_list_from_error_test",
+                "test_name": "datafilenamekey_list_from_sample_error_test",
                 "tests": [
                   {
+                    "comment": "test improper body argument with empty map for this call",
                     "request": {
                       "body": {}
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "Got an unexpected keyword argument \"body\""
                     }
                   },
                   {
+                    "comment": "test improper body argument with string for this call",
                     "request": {
                       "body": "..."
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "Got an unexpected keyword argument \"body\""
                     }
                   },
                   {
+                    "comment": "test improper body argument with map for this call",
                     "request": {
                       "body": {
                         "avg_percent_monocyte_infiltration": "a word"
                       }
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"Error parsing ProtoRPC request (Unable to parse request content: Expected type <type 'float'> for field avg_percent_monocyte_infiltration, found a word (type <type 'unicode'>))\">"
+                      "error_msg": "Got an unexpected keyword argument \"body\""
                     }
                   },
                   {
+                    "comment": "test improper argument",
                     "request": {
                       "bad_idea": "..."
                     },
                     "expected_error_response": {
                       "error_msg": "Got an unexpected keyword argument \"bad_idea\""
-                    }
-                  },
-                  {
-                    "request": {
-                      "body": {
-                        "bad_idea": "..."
-                      }
-                    },
-                    "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
-                    }
-                  },
-                  {
-                    "request": {
-                      "body": {
-                        "avg_percent_monocyte_infiltration": "21",
-                        "bad_idea": "..."
-                      }
-                    },
-                    "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters to preview a cohort: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   }
                 ]
@@ -3916,6 +4064,7 @@
                 "test_name": "cohort_patients_samples_list_test",
                 "tests": [
                   {
+                    "comment": "get patients and samples for specified cohort",
                     "cohort_name_lookup": "sample_counts_1",
                     "request": {
                       "cohort_id": "{cohort_id}"
@@ -3997,6 +4146,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "get patients and samples for specified cohort",
                     "cohort_name_lookup": "sample_counts_2",
                     "request": {
                       "cohort_id": "{cohort_id}"
@@ -4079,6 +4229,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "get patients and samples for specified cohort",
                     "cohort_name_lookup": "clinical_status_1",
                     "request": {
                       "cohort_id": "{cohort_id}"
@@ -4177,6 +4328,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "get patients and samples for specified cohort",
                     "cohort_name_lookup": "clinical_status_2",
                     "request": {
                       "cohort_id": "{cohort_id}"
@@ -4240,6 +4392,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "get patients and samples for specified cohort",
                     "cohort_name_lookup": "clinical_vital_1",
                     "request": {
                       "cohort_id": "{cohort_id}"
@@ -4568,6 +4721,7 @@
                     "expected_status_code": 200
                   },
                   {
+                    "comment": "get patients and samples for specified cohort",
                     "cohort_name_lookup": "clinical_vital_2",
                     "request": {
                       "cohort_id": "{cohort_id}"
@@ -4872,7 +5026,7 @@
             }
           },
           "google_genomics_from_cohort": {
-            "requires_auth": "false",
+            "requires_auth": "true",
             "deletes_resource": "false",
             "test_config": {
               "minimal": {
@@ -4891,6 +5045,7 @@
                 "test_name": "google_genomics_from_sample_test",
                 "tests": [
                   {
+                    "comment": "get dataset and readset group for specified barcodes.  note that this endpoint doesn't recognize multiple barcodes",
                     "request": {
                       "sample_barcode": " CCLE-LUDLU-1-DNA-08, CCLE-NCI-H2087-RNA-08, CCLE-NCI-H727-RNA-08"
                     },
@@ -4907,6 +5062,7 @@
                     }
                   },
                   {
+                    "comment": "get dataset and readset group for specified barcode",
                     "request": {
                       "sample_barcode": "CCLE-LUDLU-1-DNA-08"
                     },
@@ -4942,6 +5098,7 @@
                     }
                   },
                   {
+                    "comment": "get dataset and readset group for specified barcode",
                     "request": {
                       "sample_barcode": "CCLE-NCI-H2087-RNA-08",
                       "fields": "items(GG_dataset_id,GG_readgroupset_id)"
@@ -4963,6 +5120,7 @@
                     }
                   },
                   {
+                    "comment": "get dataset and readset group for specified barcode",
                     "request": {
                       "sample_barcode": "CCLE-NCI-H727-RNA-08",
                       "fields": "count,kind , items(SampleBarcode)"
@@ -4987,6 +5145,7 @@
                     }
                   },
                   {
+                    "comment": "get dataset and readset group for specified barcode that has no bam files",
                     "request": {
                       "sample_barcode": "TCGA-W5-AA2U-01A"
                     },

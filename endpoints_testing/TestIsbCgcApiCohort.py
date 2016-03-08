@@ -43,9 +43,6 @@ class IsbCgcApiTestCohort(ParametrizedApiTest):
             self.set_cohort_id(test_config_dict)
         self.test_run()
 
-    def datafilenamekey_list_from_error_test(self):
-        self.test_run()
-        
     def datafilenamekey_list_from_cohort_test(self):
         return
         # based on the cohort name in the config file, need to get an id
@@ -55,6 +52,9 @@ class IsbCgcApiTestCohort(ParametrizedApiTest):
         
     def datafilenamekey_list_from_sample_test(self):
         # based on the cohort name in the config file, need to get an id
+        self.test_run()
+        
+    def datafilenamekey_list_from_sample_error_test(self):
         self.test_run()
         
     def sample_details_test(self):
