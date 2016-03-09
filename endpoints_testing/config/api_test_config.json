@@ -1,6 +1,20 @@
 {
+  "test2endpoint_url_info": {
+    "minimal": {
+      "endpoints_url_base": "https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
+      "version": "v1"
+    },
+    "bad_requests": {
+      "endpoints_url_base": "https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
+      "version": "v1"
+    },
+    "large_data": {
+      "endpoints_url_base": "https://isb-cgc-test.appspot.com/_ah/api/discovery/v1/apis/",
+      "version": "v1"
+    }
+  },
   "endpoints_url_base": "https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
-  "endpoints_url_base_dev": "https://20160201t105819-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
+  "endpoints_url_test": "https://isb-cgc-test.appspot.com/_ah/api/discovery/v1/apis/",
   "endpoints_url_base_prod": "https://isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
   "version": "v1",
   "api_config_dir": "endpoints_testing/config",
@@ -24,6 +38,7 @@
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/save"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/preview"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/list"}, 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/full_tests/list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/cohort_patients_samples_list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/patient_details"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/sample_details"}, 

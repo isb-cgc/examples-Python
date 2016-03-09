@@ -25,7 +25,7 @@ cohort_id2cohort_name = {}
 
 class IsbCgcApiTestCohort(ParametrizedApiTest):
     def set_cohort_id(self, test_config_dict):
-        if 'cohort_id' in test_config_dict['request']:
+        if 'cohort_id' in test_config_dict['request'] and 'cohort_name_lookup' in test_config_dict:
             notfound = True
             for cohort_id, cohort_name in cohort_id2cohort_name.iteritems():
                 if cohort_name == test_config_dict['cohort_name_lookup']:
@@ -34,24 +34,21 @@ class IsbCgcApiTestCohort(ParametrizedApiTest):
                     break
             
             if notfound:
-                self.assertTrue(False, 'didn\'t find a cohort id for %s' % (test_config_dict['tests']['cohort_name_lookup']))
+                self.assertTrue(False, 'didn\'t find a cohort id for %s' % (test_config_dict['cohort_name_lookup']))
 
     def cohort_patients_samples_list_test(self):
-        return
         # based on the cohort name in the config file, need to get an id
         for test_config_dict in self.test_config_list['tests']:
             self.set_cohort_id(test_config_dict)
         self.test_run()
 
     def datafilenamekey_list_from_cohort_test(self):
-        return
         # based on the cohort name in the config file, need to get an id
         for test_config_dict in self.test_config_list['tests']:
             self.set_cohort_id(test_config_dict)
         self.test_run()
         
     def datafilenamekey_list_from_sample_test(self):
-        # based on the cohort name in the config file, need to get an id
         self.test_run()
         
     def datafilenamekey_list_from_sample_error_test(self):
@@ -70,7 +67,8 @@ class IsbCgcApiTestCohort(ParametrizedApiTest):
         self.test_run()
     
     def list_test(self):
-        return
+        for test_config_dict in self.test_config_list['tests']:
+            self.set_cohort_id(test_config_dict)
         responses = self.test_run()
         if not responses:
             return
@@ -86,7 +84,6 @@ class IsbCgcApiTestCohort(ParametrizedApiTest):
             (self.resource, self.endpoint, self.type_test, cohort_count, len(responses[0]['items']) if 'items' in responses[0] else 0))
         
     def delete_test(self):
-        return
         count = 0
         try:
             cohort_ids = []
@@ -110,7 +107,6 @@ class IsbCgcApiTestCohort(ParametrizedApiTest):
         self.test_run()
         
     def save_test(self):
-        return
         self.test_run()
 
     def google_genomics_from_cohort_test(self):

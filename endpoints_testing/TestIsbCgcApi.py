@@ -287,66 +287,59 @@ def main():
         json_config = json.load(f)
 
     provider = FilesystemProvider(json_config['api_config_dir'], 'cur:config', aliases = json_config['aliases'])
-    endpoints_url_base = json_config['endpoints_url_base']
-    test_minimal = unittest.TestSuite()
-    test_bad_requests = unittest.TestSuite()
-    load_test_authorized = unittest.TestSuite()
-    for api_name, api_config in json_config['apis'].iteritems():
-        print 'start adding tests for %s' % (api_name)
-#         api_config = json_config['apis'][args.api_name]
-        discovery_url = endpoints_url_base + api_config['endpoint_uri']
-        version = api_config['version']
-        base_resource_name = api_config['base_resource_name']
-        # get the endpoints test order
-        endpoint_test_ordering = []
-        for index, reference in enumerate(api_config['test_ordering']):
-            ref = '#/test_ordering/%s' % index
-            test_config = resolve(api_config, ref, provider)
-            fields = reference['$ref'].split('/')
-            # TODO: adjust for pairwise 'missing' field
-            test_config['resource'] = fields[2]
-            test_config['endpoint'] = fields[-1]
-            endpoint_test_ordering.append(test_config)
-        
-        for test_user_credentials in args.test_user_credentials:
-            # add tests without authorization first
-            for endpoints_test_config in endpoint_test_ordering:
-                resource = endpoints_test_config['resource'] 
-                endpoint_name = endpoints_test_config['endpoint']
-                requires_auth = endpoints_test_config['requires_auth']
-                
-                for test_config_name, test_config_dict in endpoints_test_config['test_config'].iteritems():
-                    test_config = {
-                        'api': api_name, 
-                        'version': version, 
-                        'endpoint': endpoint_name, 
-                        'base_resource': base_resource_name, 
-                        'resource': resource, 
-                        'discovery_url': discovery_url, 
-                        'type_test': test_config_name, 
-                        'deletes_resource': endpoints_test_config['deletes_resource'], 
-                        'test_config_dict': test_config_dict, 
-                        'expected_status_code': test_config_dict['expected_status_code'] if 'expected_status_code' in test_config_dict else None
-                    }
-                    test_name = test_config_dict['test_name'] if 'test_name' in test_config_dict else 'test_run'
-                    if 'tests' not in test_config_dict:
-                        test_config_dict['tests'] = {}
-                    if test_config_name == 'minimal':
-                        test_minimal.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=None))
-                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=10, auth=test_user_credentials))
-                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=50, auth=test_user_credentials))
-                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=100, auth=test_user_credentials))
-                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=500, auth=test_user_credentials))
-                        load_test_authorized.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1000, auth=test_user_credentials))
-                    elif test_config_name == 'bad_requests':
-                        test_bad_requests.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=test_user_credentials))
-        print 'finished adding tests for %s' % (api_name)
-
-    stream = _WritelnDecorator(sys.stdout)
-    _run_suite(test_minimal, stream, 'minimal')
-    _run_suite(test_bad_requests, stream, 'bad requests')
-#     _run_suite(load_test_authorized, stream, 'load authorized')
-#     cohort_ids = []
+    for test, endpoint_url_info in json_config['test2endpoint_url_info'].iteritems():
+        print 'run %s test' % (test)
+        test_suite = unittest.TestSuite()
+    
+        endpoints_url_base = endpoint_url_info['endpoints_url_base']
+        for api_name, api_config in json_config['apis'].iteritems():
+            print '\tstart adding tests for %s' % (api_name)
+    #         api_config = json_config['apis'][args.api_name]
+            discovery_url = endpoints_url_base + api_config['endpoint_uri']
+            version = api_config['version']
+            base_resource_name = api_config['base_resource_name']
+            # get the endpoints test order
+            endpoint_test_ordering = []
+            for index, reference in enumerate(api_config['test_ordering']):
+                ref = '#/test_ordering/%s' % index
+                test_config = resolve(api_config, ref, provider)
+                fields = reference['$ref'].split('/')
+                # TODO: adjust for pairwise 'missing' field
+                test_config['resource'] = fields[2]
+                test_config['endpoint'] = fields[-1]
+                endpoint_test_ordering.append(test_config)
+            
+            for test_user_credentials in args.test_user_credentials:
+                # add tests without authorization first
+                for endpoints_test_config in endpoint_test_ordering:
+                    resource = endpoints_test_config['resource'] 
+                    endpoint_name = endpoints_test_config['endpoint']
+                    requires_auth = endpoints_test_config['requires_auth']
+                    
+                    for test_config_name, test_config_dict in endpoints_test_config['test_config'].iteritems():
+                        test_config = {
+                            'api': api_name, 
+                            'version': version, 
+                            'endpoint': endpoint_name, 
+                            'base_resource': base_resource_name, 
+                            'resource': resource, 
+                            'discovery_url': discovery_url, 
+                            'type_test': test_config_name, 
+                            'deletes_resource': endpoints_test_config['deletes_resource'], 
+                            'test_config_dict': test_config_dict, 
+                            'expected_status_code': test_config_dict['expected_status_code'] if 'expected_status_code' in test_config_dict else None
+                        }
+                        test_name = test_config_dict['test_name'] if 'test_name' in test_config_dict else 'test_run'
+                        if 'tests' not in test_config_dict:
+                            test_config_dict['tests'] = {}
+                        if test_config_name == test:
+                            test_suite.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=None))
+            print 'finished adding tests for %s' % (api_name)
+    
+        stream = _WritelnDecorator(sys.stdout)
+        _run_suite(test_suite, stream, test.replace('_', ' '))
+    #     _run_suite(load_test_authorized, stream, 'load authorized')
+    #     cohort_ids = []
     print '%s: finished running tests' % (datetime.now())
     
 if __name__ == '__main__':

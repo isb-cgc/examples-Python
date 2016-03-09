@@ -579,12 +579,12 @@
                         "format": "date"
                       },
                       "num_patients": {
-                        "value": "26",
+                        "value": "24",
                         "type": "string",
                         "format": "int64"
                       },
                       "num_samples": {
-                        "value": "26",
+                        "value": "24",
                         "type": "string",
                         "format": "int64"
                       }
@@ -1056,9 +1056,9 @@
                           "value": {
                             "type": "from list",
                             "values": [
-                              "BLCA", 
-                              "1", 
-                              "01"
+                              "[u'BLCA']", 
+                              "[u'1']", 
+                              "[u'01']"
                             ]
                           }
                         }
@@ -1103,15 +1103,15 @@
                             "values": [
                               "Study", 
                               "SampleTypeCode", 
-                              "has_HiSeq_miRnaSeq" 
+                              "has_HiSeq_miRnaSeq"
                             ]
                           },
                           "value": {
                             "type": "from list",
                             "values": [
-                              "PRAD", 
-                              "1", 
-                              "11" 
+                              "[u'PRAD']", 
+                              "[u'1']", 
+                              "[u'11']" 
                             ]
                           }
                         }
@@ -1163,10 +1163,10 @@
                           "value": {
                             "type": "from list",
                             "values": [
-                              "NO", 
-                              "Stage I", 
-                              "No", 
-                              "R0"
+                              "[u'NO']", 
+                              "[u'Stage I']", 
+                              "[u'No']", 
+                              "[u'R0']"
                             ]
                           }
                         }
@@ -1218,10 +1218,10 @@
                           "value": {
                             "type": "from list",
                             "values": [
-                              "YES", 
-                              "None", 
-                              "No", 
-                              "R1"
+                              "[u'YES']", 
+                              "[u'None']", 
+                              "[u'No']", 
+                              "[u'R1']"
                             ]
                           }
                         }
@@ -1273,10 +1273,10 @@
                           "value": {
                             "type": "from list",
                             "values": [
-                              "Alive", 
-                              "WHITE", 
-                              "MALE", 
-                              "United States"
+                              "[u'Alive']", 
+                              "[u'WHITE']", 
+                              "[u'MALE']", 
+                              "[u'United States']"
                             ]
                           }
                         }
@@ -1328,10 +1328,10 @@
                           "value": {
                             "type": "from list",
                             "values": [
-                              "Dead", 
-                              "WHITE", 
-                              "FEMALE", 
-                              "None"
+                              "[u'Dead']", 
+                              "[u'WHITE']", 
+                              "[u'FEMALE']", 
+                              "[u'None']"
                             ]
                           }
                         }
@@ -1375,7 +1375,7 @@
                             "value": "SampleBarcode"
                           },
                           "value": {
-                            "value": "TCGA-BR-7704-01A,TCGA-BR-7704-10A,TCGA-BR-7704-11A,TCGA-BR-7716-01A,TCGA-BR-7716-10A,TCGA-BR-7716-11A,TCGA-BR-7717-01A,TCGA-BR-7717-10A,TCGA-BR-7717-11A,TCGA-BR-A4CR-01A,TCGA-BR-A4CR-10A,TCGA-BR-A4CS-01A,TCGA-BR-A4CS-10A"
+                            "value": "[u'TCGA-BR-7704-01A,TCGA-BR-7704-10A,TCGA-BR-7704-11A,TCGA-BR-7716-01A,TCGA-BR-7716-10A,TCGA-BR-7716-11A,TCGA-BR-7717-01A,TCGA-BR-7717-10A,TCGA-BR-7717-11A,TCGA-BR-A4CR-01A,TCGA-BR-A4CR-10A,TCGA-BR-A4CS-01A,TCGA-BR-A4CS-10A']"
                           }
                         }
                       },
@@ -1418,7 +1418,7 @@
                             "value": "ParticipantBarcode"
                           },
                           "value": {
-                            "value": "TCGA-VD-A8KO,TCGA-VD-AA8R,TCGA-V4-A9ES,TCGA-VD-AA8O,TCGA-WC-AA9A,TCGA-VD-AA8P,TCGA-V4-A9ET"
+                            "value": "[u'TCGA-VD-A8KO,TCGA-VD-AA8R,TCGA-V4-A9ES,TCGA-VD-AA8O,TCGA-WC-AA9A,TCGA-VD-AA8P,TCGA-V4-A9ET']"
                           }
                         }
                       },
@@ -1461,7 +1461,7 @@
                             "value": "SampleBarcode"
                           },
                           "value": {
-                            "value": "TCGA-A6-2679-01A,TCGA-A6-2679-10A,TCGA-A6-2679-11A,TCGA-FD-A43X-01A,TCGA-FD-A43X-10A"
+                            "value": "[u'TCGA-A6-2679-01A,TCGA-A6-2679-10A,TCGA-A6-2679-11A,TCGA-FD-A43X-01A,TCGA-FD-A43X-10A']"
                           }
                         }
                       },
@@ -1504,12 +1504,26 @@
                             "value": "ParticipantBarcode"
                           },
                           "value": {
-                            "value": "TCGA-AQ-A04L,TCGA-E9-A1N8"
+                            "value": "[u'TCGA-AQ-A04L,TCGA-E9-A1N8']"
                           }
                         }
                       }
                     ]
-                  },
+                  }
+                ]
+              },
+              "large_data": {}
+            }
+          },
+          "full_tests": {
+          "list": {
+            "requires_auth": "true",
+            "creates_resource": "false",
+            "deletes_resource": "false",
+            "test_config": {
+              "minimal": {
+                "test_name": "list_test",
+                "tests": [
                   {
                     "comment": "list a selected cohort",
                     "cohort_name_lookup": "clinical_vital_1",
@@ -1560,10 +1574,10 @@
                       "value": {
                         "type": "from list",
                         "values": [
-                          "Alive", 
-                          "WHITE", 
-                          "MALE", 
-                          "United States"
+                          "[u'Alive']", 
+                          "[u'WHITE']", 
+                          "[u'MALE']", 
+                          "[u'United States']"
                         ]
                       }
                     }
@@ -1617,9 +1631,9 @@
                       "value": {
                         "type": "from list",
                         "values": [
-                          "BLCA", 
-                          "1", 
-                          "01"
+                          "[u'BLCA']", 
+                          "[u'1']", 
+                          "[u'01']"
                         ]
                       }
                     }
@@ -1627,6 +1641,7 @@
                 ]
               },
               "large_data": {}
+            }
             }
           },
           "patient_details": {
