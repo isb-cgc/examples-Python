@@ -22,6 +22,9 @@ class ParametrizedApiTest(unittest.TestCase):
 		self.api = test_config['api']
 		self.version = test_config['version']
 		self.base_resource = test_config['base_resource']
+		self.client_id = test_config['client_id']
+		self.client_secret = test_config['client_secret']
+		self.credential_file_name = test_config['credential_file_name']
 		self.resource = test_config['resource']
 		self.endpoint = test_config['endpoint']
 		self.type_test = test_config['type_test']
@@ -33,7 +36,6 @@ class ParametrizedApiTest(unittest.TestCase):
 		
 	@staticmethod
 	def parametrize(testcase_class, test_name, test_config=None, num_requests=None, auth=None):
-		testloader = unittest.TestLoader()
 		suite = unittest.TestSuite()
 		suite.addTest(testcase_class(test_name, test_config, num_requests=num_requests, auth=auth))
 		return suite

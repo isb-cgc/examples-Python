@@ -944,7 +944,256 @@
                   }
                 ]
               },
-              "large_data": {}
+              "large_data": {
+                "test_name": "save_test",
+                "tests": [
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "name": "118",
+                      "body": {
+                        "Study": [
+                          "CHOL",
+                          "KICH"
+                        ],
+                        "gender": [
+                          "Female",
+                          "Male"
+                        ],
+                        "vital_status": "Alive"
+                    }
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "118"
+                      }, 
+                      "num_patients": {
+                        "value": "118"
+                      },
+                      "num_samples": {
+                        "value": "242"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "body": {
+                        "Study": [
+                          "HNSC",
+                          "UCEC"
+                        ], 
+                        "clinical_stage": [
+                          "Stage IVA",
+                          "Stage IB"
+                        ],
+                        "neoplasm_histologic_grade": [
+                          "G2",
+                          "G3"
+                        ]
+                      },
+                      "name": "356"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "356"
+                      }, 
+                      "num_patients": {
+                        "value": "356"
+                      },
+                      "num_samples": {
+                        "value": "741"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "body": {
+                        "Study": [
+                          "COAD",
+                          "LGG",
+                          "TGCT"
+                        ],
+                        "tumor_tissue_site": [
+                          "Colon",
+                          "Central nervous system",
+                          "Testes"
+                        ],
+                        "primary_therapy_outcome_success": [
+                          "Complete Remission/Response",
+                          "Stable Disease",
+                          "Progressive Disease",
+                          "No Measureable Tumor or Tumor Markers"
+                        ]
+                      },
+                      "name": "707"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "707"
+                      }, 
+                      "num_patients": {
+                        "value": "707"
+                      },
+                      "num_samples": {
+                        "value": "1468"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "body": {
+                        "Study": [
+                          "LUAD",
+                          "LUSC",
+                          "KIRP",
+                          "CESC"
+                        ], 
+                        "icd_10": [
+                          "C34.1",
+                          "C64.1",
+                          "C53.9"
+                        ], 
+                        "tobacco_smoking_history": [
+                          "Current reformed smoker for < or = 15 years",
+                          "Lifelong Non-smoker",
+                          "Current smoker",
+                          "Current reformed smoker for > 15 years"
+                        ]
+                      },
+                      "name": "1047"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "1047"
+                      }, 
+                      "num_patients": {
+                        "value": "1047"
+                      },
+                      "num_samples": {
+                        "value": "2251"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "body": 
+                      {
+                        "Study": [
+                          "LAML",
+                          "SARC",
+                          "KIRP",
+                          "CESC",
+                          "BLCA",
+                          "LIHC",
+                          "COAD",
+                          "STAD",
+                          "LUAD",
+                          "LUSC",
+                          "SKCM",
+                          "THCA",
+                          "LGG",
+                          "UCEC"
+                        ],
+                        "prior_dx": "No"
+                      },
+                      "name": "5192"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "5192"
+                      }, 
+                      "num_patients": {
+                        "value": "5192"
+                      },
+                      "num_samples": {
+                        "value": "11117"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "body": {
+                        "Study": [
+                          "BLCA",
+                          "BRCA",
+                          "CESC",
+                          "COAD",
+                          "GBM",
+                          "HNSC",
+                          "KICH",
+                          "KIRC",
+                          "KIRP",
+                          "LGG",
+                          "LIHC",
+                          "LUAD",
+                          "LUSC",
+                          "OV",
+                          "PAAD",
+                          "PCPG",
+                          "PRAD",
+                          "READ",
+                          "SARC",
+                          "STAD",
+                          "THCA",
+                          "UCEC"
+                        ],
+                        "histological_type": [
+                          "Astrocytoma",
+                          "Cervical Squamous Cell Carcinoma",
+                          "Colon Adenocarcinoma",
+                          "Endometrioid endometrial adenocarcinoma",
+                          "Head and Neck Squamous Cell Carcinoma",
+                          "Hepatocellular Carcinoma",
+                          "Infiltrating Ductal Carcinoma",
+                          "Infiltrating Lobular Carcinoma",
+                          "Kidney Chromophobe",
+                          "Kidney Clear Cell Renal Carcinoma",
+                          "Kidney Papillary Renal Cell Carcinoma",
+                          "Leiomyosarcoma (LMS)",
+                          "Lung Adenocarcinoma Mixed Subtype",
+                          "Lung Adenocarcinoma- Not Otherwise Specified (NOS)",
+                          "Lung Squamous Cell Carcinoma- Not Otherwise Specified (NOS)",
+                          "Muscle invasive urothelial carcinoma (pT2 or above)",
+                          "Oligoastrocytoma",
+                          "Oligodendroglioma",
+                          "Pancreas-Adenocarcinoma Ductal Type",
+                          "Pheochromocytoma",
+                          "Prostate Adenocarcinoma Acinar Type",
+                          "Rectal Adenocarcinoma",
+                          "Serous Cystadenocarcinoma",
+                          "Serous endometrial adenocarcinoma",
+                          "Stomach  Adenocarcinoma  Not Otherwise Specified (NOS)",
+                          "Thyroid Papillary Carcinoma - Classical/usual",
+                          "Untreated primary (de novo) GBM"
+                        ]
+                      },
+                      "name": "8530"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "8530"
+                      }, 
+                      "num_patients": {
+                        "value": "8530"
+                      },
+                      "num_samples": {
+                        "value": ""
+                      }
+                    },
+                    "expected_status_code": 200
+                  }
+                ]
+              }
             }
           },
           "delete": {

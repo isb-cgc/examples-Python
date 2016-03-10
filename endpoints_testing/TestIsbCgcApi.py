@@ -18,6 +18,7 @@ import argparse
 import httplib2
 import json
 import multiprocessing
+import os
 import requests 
 import sys
 import time
@@ -28,6 +29,10 @@ from concurrent import futures
 from datetime import datetime
 from jsonspec.reference import resolve
 from jsonspec.reference.providers import FilesystemProvider
+
+from oauth2client.client import OAuth2WebServerFlow 
+from oauth2client import tools 
+from oauth2client.file import Storage 
 
 import isb_auth
 from TestIsbCgcApiCohort import IsbCgcApiTestCohort
@@ -43,6 +48,25 @@ from ParametrizedApiTest import ParametrizedApiTest
 
 # TODO: modify stress test to have a request per count, rather than repeat the same request
 # TODO: run one save per six example saves, then for stress test, randomly pick one per count
+
+# The google defined scope for authorization 
+EMAIL_SCOPE = 'https://www.googleapis.com/auth/userinfo.email' 
+
+ 
+#------------------------------------------------------------------------------ 
+# This validates the credentials of the current user against the project site
+# identified by the client_id and the client secret 
+def get_credentials(client_id, client_secret, credential_file_name): 
+    oauth_flow_args = ['--noauth_local_webserver'] 
+    # where a default token file (based on the google project) will be stored for use by the endpoints 
+    DEFAULT_STORAGE_FILE = os.path.join(os.path.expanduser("~"), credential_file_name) 
+    storage = Storage(DEFAULT_STORAGE_FILE) 
+    credentials = storage.get() 
+    if not credentials or credentials.invalid: 
+        flow = OAuth2WebServerFlow(client_id, client_secret, EMAIL_SCOPE) 
+        flow.auth_uri = flow.auth_uri.rstrip('/') + '?approval_prompt=force' 
+        credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args)) 
+    return credentials 
 
 # this work around resolves an issue with TextTestRunner where it expects a stream to have a writeln method
 # from: http://svn.python.org/projects/python/trunk/Lib/unittest/runner.py
@@ -73,7 +97,7 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
             
             print '\n%s: testing %s.%s as %s.  repeats: %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, self.num_requests)
             # build an API service object for the testing
-            credentials = isb_auth.get_credentials()
+            credentials = get_credentials(self.client_id, self.client_secret, self.credential_file_name)
             http = httplib2.Http()
             http = credentials.authorize(http)
             
@@ -292,6 +316,9 @@ def main():
         test_suite = unittest.TestSuite()
     
         endpoints_url_base = endpoint_url_info['endpoints_url_base']
+        client_id = endpoint_url_info['CLIENT_ID']
+        client_secret = endpoint_url_info['CLIENT_SECRET']
+        credential_file_name = endpoint_url_info['STORAGE_FILE']
         for api_name, api_config in json_config['apis'].iteritems():
             print '\tstart adding tests for %s' % (api_name)
     #         api_config = json_config['apis'][args.api_name]
@@ -322,6 +349,9 @@ def main():
                             'version': version, 
                             'endpoint': endpoint_name, 
                             'base_resource': base_resource_name, 
+                            'client_id': client_id,
+                            'client_secret': client_secret,
+                            'credential_file_name': credential_file_name,
                             'resource': resource, 
                             'discovery_url': discovery_url, 
                             'type_test': test_config_name, 
