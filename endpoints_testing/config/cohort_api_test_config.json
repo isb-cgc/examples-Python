@@ -1177,17 +1177,17 @@
                           "Untreated primary (de novo) GBM"
                         ]
                       },
-                      "name": "8530"
+                      "name": "8528"
                     },
                     "expected_response": {
                       "name": {
-                        "value": "8530"
+                        "value": "8528"
                       }, 
                       "num_patients": {
-                        "value": "8530"
+                        "value": "8528"
                       },
                       "num_samples": {
-                        "value": ""
+                        "value": "17739"
                       }
                     },
                     "expected_status_code": 200
@@ -1224,7 +1224,29 @@
                   }
                 ]
               },
-              "large_data": {}
+              "large_data": {
+                "test_name": "delete_test",
+                "tests": [
+                  {
+                    "comment": "generic delete request, cohort ids obtained from list test replaced by test code",
+                    "request": {
+                      "cohort_id": ""
+                    },
+                    "expected_response": {
+                      "msg": {
+                        "value_replace": "Cohort {cohort_id} successfully deactivated.",
+                        "replace": [
+                          "cohort_id"
+                        ]
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      }
+                    },
+                    "expected_status_code": 200
+                  }
+                ]
+              }
             }
           },
           "list": {
@@ -1780,56 +1802,76 @@
                       "cohort_id": "{cohort_id}"
                     },
                     "expected_response": {
-                      "name": {
-                        "value": "clinical_vital_1"
-                      },
-                      "comments": {
-                        "value": "None"
-                      },
-                      "id": {
-                        "type": "string",
-                        "format": "int64"
-                      },
-                      "perm": {
-                        "value": "OWNER"
-                      },
-                      "filters": {
-                        "type": "map_list",
-                        "matchup_key": "",
-                        "key": "expected_filters_response"
-                      },
-                      "last_date_saved": {
-                        "type": "string",
-                        "format": "date"
-                      },
-                      "email": {
-                        "type": "string",
-                        "format": "email"
+                      "count": {
+                        "value": "1"
                       },
                       "kind": {
-                        "value": "cohort_api#cohortsItem"
+                        "value": "cohort_api#cohorts"
+                      },
+                      "items": {
+                        "type": "map_list",
+                        "optional": true,
+                        "matchup_key": "name",
+                        "key": "expected_items_response"
                       }
                     },
-                    "expected_filters_response": {
-                      "name": {
-                        "type": "from list",
-                        "values": [
-                          "vital_status", 
-                          "race", 
-                          "country", 
-                          "gender"
-                        ]
-                      },
-                      "value": {
-                        "type": "from list",
-                        "values": [
-                          "[u'Alive']", 
-                          "[u'WHITE']", 
-                          "[u'MALE']", 
-                          "[u'United States']"
-                        ]
+                    "expected_items_response": [
+                      {
+                        "value": "clinical_vital_1",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "clinical_vital_1"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "type": "from list",
+                            "values": [
+                              "vital_status", 
+                              "race", 
+                              "country", 
+                              "gender"
+                            ]
+                          },
+                          "value": {
+                            "type": "from list",
+                            "values": [
+                              "[u'Alive']", 
+                              "[u'WHITE']", 
+                              "[u'MALE']", 
+                              "[u'United States']"
+                            ]
+                          }
+                        }
                       }
-                    }
+                    ]
                   },
                   {
                     "comment": "list a selected cohort",
@@ -1838,54 +1880,129 @@
                       "cohort_id": "{cohort_id}"
                     },
                     "expected_response": {
-                      "name": {
-                        "value": "sample_counts_1"
-                      },
-                      "comments": {
-                        "value": "None"
-                      },
-                      "id": {
-                        "type": "string",
-                        "format": "int64"
-                      },
-                      "perm": {
-                        "value": "OWNER"
-                      },
-                      "filters": {
-                        "type": "map_list",
-                        "matchup_key": "",
-                        "key": "expected_filters_response"
-                      },
-                      "last_date_saved": {
-                        "type": "string",
-                        "format": "date"
-                      },
-                      "email": {
-                        "type": "string",
-                        "format": "email"
+                      "count": {
+                        "value": "1"
                       },
                       "kind": {
-                        "value": "cohort_api#cohortsItem"
+                        "value": "cohort_api#cohorts"
+                      },
+                      "items": {
+                        "type": "map_list",
+                        "optional": true,
+                        "matchup_key": "name",
+                        "key": "expected_items_response"
                       }
                     },
-                    "expected_filters_response": {
-                      "name": {
-                        "type": "from list",
-                        "values": [
-                          "Study", 
-                          "has_SNP6", 
-                          "SampleTypeCode"
-                        ]
+                    "expected_items_response": [
+                      {
+                        "value": "sample_counts_1",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "sample_counts_1"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "type": "from list",
+                            "values": [
+                              "Study", 
+                              "has_SNP6", 
+                              "SampleTypeCode"
+                            ]
+                          },
+                          "value": {
+                            "type": "from list",
+                            "values": [
+                              "[u'BLCA']", 
+                              "[u'1']", 
+                              "[u'01']"
+                            ]
+                          }
+                        }
                       },
-                      "value": {
-                        "type": "from list",
-                        "values": [
-                          "[u'BLCA']", 
-                          "[u'1']", 
-                          "[u'01']"
-                        ]
+                      {
+                        "value": "clinical_vital_1",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "clinical_vital_1"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "type": "from list",
+                            "values": [
+                              "vital_status", 
+                              "race", 
+                              "country", 
+                              "gender"
+                            ]
+                          },
+                          "value": {
+                            "type": "from list",
+                            "values": [
+                              "[u'Alive']", 
+                              "[u'WHITE']", 
+                              "[u'MALE']", 
+                              "[u'United States']"
+                            ]
+                          }
+                        }
                       }
-                    }
+                    ]
                   }
                 ]
               },
@@ -3635,7 +3752,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "7"
+                        "value": "8"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3646,13 +3763,14 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
-                      "gs://isb-cgc-open/file-path-currently-unavailable",
                       "gs://isb-cgc-open/tcga/blca/IlluminaHiSeq_TotalRNASeqV2/unc.edu__TotalRNASeqV2/Level_3/unc.edu.06d706f6-4e05-4ffc-9b75-f9fccb639a33.2275358.junction_quantification.txt",
                       "gs://isb-cgc-open/tcga/blca/IlluminaHiSeq_TotalRNASeqV2/unc.edu__TotalRNASeqV2/Level_3/unc.edu.06d706f6-4e05-4ffc-9b75-f9fccb639a33.2276019.rsem.genes.results",
                       "gs://isb-cgc-open/tcga/blca/IlluminaHiSeq_TotalRNASeqV2/unc.edu__TotalRNASeqV2/Level_3/unc.edu.06d706f6-4e05-4ffc-9b75-f9fccb639a33.2276020.rsem.isoforms.results",
                       "gs://isb-cgc-open/tcga/blca/IlluminaHiSeq_TotalRNASeqV2/unc.edu__TotalRNASeqV2/Level_3/unc.edu.06d706f6-4e05-4ffc-9b75-f9fccb639a33.2276034.rsem.isoforms.normalized_results",
                       "gs://isb-cgc-open/tcga/blca/IlluminaHiSeq_TotalRNASeqV2/unc.edu__TotalRNASeqV2/Level_3/unc.edu.06d706f6-4e05-4ffc-9b75-f9fccb639a33.2276035.rsem.genes.normalized_results",
-                      "gs://isb-cgc-open/tcga/blca/IlluminaHiSeq_TotalRNASeqV2/unc.edu__TotalRNASeqV2/Level_3/unc.edu.06d706f6-4e05-4ffc-9b75-f9fccb639a33.2316986.bt.exon_quantification.txt"
+                      "gs://isb-cgc-open/tcga/blca/IlluminaHiSeq_TotalRNASeqV2/unc.edu__TotalRNASeqV2/Level_3/unc.edu.06d706f6-4e05-4ffc-9b75-f9fccb639a33.2316986.bt.exon_quantification.txt",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/BLCA/RNA/RNA-Seq/UNC-LCCC/ILLUMINA/UNCID_2275325.06d706f6-4e05-4ffc-9b75-f9fccb639a33.sorted_genome_alignments.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/BLCA/RNA/RNA-Seq/UNC-LCCC/ILLUMINA/UNCID_2296507.cd889d58-7d2f-4c0a-8252-de3c6f056333.sorted_genome_alignments.bam"
                     ]
                   },
                   {
@@ -3664,7 +3782,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "51"
+                        "value": "69"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3675,7 +3793,29 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
-                      "gs://isb-cgc-open/file-path-currently-unavailable",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_F07_1039828.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/WITED_p_TCGA_b161_171_SNP_N_GenomeWideSNP_6_A06_844962.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_A03_755736.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_C09_787860.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_E03_1039874.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_B01_1039906.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_C04_1039800.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_H10_1039856.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_D07_1039958.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_C04_787904.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/ODDLY_p_TCGASNP_165_184_N_GenomeWideSNP_6_G05_1051720.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_C03_1039826.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_D03_1039902.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_D11_787842.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_A11_1039832.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/BASIC_p_TCGASNP_219_221_223_N_GenomeWideSNP_6_D10_1148650.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_B05_787980.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_D04_1039926.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_F03_1039888.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_D03_755664.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_C09_1039936.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_D04_787940.CEL",
+                      "gs://62f2c827-mock-mock-mock-1cde698a4f77/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_1/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_C06_1039834.CEL",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/BASIC_p_TCGASNP_219_221_223_N_GenomeWideSNP_6_D10_1148650.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/BASIC_p_TCGASNP_219_221_223_N_GenomeWideSNP_6_D10_1148650.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_A11_1039832.hg19.seg.txt",
@@ -3706,8 +3846,6 @@
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLADE_p_TCGASNP_184_195_N_GenomeWideSNP_6_H10_1039856.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_A03_755736.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_A03_755736.nocnv_hg19.seg.txt",
-                      "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_A04_755678.hg19.seg.txt",
-                      "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_A04_755678.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_D03_755664.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/CLEAR_p_TCGA_b91_SNP_1N_GenomeWideSNP_6_D03_755664.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_B05_787980.hg19.seg.txt",
@@ -3716,8 +3854,6 @@
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_C04_787904.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_C09_787860.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_C09_787860.nocnv_hg19.seg.txt",
-                      "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_C10_787840.hg19.seg.txt",
-                      "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_C10_787840.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_D04_787940.hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_D04_787940.nocnv_hg19.seg.txt",
                       "gs://isb-cgc-open/tcga/prad/Genome_Wide_SNP_6/broad.mit.edu__snp_cnv/Level_3/GIRTH_p_TCGA_b108_137_SNP_N_GenomeWideSNP_6_D11_787842.hg19.seg.txt",
@@ -3821,7 +3957,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "15"
+                        "value": "14"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3832,7 +3968,6 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
-                      "gs://isb-cgc-open/file-path-currently-unavailable",
                       "gs://isb-cgc-open/tcga/lihc/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_LIHC.HumanMethylation450.1.lvl-3.TCGA-BC-A10Q-01A-11D-A132-05.txt",
                       "gs://isb-cgc-open/tcga/lihc/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_LIHC.HumanMethylation450.1.lvl-3.TCGA-BC-A10Q-11A-11D-A132-05.txt",
                       "gs://isb-cgc-open/tcga/lihc/HumanMethylation450/jhu-usc.edu__methylation/Level_3/jhu-usc.edu_LIHC.HumanMethylation450.1.lvl-3.TCGA-BC-A10T-01A-11D-A132-05.txt",
@@ -3858,7 +3993,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "129"
+                        "value": "152"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -3997,7 +4132,30 @@
                       "gs://isb-cgc-open/tcga/ov/IlluminaHiSeq_RNASeq/bcgsc.ca__RNASeq/Level_3/TCGA-61-1743-01A-01R-1568-13.hg19.exon.quantification.txt",
                       "gs://isb-cgc-open/tcga/ov/IlluminaHiSeq_RNASeq/bcgsc.ca__RNASeq/Level_3/TCGA-61-1743-01A-01R-1568-13.hg19.gene.quantification.txt",
                       "gs://isb-cgc-open/tcga/ov/IlluminaHiSeq_RNASeq/bcgsc.ca__RNASeq/Level_3/TCGA-61-1743-01A-01R-1568-13.hg19.spljxn.quantification.txt",
-                      "gs://isb-cgc-open/tcga/ov/IlluminaHiSeq_RNASeq/bcgsc.ca__RNASeq/Level_3/TCGA-61-1743-01A-01R-1568-13.spljxn.quantification.txt"
+                      "gs://isb-cgc-open/tcga/ov/IlluminaHiSeq_RNASeq/bcgsc.ca__RNASeq/Level_3/TCGA-61-1743-01A-01R-1568-13.spljxn.quantification.txt",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/LAML/Total_RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-AB-2966-03A-01T-0734-13_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/LAML/Total_RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-AB-2971-03A-01T-0734-13_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-04-1332-01A-01R-1564-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-13-0714-01A-01R-1564-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-13-0766-01A-02R-1564-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-13-0887-01A-01R-1564-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-13-1481-01A-01R-1565-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-23-1022-01A-01R-1564-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-23-1113-01A-01R-1564-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-24-1105-01A-01R-1565-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-24-1545-01A-01R-1566-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-24-1930-01A-01R-1567-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-24-2033-01A-01R-1568-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-25-1319-01A-01R-1565-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-25-1329-01A-01R-1565-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-25-1635-01A-01R-1566-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-25-1870-01A-01R-1567-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-29-1691-01A-01R-1566-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-29-1701-01A-01R-1567-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-29-1702-01A-01R-1567-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-29-1768-01A-01R-1567-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-57-1582-01A-01R-1566-13_GRCh37-lite_rnaseq.bam",
+                      "gs://360ee3ad-mock-mock-mock-52f9a5e7f99a/tcga/OV/RNA/RNA-Seq/BCCAGSC/ILLUMINA/TCGA-61-1743-01A-01R-1568-13_GRCh37-lite_rnaseq.bam"
                     ]
                   },
                   {
@@ -4009,7 +4167,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "72"
+                        "value": "71"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -4020,7 +4178,6 @@
                       }
                     },
                     "expected_datafilenamekeys_response": [
-                      "gs://isb-cgc-open/file-path-currently-unavailable",
                       "gs://isb-cgc-open/tcga/acc/MDA_RPPA_Core/mdanderson.org__protein_exp/Level_3/mdanderson.org_ACC.MDA_RPPA_Core.protein_expression.Level_3.249586F7-DC75-489A-886E-3AECB9FA7B4B.txt",
                       "gs://isb-cgc-open/tcga/blca/MDA_RPPA_Core/mdanderson.org__protein_exp/Level_3/mdanderson.org_BLCA.MDA_RPPA_Core.protein_expression.Level_3.3E84E307-85E3-4AD3-9923-2AACF734B905.txt",
                       "gs://isb-cgc-open/tcga/blca/MDA_RPPA_Core/mdanderson.org__protein_exp/Level_3/mdanderson.org_BLCA.MDA_RPPA_Core.protein_expression.Level_3.4BD320F4-9175-4A56-A17C-6ADFA8B98CD1.txt",
@@ -4395,10 +4552,10 @@
                     },
                     "expected_response": {
                       "patient_count": {
-                        "value": "26"
+                        "value": "24"
                       },
                       "sample_count": {
-                        "value": "26"
+                        "value": "24"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
@@ -4416,7 +4573,6 @@
                       "TCGA-CH-5761",
                       "TCGA-CH-5767",
                       "TCGA-CH-5768",
-                      "TCGA-CH-5771",
                       "TCGA-EJ-7123",
                       "TCGA-EJ-7328",
                       "TCGA-EJ-7330",
@@ -4431,7 +4587,6 @@
                       "TCGA-G9-6348",
                       "TCGA-G9-6363",
                       "TCGA-G9-6365",
-                      "TCGA-G9-6367",
                       "TCGA-G9-6496",
                       "TCGA-HC-7211",
                       "TCGA-HC-7738",
@@ -4444,7 +4599,6 @@
                       "TCGA-CH-5761-11A",
                       "TCGA-CH-5767-11B",
                       "TCGA-CH-5768-11A",
-                      "TCGA-CH-5771-11A",
                       "TCGA-EJ-7123-11A",
                       "TCGA-EJ-7328-11A",
                       "TCGA-EJ-7330-11A",
@@ -4459,7 +4613,6 @@
                       "TCGA-G9-6348-11A",
                       "TCGA-G9-6363-11A",
                       "TCGA-G9-6365-11A",
-                      "TCGA-G9-6367-11A",
                       "TCGA-G9-6496-11A",
                       "TCGA-HC-7211-11A",
                       "TCGA-HC-7738-11A",

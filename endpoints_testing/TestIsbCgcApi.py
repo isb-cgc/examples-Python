@@ -126,7 +126,8 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                         bad_requests += [{'ERROR': e, 'pos': count}]
                     count += 1
                     
-                print '%s:\texecute the requests:\n\t\t%s' % (datetime.now(), test_config_dict['request'])
+                print '%s:\texecute the requests:\n\t\t%s%s' % (datetime.now(), test_config_dict['request'], 
+                        ' (%s)' % (test_config_dict['cohort_name_lookup']) if 'cohort_name_lookup' in test_config_dict else '')
                 responses, execution_time = self._query_api(requests)
                 print '%s:\tfinished executing the requests' % (datetime.now())
                 for bad_request in bad_requests:
@@ -169,7 +170,7 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                     print '%s:\trun %s(%s) generated an exception--%s' % (datetime.now(), run_info[1], run_info[2], future.exception())
                     responses += [{'ERROR': future.exception()}]
                 else:
-                    print '%s:\trun%s(%s) succeeded\n' % (datetime.now(), run_info[1], run_info[2])
+                    print '%s:\trun%s(time:%s size:%s) succeeded\n' % (datetime.now(), run_info[1], run_info[2], len(str(future.result())))
                     responses += [future.result()]
         execution_time = time.time() - start
         return responses, execution_time
