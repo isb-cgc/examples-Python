@@ -99,13 +99,13 @@ def main():
     # metadata to identify a cohort of interest.  The ISB-CGC web-app will
     # allow you to do this interactively, but you can also do it
     # programmatically.  For example, say we are interested in a cohort
-    # of deceased, female, breast cancer patients in the TCGA project:
+    # of deceased, femalepatients from any of four projects:
     payload = { 'Project'     : 'TCGA',
-                'Study'       : 'BRCA',
+                'Study'       : ['OV','BRCA','GBM','LGG'],
                 'gender'      : 'Female',
                 'vital_status': 'Dead' }
     data = test_preview_cohort_service ( service, payload )
-    # print json.dumps ( data, indent=4 )
+    print json.dumps ( data, indent=4 )
 
     # Now we can loop over each of the patient identifiers and ask for
     # additional details about each patient:
@@ -113,7 +113,7 @@ def main():
     for aPatient in patientList:
 
         data = test_patient_details_service ( service, aPatient )
-        # print json.dumps ( data, indent=4 )
+        print json.dumps ( data, indent=4 )
 
         # Most patients have provided two samples to the TCGA project:
         # one normal (typically blood) sample, and one tumor sample.
@@ -132,7 +132,7 @@ def main():
             for aSample in sampleList:
 
                 data = test_sample_details_service ( service, aSample )
-                # print json.dumps ( data, indent=4 )
+                print json.dumps ( data, indent=4 )
 
                 # The "sample_details" will include lots of information
                 # about the biospecimen, but also about the data files
