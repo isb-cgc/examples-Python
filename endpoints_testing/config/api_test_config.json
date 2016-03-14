@@ -1,13 +1,13 @@
 {
   "test2endpoint_url_info": {
-    "minimal__": {
+    "minimal": {
       "endpoints_url_base": "https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
       "version": "v1",
       "CLIENT_ID": "907668440978-0ol0griu70qkeb6k3gnn2vipfa5mgl60.apps.googleusercontent.com",
       "CLIENT_SECRET": "To_WJH7-1V-TofhNGcEqmEYi",
       "STORAGE_FILE": ".isb_credentials_dev"
     },
-    "bad_requests__": {
+    "bad_requests": {
       "endpoints_url_base": "https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
       "version": "v1",
       "CLIENT_ID": "907668440978-0ol0griu70qkeb6k3gnn2vipfa5mgl60.apps.googleusercontent.com",
