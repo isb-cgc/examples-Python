@@ -62,6 +62,7 @@ def get_credentials(client_id, client_secret, credential_file_name):
     storage = Storage(DEFAULT_STORAGE_FILE) 
     credentials = storage.get() 
     if not credentials or credentials.invalid: 
+        # this will bring up a verification URL to paste in a browser
         flow = OAuth2WebServerFlow(client_id, client_secret, EMAIL_SCOPE) 
         flow.auth_uri = flow.auth_uri.rstrip('/') + '?approval_prompt=force' 
         credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args)) 
@@ -94,7 +95,7 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                 # simulate user login with selenium
                 pass
             
-            print '\n%s: testing %s.%s as %s.  repeats: %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, self.num_requests)
+            print '\n%s: testing %s.%s as %s' % (datetime.now(), self.resource, self.endpoint, self.type_test)
             # build an API service object for the testing
             credentials = get_credentials(self.client_id, self.client_secret, self.credential_file_name)
             http = httplib2.Http()
@@ -115,25 +116,16 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
             all_responses = []
             for test_config_dict in self.test_config_list['tests']:
                 self.assertTrue((test_config_dict['request'] and 0 < len(test_config_dict['request'])) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
-                requests = []
-                count = 0
-                bad_requests = []
-                while count < self.num_requests:
-                    try:
-                        requests.append(method_to_call(**test_config_dict['request']))
-                    except Exception as e:
-                        bad_requests += [{'ERROR': e, 'pos': count}]
-                    count += 1
-                    
-                print '%s:\texecute the requests:\n\t\t%s%s' % (datetime.now(), test_config_dict['request'], 
+                print '%s:\texecute the request:\n\t\t%s%s' % (datetime.now(), test_config_dict['request'], 
                         ' (%s)' % (test_config_dict['cohort_name_lookup']) if 'cohort_name_lookup' in test_config_dict else '')
-                responses, execution_time = self._query_api(requests)
-                print '%s:\tfinished executing the requests' % (datetime.now())
-                for bad_request in bad_requests:
-                    responses.insert(bad_request['pos'], bad_request)
-                for r in responses:
-                    self._check_response(r, test_config_dict, **kwargs)
-                all_responses += responses
+                try:
+                    response, execution_time = self._query_api(method_to_call(**test_config_dict['request']))
+                except Exception as e:
+                    response = {'ERROR': e}
+                    execution_time = 0
+                print '%s:\tfinished executing the request (size: %s time: %s)' % (datetime.now(), len(str(response)), execution_time)
+                self._check_response(response, test_config_dict, **kwargs)
+                all_responses += [response]
             return all_responses
         except AssertionError as ae:
             traceback.print_exc()
@@ -146,34 +138,15 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
             print '%s: finished testing %s.%s as %s.  took %s' % (datetime.now(), self.resource, self.endpoint, self.type_test, execution_time)
 
     # helper methods
-    def _query_api(self, requests):
-        def wrap_method_call(*method_to_call):
-            return method_to_call[0].execute()
-
-        executor = futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count() * 4)
-
+    def _query_api(self, method_to_call):
         start = time.time()
-        future2request = {}
-        count = 0
-        for request in requests:
-            future2request[executor.submit(wrap_method_call, request)] = [request, count, time.time()]
-            count += 1
-        responses = []
-        future_keys = future2request.keys()
-        while future_keys:
-            future_done, future_keys = futures.wait(future_keys, return_when = futures.FIRST_COMPLETED)
-            for future in future_done:
-                run_info = future2request.pop(future)
-                run_info[2] = time.time() - run_info[2]
-                if future.exception() is not None:
-                    print '%s:\trun %s(%s) generated an exception--%s' % (datetime.now(), run_info[1], run_info[2], future.exception())
-                    responses += [{'ERROR': future.exception()}]
-                else:
-                    print '%s:\trun%s(time:%s size:%s) succeeded\n' % (datetime.now(), run_info[1], run_info[2], len(str(future.result())))
-                    responses += [future.result()]
+        try:
+            response = method_to_call.execute()
+        except Exception as e:
+            print '%s:\trun generated an exception--%s' % (datetime.now(), e)
+            response = {'ERROR': e}
         execution_time = time.time() - start
-        return responses, execution_time
-        
+        return response, execution_time
 
     def _check_expected_map_list(self, response, expected_response, key, test_config_dict, matchup_key, indent, **kwargs):
         count = 0
@@ -367,7 +340,7 @@ def main():
                         if 'tests' not in test_config_dict:
                             test_config_dict['tests'] = {}
                         if test_config_name == test:
-                            test_suite.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, num_requests=1, auth=None))
+                            test_suite.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, auth=None))
             print 'finished adding tests for %s' % (api_name)
     
         stream = _WritelnDecorator(sys.stdout)
