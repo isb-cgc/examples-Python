@@ -333,7 +333,7 @@
                     ]
                   },
                   {
-                    "comment": "test special case of range argument.  note not working, getting sql error",
+                    "comment": "test special case of range argument.",
                     "request": {
                       "body": {
                         "age_at_initial_pathologic_diagnosis": "40 to 49,60 to 69",
@@ -379,7 +379,7 @@
                     ]
                   },
                   {
-                    "comment": "check string list arguments with spaces.  note, currently not working, looks like build query string only stripping unicode of spaces, is this plain str?",
+                    "comment": "check string list arguments with spaces.",
                     "request": {
                       "body": {
                         "ParticipantBarcode": "  TCGA-BR-A4CS , TCGA-BR-7704,  TCGA-BR-A4CR,TCGA-BR-7717  , TCGA-BR-7716 "
@@ -941,6 +941,49 @@
                       }
                     },
                     "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort of CCLE samples",
+                    "request": {
+                      "name": "ccle_cohort",
+                      "body": {
+                        "SampleBarcode": [
+                          "CCLE-NCI-H727-RNA-08",
+                          "CCLE-LUDLU-1-DNA-08",
+                          "CCLE-NCI-H2087-RNA-08"
+                        ] 
+                      }
+                    },
+                    "expected_response": {
+                      "etag": {
+                      "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "name": {
+                        "value": "ccle_cohort"
+                      }, 
+                      "last_date_saved": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "num_patients": {
+                        "value": "3",
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "num_samples": {
+                        "value": "3",
+                        "type": "string",
+                        "format": "int64"
+                      }
+                    },
+                    "expected_status_code": 200
                   }
                 ]
               },
@@ -1115,6 +1158,64 @@
                       },
                       "num_samples": {
                         "value": "11117"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "body": {
+                        "Study": [
+                          "LAML", 
+                          "SARC", 
+                          "KIRP", 
+                          "CESC", 
+                          "BLCA", 
+                          "LIHC", 
+                          "COAD", 
+                          "STAD", 
+                          "LUAD", 
+                          "LUSC", 
+                          "SKCM",
+                          "THCA", 
+                          "LGG", 
+                          "UCEC", 
+                          "BRCA"
+                        ],
+                        "ethnicity": "NOT HISPANIC OR LATINO"
+                      },
+                      "name": "5359"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "5359"
+                      }, 
+                      "num_patients": {
+                        "value": "5359"
+                      },
+                      "num_samples": {
+                        "value": "11541"
+                      }
+                    },
+                    "expected_status_code": 200
+                  },
+                  {
+                    "comment": "save cohort based on data and type attributes",
+                    "request": {
+                      "body": {
+                      },
+                      "name": "12243"
+                    },
+                    "expected_response": {
+                      "name": {
+                        "value": "12243"
+                      }, 
+                      "num_patients": {
+                        "value": "12243"
+                      },
+                      "num_samples": {
+                        "value": "25438"
                       }
                     },
                     "expected_status_code": 200
@@ -1778,12 +1879,166 @@
                             "value": "[u'TCGA-AQ-A04L,TCGA-E9-A1N8']"
                           }
                         }
+                      },
+                      {
+                        "value": "ccle_cohort",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "ccle_cohort"
+                          },
+                          "comments": {
+                            "value": "None"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "int64"
+                          },
+                          "perm": {
+                            "value": "OWNER"
+                          },
+                          "filters": {
+                            "type": "map_list",
+                            "matchup_key": "",
+                            "key": "expected_filters_response"
+                          },
+                          "last_date_saved": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "kind": {
+                            "value": "cohort_api#cohortsItem"
+                          }
+                        },
+                        "expected_filters_response": {
+                          "name": {
+                            "value": "SampleBarcode"
+                          },
+                          "value": {
+                            "value": "[u'CCLE-NCI-H727-RNA-08', u'CCLE-LUDLU-1-DNA-08', u'CCLE-NCI-H2087-RNA-08']"
+                          }
+                        }
                       }
                     ]
                   }
                 ]
               },
-              "large_data": {}
+              "large_data": {
+                "test_name": "list_test",
+                "tests": [
+                  {
+                    "comment": "list all cohorts created for test user",
+                    "request": {
+                    },
+                    "expected_response": {
+                      "count": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "kind": {
+                        "type": "from list",
+                        "values": [
+                          "cohort_api#cohorts",
+                          "cohort_api#cohortsItem"
+                        ]
+                      },
+                      "items": {
+                        "type": "map_list",
+                        "optional": true,
+                        "matchup_key": "name",
+                        "key": "expected_items_response"
+                      }
+                    },
+                    "expected_items_response": [
+                      {
+                        "value": "All TCGA Data",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "All TCGA Data"
+                          }
+                        }
+                      },
+                      {
+                        "value": "118",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "118"
+                          }
+                        }
+                      },
+                      {
+                        "value": "356",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "356"
+                          }
+                        }
+                      },
+                      {
+                        "value": "707",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "707"
+                          }
+                        }
+                      },
+                      {
+                        "value": "1047",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "1047"
+                          }
+                        }
+                      },
+                      {
+                        "value": "5192",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "5192"
+                          }
+                        }
+                      },
+                      {
+                        "value": "5359",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "5359"
+                          }
+                        }
+                      },
+                      {
+                        "value": "8528",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "8528"
+                          }
+                        }
+                      },
+                      {
+                        "value": "12243",
+                        "response_key": "expected_map_response",
+                        "expected_map_response": {
+                          "name": {
+                            "value": "12243"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
             }
           },
           "full_tests": {
@@ -3083,8 +3338,7 @@
                     }
                   }
                 ]
-              },
-              "large_data": {}
+              }
             }
           },
           "sample_details": {
@@ -3730,8 +3984,6 @@
                     }
                   }
                 ]
-              },
-              "large_data": {
               }
             }
           },
@@ -4253,7 +4505,161 @@
                   }
                 ]
               },
-              "large_data": {}
+              "large_data": {
+                "test_name": "datafilenamekey_list_from_cohort_test",
+                "tests": [
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort",
+                    "cohort_name_lookup": "118",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "2246"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort",
+                    "cohort_name_lookup": "356",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "8391"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort",
+                    "cohort_name_lookup": "707",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "17132"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort",
+                    "cohort_name_lookup": "1047",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "24767"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort and list of pipelines",
+                    "cohort_name_lookup": "5359",
+                    "request": {
+                      "cohort_id": "{cohort_id}",
+                      "platform": "Genome_Wide_SNP_6"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "32540"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort and list of pipelines",
+                    "cohort_name_lookup": "5359",
+                    "request": {
+                      "cohort_id": "{cohort_id}",
+                      "platform": "IlluminaHiSeq_RNASeqV2"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "37048"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort and list of pipelines",
+                    "cohort_name_lookup": "8528",
+                    "request": {
+                      "cohort_id": "{cohort_id}",
+                      "platform": "Genome_Wide_SNP_6"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "50358"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort and list of pipelines",
+                    "cohort_name_lookup": "8528",
+                    "request": {
+                      "cohort_id": "{cohort_id}",
+                      "platform": "IlluminaHiSeq_RNASeqV2"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "54085"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort and list of pipelines",
+                    "cohort_name_lookup": "12243",
+                    "request": {
+                      "cohort_id": "{cohort_id}",
+                      "platform": "Genome_Wide_SNP_6"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "67278"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort and list of pipelines",
+                    "cohort_name_lookup": "12243",
+                    "request": {
+                      "cohort_id": "{cohort_id}",
+                      "platform": "IlluminaHiSeq_RNASeqV2"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "71786"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort",
+                    "cohort_name_lookup": "5192",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": "126803"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "list the datafilenamekeys for the specified cohort",
+                    "cohort_name_lookup": "8528",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "count": {
+                        "value": ""
+                      }
+                    }
+                  }
+                ]
+              }
             }
           },
           "datafilenamekey_list_from_sample": {
@@ -5417,7 +5823,131 @@
                   }
                 ]
               },
-              "large_data": {}
+              "large_data": {
+                "test_name": "cohort_patients_samples_list_test",
+                "tests": [
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "118",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "118"
+                      },
+                      "sample_count": {
+                        "value": "242"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "356",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "356"
+                      },
+                      "sample_count": {
+                        "value": "741"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "707",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "707"
+                      },
+                      "sample_count": {
+                        "value": "1468"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "1047",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "1047"
+                      },
+                      "sample_count": {
+                        "value": "2251"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "5192",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "5192"
+                      },
+                      "sample_count": {
+                        "value": "11117"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "5359",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "5359"
+                      },
+                      "sample_count": {
+                        "value": "11541"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "8528",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "8528"
+                      },
+                      "sample_count": {
+                        "value": "17739"
+                      }
+                    }
+                  },
+                  {
+                    "comment": "get patients and samples for specified cohort",
+                    "cohort_name_lookup": "12243",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "patient_count": {
+                        "value": "12243"
+                      },
+                      "sample_count": {
+                        "value": "25438"
+                      }
+                    }
+                  }
+                ]
+              }
             }
           },
           "google_genomics_from_cohort": {
@@ -5425,6 +5955,60 @@
             "deletes_resource": "false",
             "test_config": {
               "minimal": {
+                "test_name": "google_genomics_from_cohort_test",
+                "tests": [
+                  {
+                    "comment": "get dataset and readset groups for the specified cohort",
+                    "cohort_name_lookup": "ccle_cohort",
+                    "request": {
+                      "cohort_id": "{cohort_id}"
+                    },
+                    "expected_response": {
+                      "etag": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohorts"
+                      },
+                      "count": {
+                        "value": "3"
+                      },
+                      "items": {
+                        "type": "map_list",
+                        "matchup_key": "",
+                        "key": "expected_items_response"
+                      }
+                    },
+                    "expected_items_response": {
+                      "GG_dataset_id": {
+                        "type": "from list",
+                        "values": [
+                          "1175112317461194900",
+                          "2592944257098811032"
+                        ]
+                      },
+                      "GG_readgroupset_id": {
+                        "type": "from list",
+                        "values": [
+                          "CJKPhaq1GhCjsYv4_8ntnyA",
+                          "CJKPhaq1GhCa0YyNtMSIstYB",
+                          "CJKPhaq1GhDizMuZxbyLv4kB"
+                        ]
+                      },
+                      "SampleBarcode": {
+                        "type": "from list",
+                        "values": [
+                          "CCLE-LUDLU-1-DNA-08", 
+                          "CCLE-NCI-H2087-RNA-08", 
+                          "CCLE-NCI-H727-RNA-08"
+                        ]
+                      },
+                      "kind": {
+                        "value": "cohort_api#cohortsItem"
+                      }
+                    }
+                  }
+                ]
               },
               "bad_requests": {
               },

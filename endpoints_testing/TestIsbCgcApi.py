@@ -185,10 +185,11 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                 cohorts += [listmap]
             name2expected = dict([(expected_map_response['value'], [expected_map_response, expected_map_response[expected_map_response['response_key']]]) for expected_map_response in expected_response])
             for name, maps in name2maps.iteritems():
-                self.assertIn(name, name2expected, 'name %s not found as key into the map list for %s:%s:%s' % (name, self.resource, self.endpoint, self.type_test))
-                expected_nested_response = name2expected[name]
-                for nestedmap in maps:
-                    self._check_expected(nestedmap, expected_nested_response[1], expected_nested_response[0], indent + '\t', **kwargs)
+                if maps[0]['perm'] == 'OWNER':
+                    self.assertIn(name, name2expected, 'name %s(%s) not found as key into the map list for %s:%s:%s' % (name, maps[0]['id'], self.resource, self.endpoint, self.type_test))
+                    expected_nested_response = name2expected[name]
+                    for nestedmap in maps:
+                        self._check_expected(nestedmap, expected_nested_response[1], expected_nested_response[0], indent + '\t', **kwargs)
         else:
             for nextmap in response:
                 if 0 == count % 32:
@@ -201,8 +202,11 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
         for key, details in expected_response.iteritems():
             if 'value' in details.keys():
                 if key in response:
-                    self.assertEqual(response[key], details['value'], 'value in response for %s isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
+                    try:
+                        self.assertEqual(response[key], details['value'], 'value in response for %s isn\'t equal to expected value for %s:%s:%s: %s != %s' % 
                         (key, self.resource, self.endpoint, self.type_test, response[key], details['value']))
+                    except Exception as e:
+                        raise e
                 else:
                     self.assertTrue(False, 'expected key \'%s\' not found in the response for %s:%s:%s' % (key, self.resource, self.endpoint, self.type_test))
             elif 'type' in details.keys():
