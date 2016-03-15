@@ -8,6 +8,8 @@ from oauth2client.client import OAuth2WebServerFlow
 from oauth2client import tools
 from oauth2client.file import Storage
 
+from api_test_service import test_preview_cohort_service
+
 # the CLIENT_ID for the ISB-CGC site
 CLIENT_ID = '907668440978-0ol0griu70qkeb6k3gnn2vipfa5mgl60.apps.googleusercontent.com'
 # The google-specified 'installed application' OAuth pattern 
@@ -51,7 +53,7 @@ def test_delete_cohort_service ( service, cohort_id ):
 # If no cohort_id is supplied, this api will list all cohorts that 
 # the current user can access
 
-def test_list_cohort_service ( service, cohort_id ):
+def test_list_cohort_service ( service, cohort_id = None):
 
     print " "
     print " *** calling list endpoint *** ", cohort_id
@@ -96,7 +98,6 @@ def main():
     # you need to know the base address of this endpoint, and the name
     # and version of this api
     site = 'api-dot-isb-cgc.appspot.com'
-#     site = 'api-dot-mvm-dot-isb-cgc.appspot.com'
     api = 'cohort_api'
     version = 'v1'
 
@@ -114,18 +115,51 @@ def main():
                 'body': {
                     'Project'     : 'TCGA',
                     'Study'       : 'BRCA',
-                    'country'     : 'Russia, United States'
-#                     'country'     : [
-#                         'Russia',
-#                         'United States'
-#                     ]
+                    'country'     : [
+                        'Russia',
+                        'United States'
+                    ]
                 }
               }
     data = test_create_cohort_service( service, **payload )
     print json.dumps ( data, indent=4 )
     cohort_id = data['id']
     
-    # Now we can obtain the participant and sample barcode information for the cohort:
+    # Now we can obtain the information about the cohort,
+    # includingthe filters used to create it:
+    data = test_list_cohort_service( service, cohort_id )
+    print json.dumps ( data, indent=4 )
+
+    # And lastly, delete the cohort:
+    data = test_delete_cohort_service ( service, cohort_id )
+    print json.dumps ( data, indent=4 )
+    
+    # The preview API can allow getting a list of samples.  These barcodes can then 
+    # be passed into save to create the cohort.  We'll select patients who have 
+    # Adrenocortical carcinoma and are Hispanic or Latino.  We'll specify in the fields parameter
+    # to return only the patient and sample count and the patient and sample barcodes 
+    payload = { 
+                'Project'     : 'TCGA',
+                'Study'       : 'ACC',
+                'ethnicity'   : 'HISPANIC OR LATINO'
+              }
+    fields = 'patients, patient_count, samples, sample_count'
+    data = test_preview_cohort_service(service, payload, fields)
+    print json.dumps( data, indent=4 )
+
+    # Now we'll use the returned sample barcodes to create a cohort
+    payload = { 
+                'name': 'example cohort from samples',
+                'body': {
+                    'SampleBarcode': data['samples']
+                }
+              }
+    data = test_create_cohort_service( service, **payload )
+    print json.dumps ( data, indent=4 )
+    cohort_id = data['id']
+    
+    # Now we can obtain the information about the cohort,
+    # including the filters used to create it:
     data = test_list_cohort_service( service, cohort_id )
     print json.dumps ( data, indent=4 )
 
@@ -134,7 +168,7 @@ def main():
     print json.dumps ( data, indent=4 )
 
 #------------------------------------------------------------------------------
-# We'll just wrap the call to main() with same time-checks so we can see
+# We'll just wrap the call to main() with some time-checks so we can see
 # how long this program takes to run.  Note that response-times from Google
 # Cloud Endpoints can vary depending on load.  Also, if the endpoint has not
 # received a request in a long time, it may have gone 'cold' and may need

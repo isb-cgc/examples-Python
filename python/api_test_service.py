@@ -12,13 +12,13 @@ from apiclient import discovery
 # ( Documentation for the Python Google API Client Library can be found at
 #   https://developers.google.com/api-client-library/python/start/get_started )
 
-def test_preview_cohort_service ( service, payload ):
+def test_preview_cohort_service ( service, payload, fields = None ):
 
     print " "
     print " *** calling preview_cohort endpoint *** ", payload
 
     # construct the googleapiclient.http.HttpRequest object
-    q = service.cohort_endpoints().cohorts().preview ( body = payload )
+    q = service.cohort_endpoints().cohorts().preview ( body = payload, fields = fields )
 
     # and execute 
     data = q.execute()
@@ -151,7 +151,7 @@ def main():
             return 
 
 #------------------------------------------------------------------------------
-# We'll just wrap the call to main() with same time-checks so we can see
+# We'll just wrap the call to main() with some time-checks so we can see
 # how long this program takes to run.  Note that response-times from Google
 # Cloud Endpoints can vary depending on load.  Also, if the endpoint has not
 # received a request in a long time, it may have gone 'cold' and may need
