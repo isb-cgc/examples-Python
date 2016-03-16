@@ -5,6 +5,7 @@
           "preview": {
             "requires_auth": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "preview_test",
@@ -442,7 +443,7 @@
                       "body": "..."
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters: ['age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   },
                   {
@@ -451,7 +452,7 @@
                       "body": {}
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"You must specify at least one of the following case-sensitive filters: ['age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   },
                   {
@@ -482,7 +483,7 @@
                       }
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters: ['age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   },
                   {
@@ -494,7 +495,7 @@
                       }
                     },
                     "expected_error_response": {
-                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters: ['adenocarcinoma_invasion', 'age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'country_of_procurement', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymph_node_examined_count', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'preservation_method', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'total_number_of_pregnancies', 'tumor_pathology', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
+                      "error_msg": "<HttpError 400 when requesting https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/cohort_api/v1/preview_cohort?alt=json returned \"The following filters were not recognized: 'bad_idea'. You must specify at least one of the following case-sensitive filters: ['age_at_initial_pathologic_diagnosis', 'anatomic_neoplasm_subdivision', 'avg_percent_lymphocyte_infiltration', 'avg_percent_monocyte_infiltration', 'avg_percent_necrosis', 'avg_percent_neutrophil_infiltration', 'avg_percent_normal_cells', 'avg_percent_stromal_cells', 'avg_percent_tumor_cells', 'avg_percent_tumor_nuclei', 'batch_number', 'bcr', 'clinical_M', 'clinical_N', 'clinical_stage', 'clinical_T', 'colorectal_cancer', 'country', 'days_to_birth', 'days_to_collection', 'days_to_death', 'days_to_initial_pathologic_diagnosis', 'days_to_last_followup', 'days_to_submitted_specimen_dx', 'ethnicity', 'frozen_specimen_anatomic_site', 'gender', 'has_27k', 'has_450k', 'has_BCGSC_GA_RNASeq', 'has_BCGSC_HiSeq_RNASeq', 'has_GA_miRNASeq', 'has_HiSeq_miRnaSeq', 'has_Illumina_DNASeq', 'has_RPPA', 'has_SNP6', 'has_UNC_GA_RNASeq', 'has_UNC_HiSeq_RNASeq', 'height', 'histological_type', 'history_of_colon_polyps', 'history_of_neoadjuvant_treatment', 'history_of_prior_malignancy', 'hpv_calls', 'hpv_status', 'icd_10', 'icd_o_3_histology', 'icd_o_3_site', 'lymphatic_invasion', 'lymphnodes_examined', 'lymphovascular_invasion_present', 'max_percent_lymphocyte_infiltration', 'max_percent_monocyte_infiltration', 'max_percent_necrosis', 'max_percent_neutrophil_infiltration', 'max_percent_normal_cells', 'max_percent_stromal_cells', 'max_percent_tumor_cells', 'max_percent_tumor_nuclei', 'menopause_status', 'min_percent_lymphocyte_infiltration', 'min_percent_monocyte_infiltration', 'min_percent_necrosis', 'min_percent_neutrophil_infiltration', 'min_percent_normal_cells', 'min_percent_stromal_cells', 'min_percent_tumor_cells', 'min_percent_tumor_nuclei', 'mononucleotide_and_dinucleotide_marker_panel_analysis_status', 'mononucleotide_marker_panel_analysis_status', 'neoplasm_histologic_grade', 'new_tumor_event_after_initial_treatment', 'number_of_lymphnodes_examined', 'number_of_lymphnodes_positive_by_he', 'ParticipantBarcode', 'pathologic_M', 'pathologic_N', 'pathologic_stage', 'pathologic_T', 'person_neoplasm_cancer_status', 'pregnancies', 'primary_neoplasm_melanoma_dx', 'primary_therapy_outcome_success', 'prior_dx', 'Project', 'psa_value', 'race', 'residual_tumor', 'SampleBarcode', 'SampleTypeCode', 'Study', 'tobacco_smoking_history', 'tumor_tissue_site', 'tumor_type', 'vital_status', 'weight', 'weiss_venous_invasion', 'year_of_initial_pathologic_diagnosis']\">"
                     }
                   }
                 ]
@@ -505,6 +506,7 @@
           "save": {
             "requires_auth": "true",
             "deletes_resource": "false",
+            "parallelize_position": 0,
             "test_config": {
               "minimal": {
                 "test_name": "save_test",
@@ -1301,6 +1303,7 @@
             "requires_auth": "true",
             "creates_resource": "false",
             "deletes_resource": "true",
+            "parallelize_position": 2,
             "test_config": {
               "minimal": {
                 "test_name": "delete_test",
@@ -1354,6 +1357,7 @@
             "requires_auth": "true",
             "creates_resource": "false",
             "deletes_resource": "false",
+            "parallelize_position": 0,
             "test_config": {
               "minimal": {
                 "test_name": "list_test",
@@ -2046,6 +2050,7 @@
             "requires_auth": "true",
             "creates_resource": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "list_test",
@@ -2269,6 +2274,7 @@
             "requires_auth": "false",
             "creates_resource": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "patient_details_test",
@@ -3345,6 +3351,7 @@
             "requires_auth": "false",
             "creates_resource": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "sample_details_test",
@@ -3991,6 +3998,7 @@
             "requires_auth": "false",
             "creates_resource": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "datafilenamekey_list_from_cohort_test",
@@ -4540,7 +4548,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "17132"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4552,7 +4560,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "24767"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4565,7 +4573,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "32540"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4578,7 +4586,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "37048"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4591,7 +4599,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "50358"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4604,7 +4612,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "54085"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4617,7 +4625,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "67278"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4630,7 +4638,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "71786"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4642,7 +4650,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": "126803"
+                        "value": "10000"
                       }
                     }
                   },
@@ -4654,7 +4662,7 @@
                     },
                     "expected_response": {
                       "count": {
-                        "value": ""
+                        "value": "10000"
                       }
                     }
                   }
@@ -4666,6 +4674,7 @@
             "requires_auth": "false",
             "creates_resource": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "datafilenamekey_list_from_sample_test",
@@ -4864,6 +4873,7 @@
             "requires_auth": "true",
             "creates_resource": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "cohort_patients_samples_list_test",
@@ -5953,6 +5963,7 @@
           "google_genomics_from_cohort": {
             "requires_auth": "true",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "google_genomics_from_cohort_test",
@@ -6019,6 +6030,7 @@
           "google_genomics_from_sample": {
             "requires_auth": "false",
             "deletes_resource": "false",
+            "parallelize_position": 1,
             "test_config": {
               "minimal": {
                 "test_name": "google_genomics_from_sample_test",

@@ -113,20 +113,18 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
                 method_to_call = getattr(getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{resource}'.format(resource=self.resource))(), '{method}'.format(method=self.endpoint))
             else:
                 method_to_call = getattr(getattr(self.service, '{api}'.format(api=self.base_resource))(), '{method}'.format(method=self.endpoint))
-            all_responses = []
-            for test_config_dict in self.test_config_list['tests']:
-                self.assertTrue((test_config_dict['request'] and 0 < len(test_config_dict['request'])) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
-                print '%s:\texecute the request:\n\t\t%s%s' % (datetime.now(), test_config_dict['request'], 
-                        ' (%s)' % (test_config_dict['cohort_name_lookup']) if 'cohort_name_lookup' in test_config_dict else '')
-                try:
-                    response, execution_time = self._query_api(method_to_call(**test_config_dict['request']))
-                except Exception as e:
-                    response = {'ERROR': e}
-                    execution_time = 0
-                print '%s:\tfinished executing the request (size: %s time: %s)' % (datetime.now(), len(str(response)), execution_time)
-                self._check_response(response, test_config_dict, **kwargs)
-                all_responses += [response]
-            return all_responses
+
+            self.assertTrue((self.test['request'] and 0 < len(self.test['request'])) or self.endpoint == 'list', 'no request is specified to submit for %s:%s:%s' % (self.resource, self.endpoint, self.type_test))
+            print '%s:\texecute the request:\n\t\t%s%s' % (datetime.now(), self.test['request'], 
+                    ' (%s)' % (self.test['cohort_name_lookup']) if 'cohort_name_lookup' in self.test else '')
+            try:
+                response, execution_time = self._query_api(method_to_call(**self.test['request']))
+            except Exception as e:
+                response = {'ERROR': e}
+                execution_time = 0
+            print '%s:\tfinished executing the request (size: %s time: %s)' % (datetime.now(), len(str(response)), execution_time)
+            self._check_response(response, self.test, **kwargs)
+            return response
         except AssertionError as ae:
             traceback.print_exc()
             raise ae
@@ -291,6 +289,10 @@ def main():
     for test, endpoint_url_info in json_config['test2endpoint_url_info'].iteritems():
         print 'run %s test' % (test)
         test_suite = unittest.TestSuite()
+        
+        # set up the three test suites for the parallel run, one for set up tests, one for the actual concurrency
+        # testing and one for the cleanup 
+        parallelize_tests = [[], [], []]
     
         endpoints_url_base = endpoint_url_info['endpoints_url_base']
         client_id = endpoint_url_info['CLIENT_ID']
@@ -298,7 +300,6 @@ def main():
         credential_file_name = endpoint_url_info['STORAGE_FILE']
         for api_name, api_config in json_config['apis'].iteritems():
             print '\tstart adding tests for %s' % (api_name)
-    #         api_config = json_config['apis'][args.api_name]
             discovery_url = endpoints_url_base + api_config['endpoint_uri']
             version = api_config['version']
             base_resource_name = api_config['base_resource_name']
@@ -340,9 +341,16 @@ def main():
                         if 'tests' not in test_config_dict:
                             test_config_dict['tests'] = {}
                         if test_config_name == test:
-                            test_suite.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, auth=None))
-            print 'finished adding tests for %s' % (api_name)
+                            tests = test_config_dict['tests']
+                            for unit_test in tests:
+                                test_config['test'] = unit_test
+                                test_suite.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, auth=None))
+                                if 'minimal' == test:
+                                    parallelize_tests[endpoints_test_config['parallelize_position']] += [ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, auth=None)] 
+            print '\tfinished adding tests for %s' % (api_name)
     
+        # add the parallel tests to run last
+#         test_suite.addTest(unittest.TestSuite(parallelize_tests))
         stream = _WritelnDecorator(sys.stdout)
         _run_suite(test_suite, stream, test.replace('_', ' '))
     #     _run_suite(load_test_authorized, stream, 'load authorized')

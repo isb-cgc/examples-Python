@@ -17,7 +17,7 @@ limitations under the License.
 import unittest
 
 class ParametrizedApiTest(unittest.TestCase):
-	def __init__(self, methodName="test_run", test_config=None, auth=None):
+	def __init__(self, methodName, test_config, auth):
 		super(ParametrizedApiTest, self).__init__(methodName)
 		self.api = test_config['api']
 		self.version = test_config['version']
@@ -30,11 +30,11 @@ class ParametrizedApiTest(unittest.TestCase):
 		self.type_test = test_config['type_test']
 		self.discovery_url = test_config['discovery_url']
 		self.deletes_resource = test_config['deletes_resource']
-		self.test_config_list = test_config['test_config_dict']
+		self.test = test_config['test']
 		self.auth = auth 
 		
 	@staticmethod
-	def parametrize(testcase_class, test_name, test_config=None, auth=None):
+	def parametrize(testcase_class, test_name, test_config, auth):
 		suite = unittest.TestSuite()
 		suite.addTest(testcase_class(test_name, test_config, auth=auth))
 		return suite
