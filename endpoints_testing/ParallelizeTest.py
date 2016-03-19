@@ -35,6 +35,8 @@ def run_parallel_test(test_name, test_config, count, result):
     stream = _WritelnDecorator(sys.stdout)
     result.stream = stream
     test_suite = ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, auth=None)
+    cur_errors = len(result.errors)
+    cur_failures = len(result.failures)
     try:
         test_suite.run(result)
     except Exception as e:
@@ -42,7 +44,7 @@ def run_parallel_test(test_name, test_config, count, result):
         result.printErrors()
         return "%s:\tcompleted %s:%s(%s) and failed: %s" % (datetime.now(), test_name, test_config['test']['request'], count, e), count, False
     result.printErrors()
-    if 0 < result.errors or 0 < result.failures:
+    if cur_errors < len(result.errors) or cur_failures < len(result.failures):
         return "%s:\tcompleted %s:%s(%s) and failed" % (datetime.now(), test_name, test_config['test']['request'], count), count, False
     return "%s:\tcompleted %s:%s(%s)" % (datetime.now(), test_name, test_config['test']['request'], count), count, True
     
