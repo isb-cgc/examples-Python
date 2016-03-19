@@ -15,17 +15,15 @@ limitations under the License.
 
 '''
 import argparse
+from copy import deepcopy
 import httplib2
 import json
-import multiprocessing
 import os
-import requests 
 import sys
 import time
 import traceback
 import unittest
 from apiclient import discovery
-from concurrent import futures
 from datetime import datetime
 from jsonspec.reference import resolve
 from jsonspec.reference.providers import FilesystemProvider
@@ -42,6 +40,7 @@ from TestIsbCgcApiPairwise import IsbCgcApiTestPairwise
 from TestIsbCgcApiSeqpeek import IsbCgcApiTestSeqpeek
 from TestIsbCgcApiUser import IsbCgcApiTestUser
 from ParametrizedApiTest import ParametrizedApiTest
+from ParallelizeTest import ParallelizeTest
 
 # TODO: Write browser automation with selenium modules (user login)
 
@@ -256,7 +255,7 @@ def print_other_results(test_results):
         
         print '\tunexpected successes:\n%s\n%s\n' % (failure_results, test_results.separator1)
 
-def _run_suite(test_suite, stream, test_name):
+def run_suite(test_suite, stream, test_name):
     test_results = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
     print '\n%s' % (test_results.separator1)
     print '%s: running %s test' % (datetime.now(), test_name)
@@ -274,6 +273,7 @@ def _run_suite(test_suite, stream, test_name):
         print_other_results(test_results)
     print 'test took %s secs' % (total_time)
     print '%s' % (test_results.separator1)
+    return test_results
 
 def main():
     # TODO: final report should include length of all responses and time taken for each test
@@ -293,7 +293,7 @@ def main():
         # set up the three test suites for the parallel run, one for set up tests, one for the actual concurrency
         # testing and one for the cleanup 
         parallelize_tests = [[], [], []]
-    
+        tests4parallelize = json_config['parallelize_test']['tests']
         endpoints_url_base = endpoint_url_info['endpoints_url_base']
         client_id = endpoint_url_info['CLIENT_ID']
         client_secret = endpoint_url_info['CLIENT_SECRET']
@@ -334,7 +334,6 @@ def main():
                             'discovery_url': discovery_url, 
                             'type_test': test_config_name, 
                             'deletes_resource': endpoints_test_config['deletes_resource'], 
-                            'test_config_dict': test_config_dict, 
                             'expected_status_code': test_config_dict['expected_status_code'] if 'expected_status_code' in test_config_dict else None
                         }
                         test_name = test_config_dict['test_name'] if 'test_name' in test_config_dict else 'test_run'
@@ -345,16 +344,19 @@ def main():
                             for unit_test in tests:
                                 test_config['test'] = unit_test
                                 test_suite.addTest(ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, auth=None))
-                                if 'minimal' == test:
-                                    parallelize_tests[endpoints_test_config['parallelize_position']] += [ParametrizedApiTest.parametrize(IsbCgcApiTest, test_name, test_config, auth=None)] 
+                                if test in tests4parallelize:
+                                    parallelize_tests[endpoints_test_config['parallelize_position']] += [(test_name, deepcopy(test_config))]
             print '\tfinished adding tests for %s' % (api_name)
+        stream = _WritelnDecorator(sys.stdout)
+        run_suite(test_suite, stream, test.replace('_', ' '))
     
         # add the parallel tests to run last
-#         test_suite.addTest(unittest.TestSuite(parallelize_tests))
-        stream = _WritelnDecorator(sys.stdout)
-        _run_suite(test_suite, stream, test.replace('_', ' '))
-    #     _run_suite(load_test_authorized, stream, 'load authorized')
-    #     cohort_ids = []
+        if test in tests4parallelize:
+            test_suite = unittest.TestSuite()
+            parallel_test = ParallelizeTest(parallelize_tests, json_config)
+            test_suite.addTest(parallel_test)
+            stream = _WritelnDecorator(sys.stdout)
+            run_suite(test_suite, stream, 'parallel')
     print '%s: finished running tests' % (datetime.now())
     
 if __name__ == '__main__':

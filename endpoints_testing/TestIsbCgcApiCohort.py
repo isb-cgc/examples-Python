@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 '''
+from datetime import datetime
+
 from ParametrizedApiTest import ParametrizedApiTest
 
 # TODO: Write browser automation with selenium modules (user login)
@@ -99,6 +101,7 @@ class IsbCgcApiTestCohort(ParametrizedApiTest):
                 # TODO: think about how to make this more general
                 self.test['request']['cohort_id'] = cohort_id
                 self.num_requests = 1
+                print '\n%s: deleting cohort %s' % (datetime.now(), cohort_id2cohort_name[cohort_id])
                 self.test_run(**{"cohort_id": cohort_id})
         finally:
             print 'deleted %s cohorts out of %s' % (count, len(cohort_id2cohort_name))
