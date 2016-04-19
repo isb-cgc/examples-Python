@@ -2,7 +2,7 @@
     "resources": {
       "cohorts": {
         "endpoints": {
-          "preview": {
+          "preview_cohort": {
             "requires_auth": "false",
             "deletes_resource": "false",
             "parallelize_position": 1,
@@ -503,7 +503,7 @@
               "large_data": {}
             }
           },
-          "save": {
+          "save_cohort": {
             "requires_auth": "true",
             "deletes_resource": "false",
             "parallelize_position": 0,

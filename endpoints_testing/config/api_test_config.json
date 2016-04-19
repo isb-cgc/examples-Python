@@ -7,14 +7,14 @@
       "CLIENT_SECRET": "To_WJH7-1V-TofhNGcEqmEYi",
       "STORAGE_FILE": ".isb_credentials_dev"
     },
-    "bad_requests": {
+    "_bad_requests": {
       "endpoints_url_base": "https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/",
       "version": "v1",
       "CLIENT_ID": "907668440978-0ol0griu70qkeb6k3gnn2vipfa5mgl60.apps.googleusercontent.com",
       "CLIENT_SECRET": "To_WJH7-1V-TofhNGcEqmEYi",
       "STORAGE_FILE": ".isb_credentials_dev" 
     },
-    "large_data": {
+    "_large_data": {
       "endpoints_url_base": "https://api-dot-isb-cgc-test.appspot.com/_ah/api/discovery/v1/apis/",
       "version": "v1",
       "CLIENT_ID": "144657163696-9dnmed5krg4r00km2fg1q93l71nj3r9j.apps.googleusercontent.com",
@@ -55,8 +55,8 @@
       "test_ordering": [ 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/delete"}, 
-        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/save"}, 
-        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/preview"}, 
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/save_cohort"},
+        {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/preview_cohort"},
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/full_tests/list"}, 
         {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/cohort_patients_samples_list"}, 
