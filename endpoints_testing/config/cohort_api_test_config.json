@@ -725,7 +725,6 @@
                       "body": {
                         "vital_status": "Dead", 
                         "race": "WHITE", 
-                        "country": "None",
                         "gender": "FEMALE"
                       }
                     },
@@ -748,12 +747,12 @@
                         "format": "date"
                       },
                       "num_patients": {
-                        "value": "76",
+                        "value": "128",
                         "type": "string",
                         "format": "int64"
                       },
                       "num_samples": {
-                        "value": "193",
+                        "value": "306",
                         "type": "string",
                         "format": "int64"
                       }
