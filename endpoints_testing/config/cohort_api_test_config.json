@@ -863,7 +863,7 @@
                     "request": {
                       "name": "sample_list_3",
                       "body": {
-                        "SampleBarcode": "TCGA-A6-2679-01A,TCGA-A6-2679-10A,TCGA-A6-2679-11A,TCGA-FD-A43X-01A,TCGA-FD-A43X-10A"
+                        "SampleBarcode": ["TCGA-A6-2679-01A","TCGA-A6-2679-10A","TCGA-A6-2679-11A","TCGA-FD-A43X-01A","TCGA-FD-A43X-10A"]
                       }
                     },
                     "request_list": {
@@ -909,7 +909,7 @@
                     "request": {
                       "name": "sample_list_4",
                       "body": {
-                        "ParticipantBarcode": "TCGA-AQ-A04L,TCGA-E9-A1N8"
+                        "ParticipantBarcode": ["TCGA-AQ-A04L","TCGA-E9-A1N8"]
                       }
                     },
                     "expected_response": {
