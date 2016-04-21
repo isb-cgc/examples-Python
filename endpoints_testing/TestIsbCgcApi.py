@@ -27,6 +27,7 @@ from apiclient import discovery
 from datetime import datetime
 from jsonspec.reference import resolve
 from jsonspec.reference.providers import FilesystemProvider
+# from setuptools.compat import basestring
 
 from oauth2client.client import OAuth2WebServerFlow 
 from oauth2client import tools 
@@ -47,8 +48,9 @@ from ParallelizeTest import ParallelizeTest
 # TODO: modify stress test to have a request per count, rather than repeat the same request
 # TODO: run one save per six example saves, then for stress test, randomly pick one per count
 
-# The google defined scope for authorization 
-EMAIL_SCOPE = 'https://www.googleapis.com/auth/userinfo.email' 
+# The google defined scope for authorization
+
+EMAIL_SCOPE = 'https://www.googleapis.com/auth/userinfo.email'
 
  
 #------------------------------------------------------------------------------ 

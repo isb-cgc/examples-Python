@@ -19,7 +19,7 @@
       "version": "v1",
       "CLIENT_ID": "144657163696-9dnmed5krg4r00km2fg1q93l71nj3r9j.apps.googleusercontent.com",
       "CLIENT_SECRET": "z27YV6Fd0HDKISkkHVoY1cTa",
-      "STORAGE_FILE": ".isb_credentials_test" 
+      "STORAGE_FILE": ".isb_credentials_test"
     }
   },
   "parallelize_test": {

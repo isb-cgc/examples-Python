@@ -765,7 +765,7 @@
                     "request": {
                       "name": "sample_list_1",
                       "body": {
-                        "SampleBarcode": "TCGA-BR-7704-01A,TCGA-BR-7704-10A,TCGA-BR-7704-11A,TCGA-BR-7716-01A,TCGA-BR-7716-10A,TCGA-BR-7716-11A,TCGA-BR-7717-01A,TCGA-BR-7717-10A,TCGA-BR-7717-11A,TCGA-BR-A4CR-01A,TCGA-BR-A4CR-10A,TCGA-BR-A4CS-01A,TCGA-BR-A4CS-10A"
+                        "SampleBarcode": ["TCGA-BR-7704-01A", "TCGA-BR-7704-10A", "TCGA-BR-7704-11A", "TCGA-BR-7716-01A", "TCGA-BR-7716-10A", "TCGA-BR-7716-11A", "TCGA-BR-7717-01A", "TCGA-BR-7717-10A", "TCGA-BR-7717-11A", "TCGA-BR-A4CR-01A", "TCGA-BR-A4CR-10A", "TCGA-BR-A4CS-01A", "TCGA-BR-A4CS-10A"]
                       }
                     },
                     "request_list": {
@@ -824,7 +824,7 @@
                     "request": {
                       "name": "sample_list_2",
                       "body": {
-                        "ParticipantBarcode": "TCGA-VD-A8KO,TCGA-VD-AA8R,TCGA-V4-A9ES,TCGA-VD-AA8O,TCGA-WC-AA9A,TCGA-VD-AA8P,TCGA-V4-A9ET"
+                        "ParticipantBarcode": ["TCGA-VD-A8KO", "TCGA-VD-AA8R", "TCGA-V4-A9ES", "TCGA-VD-AA8O", "TCGA-WC-AA9A", "TCGA-VD-AA8P", "TCGA-V4-A9ET"]
                       }
                     },
                     "expected_response": {
@@ -1431,7 +1431,7 @@
                           "value": {
                             "type": "from list",
                             "values": [
-                              "[u'BLCA']", 
+                              "[u'BLCA']",
                               "[u'1']", 
                               "[u'01']"
                             ]
@@ -1836,7 +1836,7 @@
                             "value": "SampleBarcode"
                           },
                           "value": {
-                            "value": "[u'TCGA-A6-2679-01A,TCGA-A6-2679-10A,TCGA-A6-2679-11A,TCGA-FD-A43X-01A,TCGA-FD-A43X-10A']"
+                            "value": ["TCGA-A6-2679-01A","TCGA-A6-2679-10A","TCGA-A6-2679-11A","TCGA-FD-A43X-01A","TCGA-FD-A43X-10A"]
                           }
                         }
                       },
@@ -1879,7 +1879,7 @@
                             "value": "ParticipantBarcode"
                           },
                           "value": {
-                            "value": "[u'TCGA-AQ-A04L,TCGA-E9-A1N8']"
+                            "value": ["TCGA-AQ-A04L","TCGA-E9-A1N8"]
                           }
                         }
                       },
