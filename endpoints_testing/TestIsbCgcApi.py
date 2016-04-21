@@ -67,6 +67,7 @@ def get_credentials(client_id, client_secret, credential_file_name):
         credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args)) 
     return credentials 
 
+
 # this work around resolves an issue with TextTestRunner where it expects a stream to have a writeln method
 # from: http://svn.python.org/projects/python/trunk/Lib/unittest/runner.py
 # issue: https://bugs.python.org/issue16739
@@ -84,6 +85,7 @@ class _WritelnDecorator(object):
         if arg:
             self.write(arg)
         self.write('\n') # text-mode streams translate to \r\n if needed
+
 
 class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTestFeatureType, IsbCgcApiTestMeta, IsbCgcApiTestPairwise, IsbCgcApiTestSeqpeek, IsbCgcApiTestUser):
     def test_run(self, **kwargs):
@@ -239,6 +241,7 @@ class IsbCgcApiTest(IsbCgcApiTestCohort, IsbCgcApiTestFeatureData, IsbCgcApiTest
             else:
                 self._check_expected(response, test_config_dict['expected_error_response'], test_config_dict, '\t', **kwargs)
 
+
 def print_other_results(test_results):
     if 0 < len(test_results.expectedFailures):
         failure_results = '\texpected failures:\n'
@@ -254,6 +257,7 @@ def print_other_results(test_results):
             failure_results += (',' if 0 < len(failure_results) else '\t\t') + failure._testMethodName
         
         print '\tunexpected successes:\n%s\n%s\n' % (failure_results, test_results.separator1)
+
 
 def run_suite(test_suite, stream, test_name):
     test_results = unittest.TextTestResult(stream = stream, descriptions = True, verbosity = 2)
@@ -274,6 +278,7 @@ def run_suite(test_suite, stream, test_name):
     print 'test took %s secs' % (total_time)
     print '%s' % (test_results.separator1)
     return test_results
+
 
 def main():
     # TODO: final report should include length of all responses and time taken for each test
