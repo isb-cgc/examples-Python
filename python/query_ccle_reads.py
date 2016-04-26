@@ -276,6 +276,10 @@ def main ( args ):
                          "end": args.pos+2,
                          "pageSize": 256 }
 
+                if ( 1 ):
+                    print json.dumps ( body, indent=4 )
+                    sys.exit(-1)
+
                 # call the GA4GH API reads.search method
                 try:
                     r = ggSvc.reads().search ( body=body ).execute()
