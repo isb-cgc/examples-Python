@@ -292,7 +292,20 @@ def main():
     with open('endpoints_testing/config/{api_config}.json'.format(api_config=args.api_name)) as f:
         json_config = json.load(f)
 
-    provider = FilesystemProvider(json_config['api_config_dir'], 'cur:config', aliases = json_config['aliases'])
+    provider = FilesystemProvider(json_config['api_config_dir'], 'cur:config', aliases=json_config['aliases'])
+    # provider json documents in the directory endpoints_testing/config
+    # gives the prefix 'cur:config'
+    # and aliases = {
+    #     ":cohort_api_test_config": "cohort_api_test_config",
+    #     ":feature_data_api_test_config": "feature_data_api_test_config",
+    #     ":feature_type_api_test_config": "feature_type_api_test_config",
+    #     ":meta_api_test_config": "meta_api_test_config",
+    #     ":pairwise_api_test_config": "pairwise_api_test_config",
+    #     ":seqpeek_api_test_config": "seqpeek_api_test_config",
+    #     ":user_api_test_config": "user_api_test_config"
+    #   }
+    # currently in test_ordering there are 14 starting with  {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/
+
     for test, endpoint_url_info in json_config['test2endpoint_url_info'].iteritems():
         print 'run %s test' % (test)
         test_suite = unittest.TestSuite()
@@ -300,35 +313,44 @@ def main():
         # set up the three test suites for the parallel run, one for set up tests, one for the actual concurrency
         # testing and one for the cleanup 
         parallelize_tests = [[], [], []]
-        tests4parallelize = json_config['parallelize_test']['tests']
-        endpoints_url_base = endpoint_url_info['endpoints_url_base']
+        tests4parallelize = json_config['parallelize_test']['tests']  # tests4parallelize = "minimal"
+        endpoints_url_base = endpoint_url_info['endpoints_url_base']  # "https://api-dot-mvm-dot-isb-cgc.appspot.com/_ah/api/discovery/v1/apis/"
         client_id = endpoint_url_info['CLIENT_ID']
         client_secret = endpoint_url_info['CLIENT_SECRET']
         credential_file_name = endpoint_url_info['STORAGE_FILE']
         for api_name, api_config in json_config['apis'].iteritems():
-            print '\tstart adding tests for %s' % (api_name)
-            discovery_url = endpoints_url_base + api_config['endpoint_uri']
-            version = api_config['version']
-            base_resource_name = api_config['base_resource_name']
+            print '\tstart adding tests for %s' % (api_name) # cohort_api, feature_data_api, etc.
+            discovery_url = endpoints_url_base + api_config['endpoint_uri']  # e.g. "cohort_api/v1/rest"
+            version = api_config['version']  # e.g. "v1"
+            base_resource_name = api_config['base_resource_name']  # e.g. "cohort_endpoints"
             # get the endpoints test order
             endpoint_test_ordering = []
             for index, reference in enumerate(api_config['test_ordering']):
                 ref = '#/test_ordering/%s' % index
                 test_config = resolve(api_config, ref, provider)
+                # for delete, ref = '#/test_ordering/14' which is {"$ref": "cur:config:cohort_api_test_config#/resources/cohorts/endpoints/delete"}
+                # for cohort_api, api_config has the keys: "endpoint_uri", "version", "base_resource_name", and "test_ordering"
+                # test_ordering is a list of refs to cohort_api_test_config
+                # so for delete for example, test_config goes to the file cohort_api_test_config
+                # then to #/resources/cohorts/endpoints/delete
+                # and gets the json config for the delete endpoint
+
                 fields = reference['$ref'].split('/')
+                # ex: for delete, fields = ['cur:config:cohort_api_test_config#', 'resources', 'cohorts', 'endpoints', 'delete']
                 # TODO: adjust for pairwise 'missing' field
-                test_config['resource'] = fields[2]
-                test_config['endpoint'] = fields[-1]
-                endpoint_test_ordering.append(test_config)
+                test_config['resource'] = fields[2]  # "cohorts"
+                test_config['endpoint'] = fields[-1]  # "delete"
+                endpoint_test_ordering.append(test_config)  # test_config is the json_blob for that endpoint
             
             for test_user_credentials in args.test_user_credentials:
                 # add tests without authorization first
                 for endpoints_test_config in endpoint_test_ordering:
-                    resource = endpoints_test_config['resource'] 
-                    endpoint_name = endpoints_test_config['endpoint']
-                    requires_auth = endpoints_test_config['requires_auth']
+                    resource = endpoints_test_config['resource']  # "cohorts"
+                    endpoint_name = endpoints_test_config['endpoint']  # "delete"
+                    requires_auth = endpoints_test_config['requires_auth']  # "true"
                     
                     for test_config_name, test_config_dict in endpoints_test_config['test_config'].iteritems():
+                        # test_config_name is either "minimal", "bad_requests", or "large_data"
                         test_config = {
                             'api': api_name, 
                             'version': version, 
