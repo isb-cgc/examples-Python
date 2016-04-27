@@ -1782,7 +1782,7 @@
                             "value": "SampleBarcode"
                           },
                           "value": {
-                            "value": ["TCGA-A6-2679-01A","TCGA-A6-2679-10A","TCGA-A6-2679-11A","TCGA-FD-A43X-01A","TCGA-FD-A43X-10A"]
+                            "value": "[u'TCGA-A6-2679-01A', u'TCGA-A6-2679-10A', u'TCGA-A6-2679-11A', u'TCGA-FD-A43X-01A', u'TCGA-FD-A43X-10A']"
                           }
                         }
                       },
