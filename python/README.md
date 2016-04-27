@@ -6,4 +6,4 @@ The ISB-CGC programmatic API is implemented using Google Cloud Endpoints.  These
   *  **api_test_url.py** shows you how to construct https requests programmatically from python
   *  **api_test_service.py** shows you how to build a service object and use them that way  (note that we have found that accessing these endpoints using a service object is roughly twice as fast as the https requests approach, so we suggest that you start there)
   *  **query_ccle_reads.py** script shows you how to use both the ISB-CGC API and the Genomics "reads" API to query the open-access CCLE DNAseq and RNAseq reads that we have loaded into Google Genomics
-  
+  *  **createSchema.py** script generates a JSON schema for an input data file. This is useful when the data file has a large number of columns, so you can avoid manual creation of its schema. This can be used with the 'bq load' command line tool to load data to BigQuery (https://cloud.google.com/bigquery/quickstart-command-line).
