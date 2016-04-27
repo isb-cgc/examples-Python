@@ -1825,7 +1825,7 @@
                             "value": "ParticipantBarcode"
                           },
                           "value": {
-                            "value": "[u'TCGA-AQ-A04L', u'TCGA-E9-A1N8]"
+                            "value": "[u'TCGA-AQ-A04L', u'TCGA-E9-A1N8']"
                           }
                         }
                       },
