@@ -1696,7 +1696,7 @@
                             "value": "SampleBarcode"
                           },
                           "value": {
-                            "value": "[u'TCGA-BR-7704-01A,TCGA-BR-7704-10A,TCGA-BR-7704-11A,TCGA-BR-7716-01A,TCGA-BR-7716-10A,TCGA-BR-7716-11A,TCGA-BR-7717-01A,TCGA-BR-7717-10A,TCGA-BR-7717-11A,TCGA-BR-A4CR-01A,TCGA-BR-A4CR-10A,TCGA-BR-A4CS-01A,TCGA-BR-A4CS-10A']"
+                            "value": "[u'TCGA-BR-7704-01A', u'TCGA-BR-7704-10A', u'TCGA-BR-7704-11A', u'TCGA-BR-7716-01A', u'TCGA-BR-7716-10A', u'TCGA-BR-7716-11A', u'TCGA-BR-7717-01A', u'TCGA-BR-7717-10A', u'TCGA-BR-7717-11A', u'TCGA-BR-A4CR-01A', u'TCGA-BR-A4CR-10A', u'TCGA-BR-A4CS-01A', u'TCGA-BR-A4CS-10A']"
                           }
                         }
                       },
