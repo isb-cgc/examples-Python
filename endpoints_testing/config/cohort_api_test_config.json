@@ -5484,10 +5484,10 @@
                     },
                     "expected_response": {
                       "patient_count": {
-                        "value": "76"
+                        "value": "128"
                       },
                       "sample_count": {
-                        "value": "193"
+                        "value": "306"
                       },
                       "kind": {
                         "value": "cohort_api#cohortsItem"
