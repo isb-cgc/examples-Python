@@ -29,7 +29,7 @@ else:
     dataFile = open(sys.argv[1],"r")
 
 #first line is expected to be the header
-expectedHeader = dataFile.readline().strip().split()
+expectedHeader = dataFile.readline().strip().split('\t')
 
 #if any numeric values in this first line, it is likely not a header: hence exit
 if any([isNumeric(x) for x in expectedHeader]):
@@ -37,7 +37,7 @@ if any([isNumeric(x) for x in expectedHeader]):
     sys.exit()
 
 #else read the first data row to infer column data types
-firstDataRow = dataFile.readline().strip().split()
+firstDataRow = dataFile.readline().strip().split('\t')
 
 #print opening bracket
 print '['
