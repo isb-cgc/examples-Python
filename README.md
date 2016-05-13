@@ -9,7 +9,7 @@ If you launch your own Cloud Datalab instance, please be sure to shut it down wh
 
 
 #### Requirements
-google-api-python-client
-oauth2client
-httplib2
-requests
+* google-api-python-client
+* oauth2client
+* httplib2
+* requests
