@@ -140,7 +140,7 @@ def main ( args ):
     # and then we will use a similar 'discovery' process to build a service to
     # access Google Genomics using the GA4GH API
     try:
-        ggSvc = discovery.build ( 'genomics', 'v1', credentials=credentials )
+        ggSvc = discovery.build('genomics', 'v1', credentials=credentials)
     except:
         print " ERROR: failed to build genomics service "
         sys.exit(-1)
@@ -148,7 +148,7 @@ def main ( args ):
     # payload = { 'Project':'CCLE', 'Study':['LUSC','SKCM'] }
     payload = { 'Project':'CCLE' }
     try:
-        r = apiSvc.cohort_endpoints().cohorts().preview ( body = payload ).execute()
+        r = apiSvc.cohort_endpoints().cohorts().preview_cohort(body=payload).execute()
         if ( args.verbose ): print json.dumps ( r, indent=4 )
     except:
         print " ERROR: cohort preview endpoint call failed "
