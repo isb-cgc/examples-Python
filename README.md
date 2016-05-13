@@ -6,3 +6,10 @@ This repository contains a series of Python examples to get you started using th
 
 ### Important Note
 If you launch your own Cloud Datalab instance, please be sure to shut it down when you are no longer using it.  A typical Google Cloud Datalab VM will cost your project approximately **$1/day**.  Shut down instructions and other tips are [here](https://cloud.google.com/datalab/getting-started) -- look for the section called **Stopping/Starting VM Instances**.
+
+
+#### Requirements
+google-api-python-client
+oauth2client
+httplib2
+requests
