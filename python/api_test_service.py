@@ -18,7 +18,7 @@ def test_preview_cohort_service ( service, payload, fields = None ):
     print " *** calling preview_cohort endpoint *** ", payload
 
     # construct the googleapiclient.http.HttpRequest object
-    q = service.cohort_endpoints().cohorts().preview ( body = payload, fields = fields )
+    q = service.cohort_endpoints().cohorts().preview_cohort( body = payload, fields = fields )
 
     # and execute 
     data = q.execute()

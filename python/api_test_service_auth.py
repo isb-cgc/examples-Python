@@ -72,7 +72,7 @@ def test_create_cohort_service ( service, **kwargs ):
     print " "
     print " *** calling save endpoint *** ", kwargs
 
-    q = service.cohort_endpoints().cohorts().save ( **kwargs )
+    q = service.cohort_endpoints().cohorts().save_cohort( **kwargs )
     data = q.execute()
 
     return ( data )
