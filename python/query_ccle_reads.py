@@ -117,6 +117,8 @@ def main ( args ):
 
     # authorize and create an Http object ( http://bitworking.org/projects/httplib2/doc/html )
     # credentials = isb_auth.get_credentials()
+
+    if ( args.verbose ): print " calling get_application_default ... "
     credentials = GoogleCredentials.get_application_default()
     # http = httplib2.Http()
     # http = credentials.authorize(http)
@@ -133,6 +135,7 @@ def main ( args ):
     discovery_url = 'https://%s/_ah/api/discovery/v1/apis/%s/%s/rest' % ( site, api, version )
     try:
         apiSvc = discovery.build ( api, version, discoveryServiceUrl=discovery_url, credentials=credentials )
+        if ( args.verbose ): print " successfully built API service ... "
     except:
         print " ERROR: failed to build api service "
         sys.exit(-1)
@@ -141,6 +144,7 @@ def main ( args ):
     # access Google Genomics using the GA4GH API
     try:
         ggSvc = discovery.build('genomics', 'v1', credentials=credentials)
+        if ( args.verbose ): print " successfully built Genomics service ... "
     except:
         print " ERROR: failed to build genomics service "
         sys.exit(-1)
@@ -149,7 +153,9 @@ def main ( args ):
     payload = { 'Project':'CCLE' }
     try:
         r = apiSvc.cohort_endpoints().cohorts().preview_cohort(body=payload).execute()
-        if ( args.verbose ): print json.dumps ( r, indent=4 )
+        if ( args.verbose ): 
+            print " results from preview_cohort call: "
+            print json.dumps ( r, indent=4 )
     except:
         print " ERROR: cohort preview endpoint call failed "
         sys.exit(-1)
@@ -157,7 +163,9 @@ def main ( args ):
     try:
         patientList = r['patients']
         sampleList = r['samples']
-        if ( args.verbose ): print len(patientList), len(sampleList)
+        if ( args.verbose ): 
+            print " # of patients and # of samples: "
+            print len(patientList), len(sampleList)
     except:
         print " nothing returned from cohorts preview "
 
@@ -276,9 +284,9 @@ def main ( args ):
                          "end": args.pos+2,
                          "pageSize": 256 }
 
-                if ( 1 ):
+                if ( args.verbose ):
+                    print " body of GA4GH request: "
                     print json.dumps ( body, indent=4 )
-                    sys.exit(-1)
 
                 # call the GA4GH API reads.search method
                 try:
@@ -327,18 +335,27 @@ def main ( args ):
 # received a request in a long time, it may have gone 'cold' and may need
 # to be 'warmed up' again.
 
+# to look at the BRAFV600E (g.chr7:140453136A>T) mutation, for example, 
+# try this:
+#       python ./query_ccle_reads.py  -c 7 -p 140453135 -w 5
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Look at CCLE DNA-seq and RNA-seq data")
     parser.add_argument ( "-v", "--verbose", action="store_true" )
-    # BRAF V600E mutation: g.chr7:140453136A>T
-    parser.add_argument ( "-c", "--chr", type=str, help="chromosome", \
+    parser.add_argument ( "-c", "--chr", type=str, help="chromosome (eg 7 rather than ch7 or chr7)", \
                 dest='chr', required=True, default='7' )
     parser.add_argument ( "-p", "--pos", type=int, help="base position (0-based)", \
                 dest='pos', required=True, default=140453136 )
-    parser.add_argument ( "-w", "--width", type=int, help="sequence context width", \
-                dest='width', required=True, default=11 )
+    parser.add_argument ( "-w", "--width", type=int, help="sequence context width (default=11)", \
+                dest='width', default=11 )
     args = parser.parse_args()
+
+    print " "
+    print " "
+    print " Looking at CCLE data using GA4GH API at chr%s:%d " % ( args.chr, args.pos )
+    print " "
+    print " "
 
     t0 = time.time() 
     main ( args )
