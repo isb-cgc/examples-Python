@@ -122,5 +122,26 @@
         {"$ref": "cur:config:user_api_test_config#/resources/user/endpoints/amiauthorized"}
       ]
     }
+  },
+  "log_dir_tag": "endpoints_testing/endpoint_validation/discovery",
+  "outdir": "endpoints_testing/endpoint_validation/doc_test/",
+  "discovery_filename": "discovery",
+  "ENDPOINT_LIST_URL": "https://%s/_ah/api/discovery/v1/apis",
+  "ENDPOINT_LIST_URL_google": "https://%s/discovery/v1/apis",
+  "ENDPOINT_URL": "https://%s/_ah/api/discovery/v1/apis/%s/%s/rest",
+  "ENDPOINT_URL_google": "https://%s/discovery/v1/apis/%s/%s/rest",
+  "endpoint_report": {
+    "filename": "EndpointReport.tsv",
+    "header": "Endpoints for %s\n",
+    "endpoint_def" : {
+      "columns": [
+        "name",
+        "version",
+        "description"
+      ]
+    }
+  },
+  "endpoint_list": {
+    "key": "id"
   }
 }
