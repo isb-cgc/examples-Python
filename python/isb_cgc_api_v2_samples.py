@@ -42,7 +42,7 @@ def get(service, barcode):
 	Usage: python python/isb_cgc_api_v2_samples.py -e get -b TCGA-W5-AA2R-01A
 	"""
 	data = service.samples().get(sample_barcode=barcode).execute()
-	print '\nresults from get'
+	print '\nresults from samples().get()'
 	pprint.pprint(data)
 
 def datafilenamekeys(service, barcode=None):
@@ -50,7 +50,7 @@ def datafilenamekeys(service, barcode=None):
 	Usage: python python/isb_cgc_api_v2_samples.py -e datafilenamekeys -b CCLE-ACC-MESO-1-DNA-08
 	"""
 	data = service.samples().datafilenamekeys(sample_barcode=barcode).execute()
-	print '\nresults from datafilenamekeys'
+	print '\nresults from samples().datafilenamekeys()'
 	pprint.pprint(data)
 
 def googlegenomics(service, barcode=None):
@@ -58,7 +58,7 @@ def googlegenomics(service, barcode=None):
 	Usage: python python/isb_cgc_api_v2_samples.py -e googlegenomics -b CCLE-ACC-MESO-1-DNA-08
 	"""
 	data = service.samples().googlegenomics(sample_barcode=barcode).execute()
-	print '\nresults from googlegenomics'
+	print '\nresults from samples().googlegenomics()'
 	pprint.pprint(data)
 
 
