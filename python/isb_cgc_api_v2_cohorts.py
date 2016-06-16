@@ -1,9 +1,11 @@
+from argparse import ArgumentParser
 from googleapiclient.discovery import build
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client import tools
 from oauth2client.file import Storage
 import httplib2
 import pprint
+import sys
 import os
 
 # the CLIENT_ID for the ISB-CGC site
@@ -95,44 +97,35 @@ def googlegenomics_from_cohort(service):
 	print 'result of googlegenomics'
 	pprint.pprint(data)
 
-def patient_details(service, barcode):
-	data = service.patients().get(patient_barcode=barcode).execute()
-	pprint.pprint(data)
-
-def sample_details(service, barcode):
-	data = service.samples().get(sample_barcode=barcode).execute()
-	pprint.pprint(data)
-
-def datafilenamekeys_from_sample(service, barcode):
-	data = service.samples().datafilenamekeys(sample_barcode='TCGA-W5-AA2R-01A').execute()
-	pprint.pprint(data)
-
-def googlegenomics_from_sample(service):
-	data = service.samples().googlegenomics(sample_barcode='CCLE-ACC-MESO-1-DNA-08').execute()
-	print '\ngooglegenomics from sample'
-	pprint.pprint(data)
-
-def user_get(service):
-	data = service.users().get().execute()
-	print '\nresult of users.get:'
-	print data
 
 def main():
-	unauthorized_service = get_unauthorized_service()
-
-	authorized_service = get_authorized_service()
-	# preview(authorized_service)
-	# create_cohort(authorized_service)
-	patient_barcode, sample_barcode = get_cohort(authorized_service)
+	# print sys.argv
+	parser = ArgumentParser()
+	parser.add_argument('--endpoint', '-e',
+						help='Name of cohorts endpoint to execute. '
+							 'Options: get, list, preview, create, delete, datafilenamekeys, googlegenomics')
+	parser.add_argument('--cohort_id', '-c',
+						help='Id of cohort to use in get, delete, datafilenamekeys, or googlegenomics endpoints')
+	parser.add_argument('--body', '-b',
+						help='Payload to use in preview or create endpoints. Example: '
+							 '{"Study": ["BRCA", "UCS"], "age_at_initial_pathologic_diagnosis_gte": 90}',
+						default='{"Study": ["BRCA", "UCS"], "age_at_initial_pathologic_diagnosis_gte": 90}')
+	parser.add_argument('--name', 'n',
+						help='The name of the cohort to create in the create endpoint.')
+	args = parser.parse_args()
+	if args.endpoint not in ['get', 'list', 'preview', 'create', 'delete', 'datafilenamekeys', 'googlegenomics']:
+		return
+	service = get_unauthorized_service() if args.endpoint == 'preview' else get_authorized_service()
+	# unauthorized_service = get_unauthorized_service()
+	# authorized_service = get_authorized_service()
+	# # preview(unauthorized_service)
+	# # create_cohort(authorized_service)
+	# patient_barcode, sample_barcode = get_cohort(authorized_service)
 	# delete_cohort(authorized_service)
 	# list_cohorts(authorized_service)
 	# datafilenamekeys_from_cohort(authorized_service)
 	# googlegenomics_from_cohort(authorized_service)
-	patient_details(authorized_service, patient_barcode)
-	# sample_details(authorized_service, sample_barcode)
-	# datafilenamekeys_from_sample(authorized_service, sample_barcode)
-	# googlegenomics_from_sample(authorized_service)
-	# user_get(authorized_service)
+
 
 
 if __name__ == '__main__':
