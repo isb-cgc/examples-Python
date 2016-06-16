@@ -61,49 +61,69 @@ def get_authorized_service():
 ## resource methods
 
 def get(service, cohort_id=1, body=None, name=None):
+	"""
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e get -c 24
+	"""
 	data = service.cohorts().get(cohort_id=cohort_id).execute()
 	print '\nresults from cohorts().get()'
 	pprint.pprint(data)
 
 
 def list(service, cohort_id=None, body=None, name=None):
+	"""
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e list
+	"""
 	data = service.cohorts().list().execute()
 	print '\nresults from cohorts().list()'
 	pprint.pprint(data)
 
 
 def preview(service, cohort_id=None, body=None, name=None):
+	"""
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e preview -b {"Study": ["BRCA", "UCS"], "age_at_initial_pathologic_diagnosis_gte": 90}
+	"""
 	data = service.cohorts().preview(body=body).execute()
 	print '\nresults from cohorts().preview()'
 	pprint.pprint(data)
 
 
 def create(service, cohort_id=None, body=None, name=None):
+	"""
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e preview -n mycohortname -b {"Study": ["BRCA", "UCS"], "age_at_initial_pathologic_diagnosis_gte": 90}
+	"""
 	data = service.cohorts().create(name=name, body=body).execute()
 	print '\nresults from cohorts().create()'
 	pprint.pprint(data)
 
 
 def delete(service, cohort_id=None, body=None, name=None):
+	"""
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e delete -c 24
+	"""
 	data = service.cohorts().delete(cohort_id=cohort_id).execute()
 	print '\nresults from cohorts().delete()'
 	pprint.pprint(data)
 
 
 def datafilenamekeys(service, cohort_id=None, body=None, name=None):
+	"""
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e datafilenamekeys -c 24
+	"""
 	data = service.cohorts().datafilenamekeys(cohort_id=cohort_id).execute()
 	print '\nresults from cohorts().datafilenamekeys()'
 	pprint.pprint(data)
 
 
 def googlegenomics(service, cohort_id=None, body=None, name=None):
+	"""
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e datafilenamekeys -c 24
+	"""
 	data = service.cohorts().googlegenomics(cohort_id=cohort_id).execute()
 	print '\nresults from cohorts().googlegenomics()'
 	pprint.pprint(data)
 
 
 def main():
-	# print sys.argv
 	parser = ArgumentParser()
 	parser.add_argument('--endpoint', '-e',
 						help='Name of cohorts endpoint to execute. '
@@ -124,18 +144,6 @@ def main():
 	body = json.loads(args.body) if args.body is not None else args.body
 
 	globals()[args.endpoint](service, cohort_id=cohort_id, body=body, name=args.name)
-
-
-# unauthorized_service = get_unauthorized_service()
-# authorized_service = get_authorized_service()
-# # preview(unauthorized_service)
-# # create_cohort(authorized_service)
-# patient_barcode, sample_barcode = get_cohort(authorized_service)
-# delete_cohort(authorized_service)
-# list_cohorts(authorized_service)
-# datafilenamekeys_from_cohort(authorized_service)
-# googlegenomics_from_cohort(authorized_service)
-
 
 
 if __name__ == '__main__':
