@@ -45,12 +45,12 @@ def get(service, barcode):
 	print '\nresults from samples().get()'
 	pprint.pprint(data)
 
-def datafilenamekeys(service, barcode=None):
+def cloud_storage_file_paths(service, barcode=None):
 	"""
-	Usage: python python/isb_cgc_api_v2_samples.py -e datafilenamekeys -b CCLE-ACC-MESO-1-DNA-08
+	Usage: python python/isb_cgc_api_v2_samples.py -e cloud_storage_file_paths -b CCLE-ACC-MESO-1-DNA-08
 	"""
-	data = service.samples().datafilenamekeys(sample_barcode=barcode).execute()
-	print '\nresults from samples().datafilenamekeys()'
+	data = service.samples().cloud_storage_file_paths(sample_barcode=barcode).execute()
+	print '\nresults from samples().cloud_storage_file_paths()'
 	pprint.pprint(data)
 
 def googlegenomics(service, barcode=None):
@@ -66,11 +66,11 @@ def main():
 	parser = ArgumentParser()
 	parser.add_argument('--endpoint', '-e',
 						help='Name of cohorts endpoint to execute. '
-							 'Options: get, datafilenamekeys, googlegenomics')
+							 'Options: get, cloud_storage_file_paths, googlegenomics')
 	parser.add_argument('--barcode', '-b',
 						help='Sample barcode. Examples: TCGA-W5-AA2R-01A, CCLE-ACC-MESO-1-DNA-08')
 	args = parser.parse_args()
-	if args.endpoint not in ['get', 'datafilenamekeys', 'googlegenomics']:
+	if args.endpoint not in ['get', 'cloud_storage_file_paths', 'googlegenomics']:
 		return
 
 	service = get_unauthorized_service()

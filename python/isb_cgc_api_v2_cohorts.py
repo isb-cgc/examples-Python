@@ -105,20 +105,21 @@ def delete(service, cohort_id=None, body=None, name=None):
 	pprint.pprint(data)
 
 
-def datafilenamekeys(service, cohort_id=None, body=None, name=None):
+def cloud_storage_file_paths(service, cohort_id=None, body=None, name=None):
 	"""
-	Usage: python python/isb_cgc_api_v2_cohorts.py -e datafilenamekeys -c 24
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e cloud_storage_file_paths -c 24
 	"""
-	data = service.cohorts().datafilenamekeys(cohort_id=cohort_id).execute()
-	print '\nresults from cohorts().datafilenamekeys()'
+	data = service.cohorts().cloud_storage_file_paths(cohort_id=cohort_id).execute()
+	print '\nresults from cohorts().cloud_storage_file_paths()'
 	pprint.pprint(data)
 
 
 def googlegenomics(service, cohort_id=None, body=None, name=None):
 	"""
-	Usage: python python/isb_cgc_api_v2_cohorts.py -e datafilenamekeys -c 24
+	Usage: python python/isb_cgc_api_v2_cohorts.py -e googlegenomics -c 24
 	"""
-	data = service.cohorts().googlegenomics(cohort_id=cohort_id).execute()
+	data = service.cohorts().goog
+	legenomics(cohort_id=cohort_id).execute()
 	print '\nresults from cohorts().googlegenomics()'
 	pprint.pprint(data)
 
@@ -129,14 +130,14 @@ def main():
 						help='Name of cohorts endpoint to execute. '
 							 'Options: get, list, preview, create, delete, datafilenamekeys, googlegenomics')
 	parser.add_argument('--cohort_id', '-c',
-						help='Id of cohort to use in get, delete, datafilenamekeys, or googlegenomics endpoints')
+						help='Id of cohort to use in get, delete, cloud_storage_file_paths, or googlegenomics endpoints')
 	parser.add_argument('--body', '-b',
 						help='Payload to use in preview or create endpoints. Example: '
 							 '{"Study": ["BRCA", "UCS"], "age_at_initial_pathologic_diagnosis_gte": 90}')
 	parser.add_argument('--name', '-n',
 						help='The name of the cohort to create in the create endpoint.')
 	args = parser.parse_args()
-	if args.endpoint not in ['get', 'list', 'preview', 'create', 'delete', 'datafilenamekeys', 'googlegenomics']:
+	if args.endpoint not in ['get', 'list', 'preview', 'create', 'delete', 'cloud_storage_file_paths', 'googlegenomics']:
 		return
 
 	service = get_unauthorized_service() if args.endpoint == 'preview' else get_authorized_service()
