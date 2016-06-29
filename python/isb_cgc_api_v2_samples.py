@@ -32,7 +32,7 @@ def get_credentials():
 def get_unauthorized_service():
 	api = 'isb_cgc_api'
 	version = 'v2'
-	site = "https://api-dot-mvm-dot-isb-cgc.appspot.com"
+	site = "https://api-dot-isb-cgc.appspot.com"
 	discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
 	return build(api, version, discoveryServiceUrl=discovery_url, http=httplib2.Http())
 
