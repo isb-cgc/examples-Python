@@ -23,17 +23,21 @@ def isNumeric(val):
 #--------------------------------------------------------------
 
 #open data file to read header and 1st data row to infer data types of columns
-if sys.argv[1].endswith('gz'):
-    dataFile = gzip.open(sys.argv[1],"r")
-else:
-    dataFile = open(sys.argv[1],"r")
+try:
+    if sys.argv[1].endswith('gz'):
+        dataFile = gzip.open(sys.argv[1],"r")
+    else:
+        dataFile = open(sys.argv[1],"r")
+except:
+    print 'requires input filename as command-line parameter'
+    sys.exit()
 
 #first line is expected to be the header
 expectedHeader = dataFile.readline().strip().split('\t')
 
 #if any numeric values in this first line, it is likely not a header: hence exit
 if any([isNumeric(x) for x in expectedHeader]):
-    print 'I see numeric fields in the first line. Perhaps the header is missing. Please check again'
+    print 'Numeric fields found in the first line. Perhaps the header is missing. Please check again'
     sys.exit()
 
 #else read the first data row to infer column data types
@@ -67,3 +71,5 @@ for index,item in enumerate(firstDataRow):
 
 #print closing bracket
 print ']'
+
+
