@@ -32,7 +32,7 @@ def get_credentials():
 def get_authorized_service():
 	api = 'isb_cgc_api'
 	version = 'v2'
-	site = "http://localhost:8080"
+	site = "https://api-dot-mvm-dot-isb-cgc.appspot.com"
 	discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
 
 	credentials = get_credentials()

@@ -36,7 +36,7 @@ def get_credentials():
 def get_unauthorized_service():
 	api = 'isb_cgc_api'
 	version = 'v2'
-	site = "http://localhost:8080"
+	site = "https://api-dot-mvm-dot-isb-cgc.appspot.com"
 	discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
 	return build(api, version, discoveryServiceUrl=discovery_url, http=httplib2.Http())
 
@@ -44,7 +44,7 @@ def get_unauthorized_service():
 def get_authorized_service():
 	api = 'isb_cgc_api'
 	version = 'v2'
-	site = "http://localhost:8080"
+	site = "https://api-dot-mvm-dot-isb-cgc.appspot.com"
 	discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
 
 	credentials = get_credentials()
@@ -84,7 +84,7 @@ def preview(service, cohort_id=None, body=None, name=None):
 	"""
 	data = service.cohorts().preview(body=body).execute()
 	print '\nresults from cohorts().preview()'
-	pprint.pprint(data)
+	pprint.pprint(data['sample_count'])
 
 
 def create(service, cohort_id=None, body=None, name=None):
@@ -104,7 +104,6 @@ def delete(service, cohort_id=None, body=None, name=None):
 	print '\nresults from cohorts().delete()'
 	pprint.pprint(data)
 
-
 def cloud_storage_file_paths(service, cohort_id=None, body=None, name=None):
 	"""
 	Usage: python python/isb_cgc_api_v2_cohorts.py -e cloud_storage_file_paths -c 24
@@ -118,8 +117,7 @@ def googlegenomics(service, cohort_id=None, body=None, name=None):
 	"""
 	Usage: python python/isb_cgc_api_v2_cohorts.py -e googlegenomics -c 24
 	"""
-	data = service.cohorts().goog
-	legenomics(cohort_id=cohort_id).execute()
+	data = service.cohorts().googlegenomics(cohort_id=cohort_id).execute()
 	print '\nresults from cohorts().googlegenomics()'
 	pprint.pprint(data)
 
