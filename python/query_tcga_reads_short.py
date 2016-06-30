@@ -1,7 +1,5 @@
 import argparse
-import httplib2
 import json
-import requests
 import sys
 import time
 
@@ -107,12 +105,6 @@ def main ( args ):
 
     if ( args.verbose ): print " calling get_application_default ... "
     credentials = GoogleCredentials.get_application_default()
-
-    if ( 0 ):
-        if ( args.verbose ): print " creating http object ... "
-        http = httplib2.Http()
-        if ( args.verbose ): print " authorizing credentials ... "
-        http = credentials.authorize(http)
 
     # and then we will use a similar 'discovery' process to build a service to
     # access Google Genomics using the GA4GH API
