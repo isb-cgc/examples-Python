@@ -126,7 +126,7 @@ def main():
 	parser = ArgumentParser()
 	parser.add_argument('--endpoint', '-e',
 						help='Name of cohorts endpoint to execute. '
-							 'Options: get, list, preview, create, delete, datafilenamekeys, googlegenomics')
+							 'Options: get, list, preview, create, delete, cloud_storage_file_paths, googlegenomics')
 	parser.add_argument('--cohort_id', '-c',
 						help='Id of cohort to use in get, delete, cloud_storage_file_paths, or googlegenomics endpoints')
 	parser.add_argument('--body', '-b',
