@@ -1,14 +1,10 @@
 import argparse
-import httplib2
 import json
-import requests
 import sys
 import time
 
 from apiclient import discovery
 from oauth2client.client import GoogleCredentials
-
-import isb_auth
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -115,13 +111,8 @@ def analyzeSeqData ( mySeqData ):
 
 def main ( args ):
 
-    # authorize and create an Http object ( http://bitworking.org/projects/httplib2/doc/html )
-    # credentials = isb_auth.get_credentials()
-
     if ( args.verbose ): print " calling get_application_default ... "
     credentials = GoogleCredentials.get_application_default()
-    # http = httplib2.Http()
-    # http = credentials.authorize(http)
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # first we will create the cohort API service
@@ -353,7 +344,8 @@ if __name__ == '__main__':
 
     print " "
     print " "
-    print " Looking at CCLE data using GA4GH API at chr%s:%d " % ( args.chr, args.pos )
+    print " Looking at CCLE data using GA4GH API at %s:%d " % ( args.chr, args.pos )
+    print "  (note that as-is, this script will take ~15 minutes to run)"
     print " "
     print " "
 
