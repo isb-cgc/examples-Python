@@ -20,6 +20,7 @@ def isNumeric(val):
         return True
     except ValueError:
         return False
+
 #--------------------------------------------------------------
 
 #open data file to read header and 1st data row to infer data types of columns
@@ -32,38 +33,72 @@ except:
     print 'requires input filename as command-line parameter'
     sys.exit()
 
+print " "
+print "Parsing input file <%s>." % sys.argv[1]
+print " "
+
 #first line is expected to be the header
 expectedHeader = dataFile.readline().strip().split('\t')
 
 #if any numeric values in this first line, it is likely not a header: hence exit
 if any([isNumeric(x) for x in expectedHeader]):
-    print 'Numeric fields found in the first line. Perhaps the header is missing. Please check again'
+    print 'Numeric fields found in the first line. Perhaps the header is missing. Please check input file.'
+    print expectedHeader
     sys.exit()
 
 #else read the first data row to infer column data types
 firstDataRow = dataFile.readline().strip().split('\t')
 
+if ( len(expectedHeader) != len(firstDataRow) ):
+    print "The number of tab-separated tokens in the first row do not match? Please check file. "
+    print len(expectedHeader), len(firstDataRow)
+else:
+    print "%d columns found in input file." % len(firstDataRow)
+
+print " "
+print " "
+print "draft JSON schema : "
+print " "
+
 #print opening bracket
 print '['
 
+# the available data types are described in detail at: https://cloud.google.com/bigquery/data-types
+# and include: STRING, BYTES, INTEGER, FLOAT, BOOLEAN ('true' or 'false'),
+# RECORD, and TIMESTAMP
+# here we will only try to infer STRING, INTEGER, FLOAT, or BOOLEAN
+
 #loop through the columns
 for index,item in enumerate(firstDataRow):
-    if item.isdigit(): #integer
-        outStr = '{"name": "'+expectedHeader[index]+'", "type": "integer", "mode": "nullable"}'
+
+    # if we have a blank field, we can't really infer anything
+    # so we'll assume string and move on ...
+    if ( item == '' ):
+        outStr = '    {"name": "'+expectedHeader[index]+'", "type": "string", "mode": "nullable"}'
+        continue
+
+    # the first test is for boolean
+    if ( item.lower()=="true" or item.lower()=="false" ):
+        outStr = '    {"name": "'+expectedHeader[index]+'", "type": "boolean", "mode": "nullable"}'
     else:
         try:
-            float(item)  #if successfully converted to floating point number
-            outStr = '{"name": "'+expectedHeader[index]+'", "type": "float", "mode": "nullable"}'
+            # next try to cast it as an integer
+            iVal = int(item)
+            outStr = '    {"name": "'+expectedHeader[index]+'", "type": "integer", "mode": "nullable"}'
         except:
-            if item.lower()=='true' or item.lower()=='false':  #infer boolean
-                outStr = '{"name": "'+expectedHeader[index]+'", "type": "boolean", "mode": "nullable"}'
-            else:
+            try:
+                # or a float ...
+                fVal = float(item)
+                outStr = '    {"name": "'+expectedHeader[index]+'", "type": "float", "mode": "nullable"}'
+            except:
                 try:
-                    parse(item) #datetime
-                    outStr = '{"name": "'+expectedHeader[index]+'", "type": "timestamp", "mode": "nullable"}'
-                except: #string is the catch-all type
-                    outStr = '{"name": "'+expectedHeader[index]+'", "type": "string", "mode": "nullable"}'
-
+                    # use the dateutil parser to see if it looks like a date
+                    parse(item)
+                    outStr = '    {"name": "'+expectedHeader[index]+'", "type": "timestamp", "mode": "nullable"}'
+                except:
+                    # final catch-all is string type
+                    outStr = '    {"name": "'+expectedHeader[index]+'", "type": "string", "mode": "nullable"}'
+            
     if index < len(firstDataRow)-1:
         outStr+=','
 
