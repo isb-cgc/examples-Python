@@ -196,6 +196,8 @@ def main ( args ):
 
                 print " "
                 print " ERROR returned from genomics service request: "
+                print json.dumps ( body, indent=4 )
+                print " "
                 ParseHTTPerrorString ( str(err) )
                 print " "
 
