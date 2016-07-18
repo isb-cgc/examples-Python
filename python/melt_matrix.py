@@ -71,7 +71,7 @@ def melt_matrix ( inputFilename, tidyFilename, \
             done = 1
             continue
 
-        print "     handling data row #%d ... " % lineNo
+        if ( lineNo%1000 == 1 ): print "     handling data row #%d ... " % lineNo
 
         tokenList = aLine.split(separator)
         if ( numTok != len(tokenList) ):
@@ -104,7 +104,7 @@ def melt_matrix ( inputFilename, tidyFilename, \
         lineNo += 1
             
     print " "
-    print " DONE ! "
+    print " DONE!  %d data rows processed " % lineNo
     print " "
 
     outFh.close()
