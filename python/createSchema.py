@@ -46,6 +46,18 @@ if any([isNumeric(x) for x in expectedHeader]):
     print expectedHeader
     sys.exit()
 
+#if any of the header tokens are not unique, that's a problem ...
+for ii in range(len(expectedHeader)):
+    for jj in range(ii+1,len(expectedHeader)):
+        if ( expectedHeader[ii].lower() == expectedHeader[jj].lower() ):
+            print "ERROR: repeated header tokens.  Please check input file."
+            print expectedHeader
+            sys.exit(-1)
+        if ( expectedHeader[ii] == '' ):
+            print "ERROR: blank header token.  Please check input file."
+            print expectedHeader
+            sys.exit(-1)
+
 #else read the first data row to infer column data types
 firstDataRow = dataFile.readline().strip().split('\t')
 
