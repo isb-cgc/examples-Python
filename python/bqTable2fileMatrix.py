@@ -329,38 +329,6 @@ def makeLocalFilename ( localDir, gsName ):
 
 #------------------------------------------------------------------------------
 
-def getShardFiles ( gcsPath, localDir, verboseFlag ):
-
-    print " "
-    print " downloading files from Google Cloud Storage to local directory "
-
-    if ( verboseFlag ):
-        print " input gcsPath : <%s> " % gcsPath
-        print " calling storage.Client ... "
-
-    storageClient = storage.Client()
-
-    ( bucketName, bNamePattern ) = splitGCSpath ( gcsPath )
-    if ( verboseFlag ):
-        print " bucketName : <%s> " % bucketName
-        print " bNamePattern   : <%s> " % bNamePattern
-
-    bucket = storageClient.get_bucket ( bucketName )
-    blobs = bucket.list_blobs()
-
-    shardFiles = []
-    for b in blobs:
-        if ( matchesWildCardPath ( b.name, bNamePattern ) ):
-            ## print b.name
-            localName = makeLocalFilename ( localDir, b.name )
-            if ( verboseFlag ): print "     calling download_to_filename ... ", b.name
-            b.download_to_filename ( localName )
-            shardFiles += [ localName ]
-
-    return ( shardFiles )
-
-#------------------------------------------------------------------------------
-
 def deleteGCSobj ( gcsPath ):
 
     storageClient = storage.Client()
@@ -373,10 +341,33 @@ def deleteGCSobj ( gcsPath ):
 
 #------------------------------------------------------------------------------
 
-def makeDFfromShardFiles ( shardFiles ):
+def makeDFfromShards ( gcsPath, localDir, verboseFlag ):
+
+    if ( verboseFlag ):
+        print " input gcsPath : <%s> " % gcsPath
+        print " calling storage.Client ... "
+
+    storageClient = storage.Client()
+
+    ( bucketName, bNamePattern ) = splitGCSpath ( gcsPath )
+    if ( verboseFlag ):
+        print " bucketName : <%s> " % bucketName
+        print " bNamePattern : <%s> " % bNamePattern
+
+    bucket = storageClient.get_bucket ( bucketName )
+    blobs = bucket.list_blobs()
 
     nFiles = 0
-    for aFile in shardFiles:
+    for b in blobs:
+
+        if ( not matchesWildCardPath ( b.name, bNamePattern ) ):
+            continue
+
+        localName = makeLocalFilename ( localDir, b.name )
+        if ( verboseFlag ): print "     calling download_to_filename ... ", b.name
+        b.download_to_filename ( localName )
+
+        aFile = localName
 
         ## print " calling read_csv ... "
         shard_df = pd.read_csv ( aFile, delimiter=',', compression='infer' )
@@ -434,21 +425,26 @@ def makeDFfromShardFiles ( shardFiles ):
 
         nFiles += 1
 
+        ## now that we don't need this file anymore, we can delete it 
+        ## both in GCS and locally
+        deleteShardFile ( gcsPath, localDir, aFile, verboseFlag )
+
     return ( cum_df )
 
 #------------------------------------------------------------------------------
 
 def readShards_write2dTSV ( gcsPath, localDir, outFile, verboseFlag ):
 
+    print " "
+    print " "
+
     if ( verboseFlag ):
         print " "
         print " getting file shards from %s " % gcsPath
 
-    ## first we need to find and download the shard files ...
-    shardFiles = getShardFiles ( gcsPath, localDir, verboseFlag )
-
-    ## next we create a dataframe from these shards ...
-    df = makeDFfromShardFiles ( shardFiles )
+    ## now we're going to get each of the shard files and create
+    ## a dataframe from all of the shards ...
+    df = makeDFfromShards ( gcsPath, localDir, verboseFlag )
 
     if ( verboseFlag ):
         print " "
@@ -516,11 +512,11 @@ def readShards_write2dTSV ( gcsPath, localDir, outFile, verboseFlag ):
 
 #------------------------------------------------------------------------------
 
-def deleteShardFiles ( gcsPath, localDir, shardFiles, verboseFlag ):
+def deleteShardFile ( gcsPath, localDir, aShard, verboseFlag ):
 
     if ( verboseFlag ):
         print " "
-        print " in deleteShardFiles ... "
+        print " in deleteShardFile ... "
         print "        GCS path  : ", gcsPath
         print "        local dir : ", localDir
 
@@ -529,18 +525,16 @@ def deleteShardFiles ( gcsPath, localDir, shardFiles, verboseFlag ):
     gcsPrefix = gcsPath[:ii]
     ## print " gcsPrefix : ", gcsPrefix
 
-    for aFile in shardFiles:
-        gcsFile = gcsPrefix + "/" + aFile[len(localDir):]
-        if ( verboseFlag ): print "             deleting GCS object ", gcsFile
-        deleteGCSobj ( gcsFile )
-        if ( verboseFlag ): print "             deleting local file ", aFile
-        os.remove ( aFile )
+    gcsFile = gcsPrefix + "/" + aShard[len(localDir):]
+    if ( verboseFlag ): print "             deleting GCS object ", gcsFile
+    deleteGCSobj ( gcsFile )
+    if ( verboseFlag ): print "             deleting local file ", aShard
+    os.remove ( aShard )
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def main ( sqlFilename, billingProjID, tmpDestTable, 
-           delTableFlag, delFilesFlag,
+def main ( sqlFilename, billingProjID, tmpDestTable, delTableFlag, 
            maxCost, gcsPath, localDir, outFile, verboseFlag ):
 
     ## let's read in the SQL query first
@@ -600,9 +594,6 @@ def main ( sqlFilename, billingProjID, tmpDestTable,
 
     shardFiles = readShards_write2dTSV ( gcsPath, localDir, outFile, verboseFlag )
 
-    if ( delFilesFlag ):
-        deleteShardFiles ( gcsPath, localDir, shardFiles, verboseFlag )
-
     print " "
     print " DONE! "
     print " "
@@ -613,7 +604,7 @@ def main ( sqlFilename, billingProjID, tmpDestTable,
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser ( description=
-    " Extract data from BigQuery and write it to a local flat-file as a 2D data matrix. \n\n This is a multi-step process and requires several parameters: \n      a) submit your SQL query to BigQuery to extract 3 columns of information \n         (eg sample-id, gene-id, gene-expression); \n      b) save the results of the SQL query to a temporary table; \n      c) export this temporary table to a file in Google Cloud Storage \n         (if the table is large, multiple file shards will be written); \n      d) copy the file(s) from GCS to your local directory; \n      e) read the file(s), and transform them into a single 2D data matrix; \n      f) write this 2D data matrix to a file in your local directory  \n\n\n Note: ignore the line below that says 'optional arguments'. \n There are five REQUIRED arguments: --sqlFile, --gcpProj, --destTable, --gcsPath, and --outFile \n\n Here is a sample SQL query, note that that it has 3 fields in the first SELECT statement: \n\n       SELECT AliquotBarcode, HGNC_gene_symbol, MAX(normalized_count) AS expCount \n       FROM [isb-cgc:tcga_201510_alpha.mRNA_UNC_HiSeq_RSEM] \n       WHERE  \n           ( SampleBarcode IN ( SELECT SampleBarcode FROM [isb-cgc:tcga_cohorts.BRCA] ) ) \n           AND ( HGNC_gene_symbol IS NOT NULL ) \n       GROUP BY AliquotBarcode, HGNC_gene_symbol \n\n ", formatter_class=argparse.RawTextHelpFormatter )
+    " Extract data from BigQuery and write it to a local flat-file as a 2D data matrix. \n\n This is a multi-step process and requires several parameters: \n      a) submit your SQL query to BigQuery to extract 3 columns of information \n         (eg sample-id, gene-id, gene-expression); \n      b) save the results of the SQL query to a temporary table; \n      c) export this temporary table to a file in Google Cloud Storage \n         (if the table is large, multiple file shards will be written); \n      d) copy the file(s) from GCS to your local directory; \n      e) read the file(s), and transform them into a single 2D data matrix; \n      f) write this 2D data matrix to a file in your local directory  \n\n\n Note: ignore the line below that says 'optional arguments'. \n There are five REQUIRED arguments: --sqlFile, --gcpProj, --destTable, --gcsPath, and --outFile \n\n Here is a sample SQL query, note that that it has 3 fields in the first SELECT statement: \n\n       SELECT AliquotBarcode, HGNC_gene_symbol, MAX(normalized_count) AS expCount \n       FROM [isb-cgc:tcga_201607_beta.mRNA_UNC_HiSeq_RSEM] \n       WHERE  \n           ( SampleBarcode IN ( SELECT SampleBarcode FROM [isb-cgc:tcga_cohorts.BRCA] ) ) \n           AND ( HGNC_gene_symbol IS NOT NULL ) \n       GROUP BY AliquotBarcode, HGNC_gene_symbol \n\n ", formatter_class=argparse.RawTextHelpFormatter )
 
     parser.add_argument ( "-q",  "--sqlFile", required=True, 
         help="name of file containing your SQL query" )
@@ -631,8 +622,6 @@ if __name__ == '__main__':
         help="maximum allowed query cost in dollars (default=$1)" )
     parser.add_argument ( "-dt", "--delTable", action='store_true', 
         help="delete temporary BigQuery table when finished" )
-    parser.add_argument ( "-df", "--delFiles", action='store_true', 
-        help="delete temporary GCS and local shard files when finished" )
     parser.add_argument ( "-v",  "--verbose", action='store_true', 
         help="verbose mode" )
 
@@ -691,7 +680,7 @@ if __name__ == '__main__':
     t0 = time.time() 
 
     main ( args.sqlFile, args.gcpProj, args.destTable, 
-           args.delTable, args.delFiles, args.maxCost,
+           args.delTable, args.maxCost,
            args.gcsPath, args.localDir, args.outFile,
            args.verbose )
 
