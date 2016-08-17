@@ -1,6 +1,8 @@
 import argparse
+from concurrent import futures
 import fnmatch
 import json
+import multiprocessing
 import os
 import pandas as pd
 import sys
@@ -9,8 +11,10 @@ import uuid
 
 from apiclient import discovery
 from apiclient import errors
-from gcloud    import storage
 from oauth2client.client import GoogleCredentials
+
+import boto.gs.connection
+import boto.gs.key
 
 #------------------------------------------------------------------------------
 # extract a list of the tables referred to in the input SQL query
@@ -331,104 +335,139 @@ def makeLocalFilename ( localDir, gsName ):
 
 def deleteGCSobj ( gcsPath ):
 
-    storageClient = storage.Client()
     ( bucketName, oName ) = splitGCSpath ( gcsPath )
     ## print " --> ", bucketName, oName
-    bucket = storageClient.get_bucket ( bucketName )
-    blob = bucket.blob ( oName )
-    ## print " calling delete "
-    blob.delete()
+    connection = boto.gs.connection.GSConnection()
+    bucket = connection.get_bucket(bucketName)
+    if oName not in bucket:
+        raise ValueError('did not find %s in %s' % (oName, bucketName))
+    key = boto.gs.key.Key(bucket, oName)
+    try:
+        key.delete()
+    finally:
+        key.close()
+        connection.close()
+
+#------------------------------------------------------------------------------
+
+def addToDataframe(cum_df, shard_df, init):
+    if (init):
+        cum_df = shard_df
+        fieldNames = shard_df.axes[1] ## print fieldNames
+        rowName = fieldNames[0]
+        colName = fieldNames[1]
+        datName = fieldNames[2]
+        print " "
+        print " the output file will contain a 2D matrix in which: "
+        print "       the <%s> field will be the output matrix ROW " % rowName
+        print "       the <%s> field will be the output matrix COLUMN " % colName
+        print "       the <%s> field will be the output matrix CELL values " % datName
+        print " "
+    else:
+        ## print " concatenating with existing dataframe ... "
+        cum_df = pd.concat([cum_df, shard_df]) ## make sure that the new shard is consistent with
+    ## the first one ...
+    print " --> total # of rows is now: %d " % cum_df.shape[0]
+    return cum_df
+
+#------------------------------------------------------------------------------
+
+def processShard(b, gcsPath, localDir, verboseFlag):
+    t0 = time.time() 
+
+    localName = makeLocalFilename(localDir, b.name)
+    if (verboseFlag):
+        print "     calling download_to_filename ... ", b.name
+    b.get_contents_to_filename(localName)
+    aFile = localName
+## print " calling read_csv ... "
+    shard_df = pd.read_csv(aFile, delimiter=',', compression='infer')
+## make sure that this shard has only TWO dimensions
+    if (shard_df.ndim != 2):
+        print " ERROR: number of dimensions should be TWO "
+        print "        error from file <%s> " % aFile
+        sys.exit(-1)
+## we also assume that each input file has 3 columns (row,col,val)
+    if (shard_df.shape[1] != 3):
+        print " ERROR: second dimension should be THREE "
+        print "        error from file <%s> " % aFile
+        sys.exit(-1)
+## now that we don't need this file anymore, we can delete it
+## both in GCS and locally
+    deleteShardFile(gcsPath, localDir, aFile, verboseFlag)
+
+    t1 = time.time()
+
+    print " =============================================================== "
+    print " finished %s.  time taken in seconds : %s" % (localName, t1-t0)
+    print " =============================================================== "
+    
+    return shard_df
 
 #------------------------------------------------------------------------------
 
 def makeDFfromShards ( gcsPath, localDir, verboseFlag ):
+    t0 = time.time() 
 
     if ( verboseFlag ):
         print " input gcsPath : <%s> " % gcsPath
         print " calling storage.Client ... "
-
-    storageClient = storage.Client()
 
     ( bucketName, bNamePattern ) = splitGCSpath ( gcsPath )
     if ( verboseFlag ):
         print " bucketName : <%s> " % bucketName
         print " bNamePattern : <%s> " % bNamePattern
 
-    bucket = storageClient.get_bucket ( bucketName )
-    blobs = bucket.list_blobs()
+    connection = boto.gs.connection.GSConnection()
+    bucket = connection.get_bucket(bucketName)
+    blobs = bucket.list()
 
-    nFiles = 0
+    executor = futures.ThreadPoolExecutor(40)
+    submitted_futures = {}
     for b in blobs:
 
         if ( not matchesWildCardPath ( b.name, bNamePattern ) ):
             continue
+        submitted_futures[executor.submit(processShard, b, gcsPath, localDir, verboseFlag)] = makeLocalFilename(localDir, b.name)
 
-        localName = makeLocalFilename ( localDir, b.name )
-        if ( verboseFlag ): print "     calling download_to_filename ... ", b.name
-        b.download_to_filename ( localName )
+    cum_df = None
+    fieldNames = [None, None, None]
+    init = True
+    future_keys = submitted_futures.keys()
+    while future_keys:
+        future_done, future_keys = futures.wait(future_keys, return_when = futures.FIRST_COMPLETED)
+        for future in future_done:
+            local_name = submitted_futures.pop(future)
+            if future.exception() is not None:
+                print '\t%s generated an exception--%s: %s' % (gcsPath, type(future.exception()).__name__, future.exception())
+            else:
+                shard_df = future.result()
+                print '\tfinished file %s' % (local_name)
+                if cum_df is not None:
+                    cumfieldNames = cum_df.axes[1]
+                    fieldNames = shard_df.axes[1]
+                    if (cumfieldNames[0] != fieldNames[0]):
+                        print " ERROR: inconsistent rowName ... <%s> <%s> " % (cumfieldNames[0], fieldNames[0])
+                        print "        error from file <%s> " % local_name
+                        raise ValueError(' ERROR: inconsistent rowName ... <%s> <%s> \n        error from file <%s> ' (cumfieldNames[0], fieldNames[0], gcsPath))
+                    if (cumfieldNames[1] != fieldNames[1]):
+                        print " ERROR: inconsistent colName ... <%s> <%s> " % (cumfieldNames[1], fieldNames[1])
+                        print "        error from file <%s> " % local_name
+                        raise ValueError(' ERROR: inconsistent colName ... <%s> <%s> \n        error from file <%s> ' (cumfieldNames[0], fieldNames[0], gcsPath))
+                    if (cumfieldNames[2] != fieldNames[2]):
+                        print " ERROR: inconsistent datName ... <%s> <%s> " % (cumfieldNames[2], fieldNames[2])
+                        print "        error from file <%s> " % local_name
+                        raise ValueError(' ERROR: inconsistent datName ... <%s> <%s> \n        error from file <%s> ' (cumfieldNames[0], fieldNames[0], gcsPath))
+                cum_df = addToDataframe(cum_df, shard_df, init)
+                init = False
+    
+    connection.close()
+    t1 = time.time()
 
-        aFile = localName
-
-        ## print " calling read_csv ... "
-        shard_df = pd.read_csv ( aFile, delimiter=',', compression='infer' )
-
-        ## make sure that this shard has only TWO dimensions
-        if ( shard_df.ndim != 2 ):
-            print " ERROR: number of dimensions should be TWO "
-            print "        error from file <%s> " % aFile
-            sys.exit(-1)
-
-        ## we also assume that each input file has 3 columns (row,col,val)
-        if ( shard_df.shape[1] != 3 ):
-            print " ERROR: second dimension should be THREE "
-            print "        error from file <%s> " % aFile
-            sys.exit(-1)
-
-        ## print "     --> %d rows read ... " % shard_df.shape[0]
-
-        if ( nFiles == 0 ):
-            cum_df = shard_df
-            fieldNames = shard_df.axes[1]
-            ## print fieldNames
-            rowName = fieldNames[0]
-            colName = fieldNames[1]
-            datName = fieldNames[2]
-
-            print " "
-            print " the output file will contain a 2D matrix in which: "
-            print "       the <%s> field will be the output matrix ROW " % rowName
-            print "       the <%s> field will be the output matrix COLUMN " % colName
-            print "       the <%s> field will be the output matrix CELL values " % datName
-            print " "
-
-        else:
-
-            ## make sure that the new shard is consistent with 
-            ## the first one ...
-            fieldNames = shard_df.axes[1]
-            if ( rowName != fieldNames[0] ):
-                print " ERROR: inconsistent rowName ... <%s> <%s> " % ( rowName, fieldNames[0] )
-                print "        error from file <%s> " % aFile
-                sys.exit(-1)
-            if ( colName != fieldNames[1] ):
-                print " ERROR: inconsistent colName ... <%s> <%s> " % ( colName, fieldNames[1] )
-                print "        error from file <%s> " % aFile
-                sys.exit(-1)
-            if ( datName != fieldNames[2] ):
-                print " ERROR: inconsistent datName ... <%s> <%s> " % ( datName, fieldNames[2] )
-                print "        error from file <%s> " % aFile
-                sys.exit(-1)
-
-            ## print " concatenating with existing dataframe ... "
-            cum_df = pd.concat ( [cum_df, shard_df] )
-            ## print " --> total # of rows is now: %d " % cum_df.shape[0]
-
-        nFiles += 1
-
-        ## now that we don't need this file anymore, we can delete it 
-        ## both in GCS and locally
-        deleteShardFile ( gcsPath, localDir, aFile, verboseFlag )
-
+    print " =============================================================== "
+    print " finished creating dataframe.  time taken in seconds : %s" % (t1-t0)
+    print " =============================================================== "
+    
     return ( cum_df )
 
 #------------------------------------------------------------------------------
@@ -507,8 +546,6 @@ def readShards_write2dTSV ( gcsPath, localDir, outFile, verboseFlag ):
     if ( not outFile.endswith(".tsv") ): outFile += ".tsv"
     print " writing new matrix to output file name <%s> " % outFile
     new_df.to_csv ( path_or_buf=outFile, sep='\t', na_rep='NA', float_format='%.3f' )
-
-    return ( shardFiles )
 
 #------------------------------------------------------------------------------
 
@@ -592,7 +629,7 @@ def main ( sqlFilename, billingProjID, tmpDestTable, delTableFlag,
     ## that have been written to GCS by the 'export' request, and then parse them
     ## and 'un-melt' the input 'tidy-formatted' data ...
 
-    shardFiles = readShards_write2dTSV ( gcsPath, localDir, outFile, verboseFlag )
+    readShards_write2dTSV ( gcsPath, localDir, outFile, verboseFlag )
 
     print " "
     print " DONE! "
