@@ -281,7 +281,6 @@ def main ( args ):
                     print json.dumps ( body, indent=4 )
 
                 # call the GA4GH API reads.search method
-                x
                 try:
                     r = ggSvc.reads().search ( body=body ).execute()
 
