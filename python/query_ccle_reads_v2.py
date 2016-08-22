@@ -280,6 +280,7 @@ def main ( args ):
                     print json.dumps ( body, indent=4 )
 
                 # call the GA4GH API reads.search method
+                x
                 try:
                     r = ggSvc.reads().search ( body=body ).execute()
 
@@ -310,9 +311,10 @@ def main ( args ):
                     mySeqData[aPatient][aSample] = seqContext
 
                 except:
-                    print " ERROR ??? genomics reads search call failed "
-                    print json.dumps ( body, indent=4 )
-                    print " "
+                    if ( args.verbose ):
+                        print " ERROR ??? genomics reads search call failed "
+                        print json.dumps ( body, indent=4 )
+                        print " "
 
 
     # now that we have collected all of the sequence data that we
@@ -345,7 +347,7 @@ if __name__ == '__main__':
     print " "
     print " "
     print " Looking at CCLE data using GA4GH API at %s:%d " % ( args.chr, args.pos )
-    print "  (note that as-is, this script will take ~15 minutes to run)"
+    print "  (note that as-is, this script will take ~5 minutes to run)"
     print " "
     print " "
 
