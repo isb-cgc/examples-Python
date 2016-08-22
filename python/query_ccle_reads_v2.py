@@ -135,13 +135,13 @@ def main ( args ):
     # access Google Genomics using the GA4GH API
     try:
         ggSvc = discovery.build('genomics', 'v1', credentials=credentials)
-        if ( args.verbose ): print " successfully built Genomics service ... "
+        if (args.verbose): print " successfully built Genomics service ... "
     except:
         print " ERROR: failed to build genomics service "
         sys.exit(-1)
 
-    payload = { 'Project':'CCLE', 'Study':['LUSC','SKCM'] }
-    # payload = { 'Project':'CCLE' }
+    payload = {'Project': 'CCLE', 'Study': ['LUSC', 'SKCM']}
+
     try:
         r = apiSvc.cohorts().preview(body=payload).execute()
         if (args.verbose):
