@@ -330,7 +330,7 @@ def main ( args ):
 
 # to look at the BRAFV600E (g.chr7:140453136A>T) mutation, for example, 
 # try this:
-#       python ./query_ccle_reads.py  -c 7 -p 140453135 -w 5
+#       python ./query_ccle_reads_v2.py  -c 7 -p 140453135 -w 5
 
 if __name__ == '__main__':
 
