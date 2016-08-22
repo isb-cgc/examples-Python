@@ -15,7 +15,8 @@ from oauth2client.client import GoogleCredentials
 #              TTCACTG
 # becomes      TTCTCTG
 
-def buildUpLocalContext ( r, seqContext, pos, width ):
+
+def buildUpLocalContext (r, seqContext, pos, width):
 
     # print json.dumps ( r, indent=4 )
 
