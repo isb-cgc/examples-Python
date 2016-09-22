@@ -144,7 +144,7 @@ def main ( args ):
     payload = {'Project': 'CCLE', 'Study': ['LUSC', 'SKCM']}
 
     try:
-        r = apiSvc.cohorts().preview(body=payload).execute()
+        r = apiSvc.cohorts().preview(**payload).execute()
         if (args.verbose):
             print " results from cohorts().preview call: "
             print json.dumps (r, indent=4)
