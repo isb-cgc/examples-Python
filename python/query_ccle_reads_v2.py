@@ -149,7 +149,7 @@ def main ( args ):
             print " results from cohorts().preview call: "
             print json.dumps (r, indent=4)
     except:
-        print " ERROR: cohort preview endpoint call failed "
+        print " ERROR: cohorts.preview endpoint call failed "
         sys.exit(-1)
 
     try:
@@ -170,7 +170,7 @@ def main ( args ):
             r = apiSvc.patients().get(patient_barcode=aPatient).execute()
             print json.dumps (r, indent=4)
         except:
-            print " ERROR: patients().get endpoint call failed for patient " + aPatient
+            print " ERROR: patients.get endpoint call failed for patient " + aPatient
             sys.exit(-1)
 
         print " some patient details : "
@@ -192,7 +192,8 @@ def main ( args ):
             r = apiSvc.patients().get(patient_barcode=aPatient).execute()
             if (args.verbose): print json.dumps(r, indent=4)
         except:
-            print " ERROR: patient_details endpoint call failed ... continuing to next patient for the patient " + aPatient
+            print " ERROR: patients.get endpoint call failed for <%s> " % aPatient
+            print "        continuing to next patient in list ... "
             continue
 
         try:
@@ -214,7 +215,8 @@ def main ( args ):
                 r = apiSvc.samples().get(sample_barcode=aSample).execute()
                 if (args.verbose): print json.dumps (r, indent=4)
             except:
-                print " ERROR ??? samples.get endpoint call failed ... continuing anyway "
+                print " ERROR: samples.get endpoint call failed for <%s> " % aSample
+                print "        continuing to next sample in list ... "
                 continue
 
             try:
