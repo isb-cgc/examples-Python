@@ -143,6 +143,10 @@ def main ( args ):
 
     payload = {'Project': 'CCLE', 'Study': ['LUSC', 'SKCM']}
 
+    ## if you want to look at all CCLE samples, without restricting to
+    ## specific studies, then specify only the 'Project' name:
+    ## payload = {'Project': 'CCLE'}
+
     try:
         r = apiSvc.cohorts().preview(**payload).execute()
         if (args.verbose):
@@ -301,13 +305,16 @@ def main ( args ):
                             # print len(r['alignments'])
                             numTot += len(r['alignments'])
                             seqContext = buildUpLocalContext ( r, seqContext, args.pos, args.width )
-    
+
                         except:
                             print " ERROR ??? genomics reads search (with nextpageToken) call failed "
                             print json.dumps ( body, indent=4 )
                             print " "
 
-                    if ( args.verbose ): print " --> numTot = ", numTot
+                    if ( args.verbose ): 
+                        print " --> numTot = ", numTot
+                        print "              ", seqContext
+                        print " "
     
                     # save this seqContext information for later
                     mySeqData[aPatient][aSample] = seqContext
@@ -330,7 +337,7 @@ def main ( args ):
 # received a request in a long time, it may have gone 'cold' and may need
 # to be 'warmed up' again.
 
-# to look at the BRAFV600E (g.chr7:140453136A>T) mutation, for example, 
+# to look at the BRAF V600E (g.chr7:140453136A>T) mutation, for example, 
 # try this:
 #       python ./query_ccle_reads_v2.py  -c 7 -p 140453135 -w 5
 
@@ -339,17 +346,19 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Look at CCLE DNA-seq and RNA-seq data")
     parser.add_argument ( "-v", "--verbose", action="store_true" )
     parser.add_argument ( "-c", "--chr", type=str, help="chromosome (eg 7 rather than ch7 or chr7)", \
-                dest='chr', required=True, default='7' )
+                dest='chr', default='7' )
     parser.add_argument ( "-p", "--pos", type=int, help="base position (0-based)", \
-                dest='pos', required=True, default=140453136 )
+                dest='pos', default=140453135 )
     parser.add_argument ( "-w", "--width", type=int, help="sequence context width (default=11)", \
                 dest='width', default=11 )
     args = parser.parse_args()
 
     print " "
     print " "
-    print " Looking at CCLE data using GA4GH API at %s:%d " % ( args.chr, args.pos )
-    print "  (note that as-is, this script will take ~5 minutes to run)"
+    print " Looking at CCLE data using GA4GH API at %s:%d (%d) " % ( args.chr, args.pos, args.width )
+
+    if ( args.chr=='7' and args.pos==140453135 and args.width==11 ):
+        print " As-is, and using default parameters, this script will take 1-2 minutes to run "
     print " "
     print " "
 
