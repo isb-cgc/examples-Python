@@ -115,6 +115,8 @@ try:
         dataFile = open(inFilename,"r")
 except:
     print 'requires input filename as command-line parameter'
+    if ( len(inFilename) > 0 ):
+        print ' --> failed to open <%s> ' % inFilename
     sys.exit()
 
 print " "
@@ -205,6 +207,10 @@ fhOut.write ( '[\n' )
 
 # loop through the columns
 for ii in range(len(fieldNames)):
+
+    # in case we got this far w/o a dataType getting set ...
+    if ( dataTypes[ii] == "NA" ):
+        dataTypes[ii] = "string"
 
     outStr = '    {"name": "'+fieldNames[ii]+'", "type": "'+dataTypes[ii]+'", "mode": "nullable", "description": "<add description here>"}'
     if ( ii < len(fieldNames)-1 ):
