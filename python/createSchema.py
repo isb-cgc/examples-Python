@@ -23,18 +23,76 @@ def isNumeric(val):
 
 # --------------------------------------------------------------
 
-specialChars = [ ' ', '-', ')', '(', ',', ':', ';', '.', '@', '#', '$', '%', '^', '&', '*', '[', ']', '{', '}', '|' ]
+specialChars = [ ' ', '-', ')', '(', ',', ':', ';', '.', '@', 
+                 '#', '$', '%', '^', '&', '*', '[', ']', '{', 
+                 '}', '|', '/', '?' ]
 
 def removeSpecialChars ( aString ):
 
     bString = ''
     for ii in range(len(aString)):
         if ( aString[ii] in specialChars ):
-            bString += '_'
+            if ( bString[-1] != "-" ): bString += '_'
         else:
             bString += aString[ii]
 
+    if ( bString[-1] == "_" ): bString = bString[:-1]
+
     return ( bString )
+
+# --------------------------------------------------------------
+
+def letter_or_underscore ( aChar ):
+
+    io = ord(aChar)
+    if ( io == 95 ): return ( 1 )
+    if ( io>=64 and io<=90 ): return ( 1 )
+    if ( io>=97 and io<=122 ): return ( 1 )
+    return ( 0 )
+
+# --------------------------------------------------------------
+
+def valid_char ( aChar ):
+
+    io = ord(aChar)
+    if ( io == 95 ): return ( 1 )
+    if ( io>=48 and io<=57 ): return ( 1 )
+    if ( io>=64 and io<=90 ): return ( 1 )
+    if ( io>=97 and io<=122 ): return ( 1 )
+    return ( 0 )
+
+# --------------------------------------------------------------
+
+def createValidBQfieldName ( aString ):
+
+    ## print " "
+    ## print " in createValidBQfieldName ... <%s> " % aString
+
+    bString = removeSpecialChars ( aString )
+    ## print " <%s> " % bString
+
+    ## make sure that the following is satisfied:
+    ## Fields must contain only letters, numbers, and underscores, start
+    ## with a letter or underscore, and be at most 128 characters long.
+
+    if ( len(bString) > 128 ): 
+        cString = createValidBQfieldName ( bString[:128] )
+    else:
+        cString = bString
+
+    ## check first character:
+    ## print " <%s> " % cString
+    if not letter_or_underscore ( cString[0] ):
+        print " createValidBQfieldName: first character is not valid <%s> " % cString
+        sys.exit(-1)
+
+    ## check all other characters:
+    for ii in range(len(cString)):
+        if not valid_char ( cString[ii] ):
+            print " createValidBQfieldName: invalid character at position %d <%s> " % ( ii, cString )
+            sys.exit(-1)
+
+    return ( cString )
 
 # --------------------------------------------------------------
 
@@ -106,6 +164,7 @@ def inferDataTypes ( dataRow, dataTypes ):
 # --------------------------------------------------------------
 
 inFilename = sys.argv[1]
+dmpFh = file ( "subsample.tsv", 'w' )
 
 # open data file ...
 try:
@@ -124,7 +183,9 @@ print "Parsing input file <%s>." % inFilename
 print " "
 
 # first line is expected to be the header
-headerRow = dataFile.readline().split('\t')
+aLine = dataFile.readline()
+dmpFh.write ( '%s' % aLine )
+headerRow = aLine.split('\t')
 
 # if any numeric values in this first line, it is likely not a header: hence exit
 if any([isNumeric(x) for x in headerRow]):
@@ -138,6 +199,7 @@ fieldNames = []
 lowerNames = []
 for ii in range(len(headerRow)):
     aName = removeSpecialChars ( headerRow[ii].strip() )
+    aName = createValidBQfieldName ( headerRow[ii].strip() )
     if ( aName.lower() in lowerNames ):
         print " ERROR: repeated header token <%s> " % aName
         sys.exit(-1)
@@ -162,7 +224,9 @@ done = 0
 while not done:
 
     # next, read a data row to infer column data types
-    dataRow = dataFile.readline().split('\t')
+    aLine = dataFile.readline()
+    dmpFh.write ( '%s' % aLine )
+    dataRow = aLine.split('\t')
     if ( len(dataRow) == 1 ):
         done = 1
         continue
@@ -183,6 +247,7 @@ while not done:
         if ( len(dataRow) < 1 ): done = 1
 
 dataFile.close()
+dmpFh.close()
 
 schemaFilename = inFilename + ".json"
 try:
