@@ -1,16 +1,21 @@
-# This script generates a JSON schema for a given data file to be used with the 'bq load' command line tool.
+# This script generates a JSON schema for a given data file to 
+# be used with the 'bq load' command line tool.
 # -------------------------------------------------------------
 
 import sys
 import string
 import gzip
+
 from dateutil.parser import parse
+
 # -------------------------------------------------------------
 
 # INPUT: path to local data file
 # OUTPUT: JSON schema to stdout
+
 # BigQuery data types = ['string','bytes','integer','float','boolean','record','timestamp']
 # BigQuery modes = ['nullable','required','repeated'] , default is nullable
+
 # -------------------------------------------------------------
 
 # function to check is a given value is numeric
@@ -32,7 +37,8 @@ def removeSpecialChars ( aString ):
     bString = ''
     for ii in range(len(aString)):
         if ( aString[ii] in specialChars ):
-            if ( bString[-1] != "-" ): bString += '_'
+            if ( len(bString) > 0 ):
+                if ( bString[-1] != "_" ): bString += '_'
         else:
             bString += aString[ii]
 
@@ -163,7 +169,28 @@ def inferDataTypes ( dataRow, dataTypes ):
         
 # --------------------------------------------------------------
 
+if ( len(sys.argv) == 1 ):
+    print " "
+    print " Usage : %s <input-filename> <nSkip> "
+    print "         where nSkip specifies the # of lines skipped between "
+    print "         lines that are parsed and checked for data-types; "
+    print "         if the input file is small, you can leave set nSkip "
+    print "         to be small, but if the input file is very large, nSkip "
+    print "         should probably be 1000 or more (default value is 1000) "
+    print " "
+    sys.exit(-1)
+
 inFilename = sys.argv[1]
+
+
+## this is the # of lines that we'll skip over each time we
+## read and parse a single line of data ...
+nSkip = 1000
+if ( len(sys.argv) == 3 ):
+    nSkip = int ( sys.argv[2] )
+    if ( nSkip < 1 ): nSkip = 1
+
+## scratch file ...
 dmpFh = file ( "subsample.tsv", 'w' )
 
 # open data file ...
@@ -216,9 +243,6 @@ print " "
 
 dataTypes = ['NA' ] * len(fieldNames)
 
-## this is the # of lines that we'll skip over each time we
-## read and parse a single line of data ...
-nSkip = 1000
 
 done = 0
 while not done:
@@ -288,3 +312,4 @@ fhOut.write ( ']\n' )
 
 fhOut.close()
 
+# --------------------------------------------------------------
