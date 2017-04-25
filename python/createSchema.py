@@ -29,7 +29,7 @@ def isNumeric(val):
 # --------------------------------------------------------------
 
 specialChars = [ ' ', '-', ')', '(', ',', ':', ';', '.', '@', 
-                 '#', '$', '%', '^', '&', '*', '[', ']', '{', 
+                 '#', '$', '^', '&', '*', '[', ']', '{', 
                  '}', '|', '/', '?' ]
 
 def removeSpecialChars ( aString ):
@@ -39,6 +39,8 @@ def removeSpecialChars ( aString ):
         if ( aString[ii] in specialChars ):
             if ( len(bString) > 0 ):
                 if ( bString[-1] != "_" ): bString += '_'
+        elif ( aString[ii] == '%' ):
+            bString += 'pct'
         else:
             bString += aString[ii]
 
@@ -102,7 +104,7 @@ def createValidBQfieldName ( aString ):
 
 # --------------------------------------------------------------
 
-def inferDataTypes ( dataRow, dataTypes ):
+def inferDataTypes ( dataRow, dataTypes, fieldNames ):
 
     for ii in range(len(dataRow)):
 
@@ -118,7 +120,7 @@ def inferDataTypes ( dataRow, dataTypes ):
 
         elif ( item.lower()=="true" or item.lower()=="false" ):
             if ( dataTypes[ii] == "NA" ):
-                print " initially setting field #%d to BOOLEAN (%s) " % ( ii, item )
+                print " initially setting field #%d (%s) to BOOLEAN (%s) " % ( ii, fieldNames[ii], item )
                 dataTypes[ii] = "boolean"
             elif ( dataTypes[ii] == "boolean" ):
                 continue
@@ -131,7 +133,7 @@ def inferDataTypes ( dataRow, dataTypes ):
             try:
                 iVal = int(item)
                 if ( dataTypes[ii] == "NA" ):
-                    print " initially setting field #%d to INTEGER (%s) " % ( ii, item )
+                    print " initially setting field #%d (%s) to INTEGER (%s) " % ( ii, fieldNames[ii], item )
                     dataTypes[ii] = "integer"
                 elif ( dataTypes[ii] == "integer" ):
                     continue
@@ -145,12 +147,12 @@ def inferDataTypes ( dataRow, dataTypes ):
                 try:
                     fVal = float(item)
                     if ( dataTypes[ii] == "NA" ):
-                        print " initially setting field #%d to FLOAT (%s) " % ( ii, item )
+                        print " initially setting field #%d (%s) to FLOAT (%s) " % ( ii, fieldNames[ii], item )
                         dataTypes[ii] = "float"
                     elif ( dataTypes[ii] == "float" ):
                         continue
                     elif ( dataTypes[ii] == "integer" ):
-                        print " CHANGING field #%d from INTEGER to FLOAT (%s) " % ( ii, item )
+                        print " CHANGING field #%d (%s) from INTEGER to FLOAT (%s) " % ( ii, fieldNames[ii], item )
                         dataTypes[ii] = "float"
                         continue
                     else:
@@ -159,9 +161,9 @@ def inferDataTypes ( dataRow, dataTypes ):
 
                 except:
                     if ( dataTypes[ii] == "NA" ):
-                        print " initially setting field #%d to STRING (%s) " % ( ii, item )
+                        print " initially setting field #%d (%s) to STRING (%s) " % ( ii, fieldNames[ii], item )
                     else:
-                        print " CHANGING field #%d to STRING (%s) " % ( ii, item )
+                        print " CHANGING field #%d (%s) to STRING (%s) " % ( ii, fieldNames[ii], item )
                     dataTypes[ii] = "string"
 
     ## print dataTypes
@@ -188,7 +190,7 @@ inFilename = sys.argv[1]
 nSkip = 1000
 if ( len(sys.argv) == 3 ):
     nSkip = int ( sys.argv[2] )
-    if ( nSkip < 1 ): nSkip = 1
+    if ( nSkip < 0 ): nSkip = 0
 
 ## scratch file ...
 dmpFh = file ( "subsample.tsv", 'w' )
@@ -262,7 +264,7 @@ while not done:
             print " %3d  %s  %s " % ( ii, fieldNames[ii], dataRow[ii] )
         sys.exit(-1)
 
-    dataTypes = inferDataTypes ( dataRow, dataTypes )
+    dataTypes = inferDataTypes ( dataRow, dataTypes, fieldNames )
 
     ## skip over a bunch of rows, we don't want to check every single row,
     ## just a few of them at random ...
