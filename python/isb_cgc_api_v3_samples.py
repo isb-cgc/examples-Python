@@ -31,19 +31,6 @@ EMAIL_SCOPE = 'https://www.googleapis.com/auth/userinfo.email'
 # where a default credentials file will be stored for use by the endpoints
 DEFAULT_STORAGE_FILE = os.path.join(os.path.expanduser("~"), '.isb_credentials')
 
-#------------------------------------------------------------------------------
-# This validates the credentials of the current user against the ISB-CGC site
-
-def get_credentials():
-    oauth_flow_args = ['--noauth_local_webserver']
-    storage = Storage(DEFAULT_STORAGE_FILE)
-    credentials = storage.get()
-    if not credentials or credentials.invalid:
-        flow = OAuth2WebServerFlow(CLIENT_ID, CLIENT_SECRET, EMAIL_SCOPE)
-        flow.auth_uri = flow.auth_uri.rstrip('/') + '?approval_prompt=force'
-        credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args))
-    return credentials
-
 def get_unauthorized_service():
     api = 'isb_cgc_tcga_api'
     version = 'v3'

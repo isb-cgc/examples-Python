@@ -46,13 +46,6 @@ def get_credentials():
         credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args))
     return credentials
 
-def get_unauthorized_service(api_tag):
-    api = 'isb_cgc{}_api'.format(api_tag)
-    version = 'v3'
-    site = "https://api-dot-isb-cgc.appspot.com"
-    discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
-    return build(api, version, discoveryServiceUrl=discovery_url, http=httplib2.Http())
-
 def get_authorized_service(api_tag):
     api = 'isb_cgc{}_api'.format(api_tag)
     version = 'v3'
@@ -139,7 +132,7 @@ def main():
         return
 
     api_tag = '_tcga' if args.endpoint in ('preview', 'create') else '' 
-    service = get_unauthorized_service(api_tag) if args.endpoint in ('preview') else get_authorized_service(api_tag)
+    service = get_authorized_service(api_tag)
     cohort_id = args.cohort_id if args.cohort_id is None else int(args.cohort_id)
     body = json.loads(args.body) if args.body is not None else args.body
 
