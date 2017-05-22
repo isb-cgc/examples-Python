@@ -30,35 +30,35 @@ def get_credentials():
 
 
 def get_authorized_service():
-	api = 'isb_cgc_api'
-	version = 'v2'
-	site = "https://api-dot-isb-cgc.appspot.com"
-	discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
+    api = 'isb_cgc_api'
+    version = 'v2'
+    site = "https://api-dot-isb-cgc.appspot.com"
+    discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
 
-	credentials = get_credentials()
-	http = credentials.authorize(httplib2.Http())
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
 
-	if credentials.access_token_expired or credentials.invalid:
-		credentials.refresh(http)
+    if credentials.access_token_expired or credentials.invalid:
+        credentials.refresh(http)
 
-	authorized_service = build(api, version, discoveryServiceUrl=discovery_url, http=http)
+    authorized_service = build(api, version, discoveryServiceUrl=discovery_url, http=http)
 
-	return authorized_service
+    return authorized_service
 
 
 def get(service):
-	"""
-	Usage: python python/isb_cgc_api_v2_users.py
-	"""
-	data = service.users().get().execute()
-	print '\nresult of users().get()'
-	pprint.pprint(data)
+    """
+    Usage: python python/isb_cgc_api_v2_users.py
+    """
+    data = service.users().get().execute()
+    print '\nresult of users().get()'
+    pprint.pprint(data)
 
 
 def main():
-	service = get_authorized_service()
-	get(service)
+    service = get_authorized_service()
+    get(service)
 
 
 if __name__ == '__main__':
-	main()
+    main()
