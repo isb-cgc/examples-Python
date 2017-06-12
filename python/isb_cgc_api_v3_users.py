@@ -1,3 +1,18 @@
+'''
+Copyright 2017, Institute for Systems Biology.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'''
 from googleapiclient.discovery import build
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client import tools
@@ -28,37 +43,34 @@ def get_credentials():
         credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args))
     return credentials
 
-
 def get_authorized_service():
-	api = 'isb_cgc_api'
-	version = 'v2'
-	site = "https://api-dot-isb-cgc.appspot.com"
-	discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
+    api = 'isb_cgc_tcga_api'
+    version = 'v3'
+    site = "https://api-dot-isb-cgc.appspot.com"
+    discovery_url = '%s/_ah/api/discovery/v1/apis/%s/%s/rest' % (site, api, version)
 
-	credentials = get_credentials()
-	http = credentials.authorize(httplib2.Http())
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
 
-	if credentials.access_token_expired or credentials.invalid:
-		credentials.refresh(http)
+    if credentials.access_token_expired or credentials.invalid:
+        credentials.refresh(http)
 
-	authorized_service = build(api, version, discoveryServiceUrl=discovery_url, http=http)
+    authorized_service = build(api, version, discoveryServiceUrl=discovery_url, http=http)
 
-	return authorized_service
+    return authorized_service
 
-
+# the API uses the isb_cgc_tcga_api endpoint but is also part of the isb_cgc_ccle_api and isb_cgc_target_api endpoints
 def get(service):
-	"""
-	Usage: python python/isb_cgc_api_v2_users.py
-	"""
-	data = service.users().get().execute()
-	print '\nresult of users().get()'
-	pprint.pprint(data)
-
+    """
+    Usage: python python/isb_cgc_api_v3_users.py
+    """
+    data = service.users().get().execute()
+    print '\nresult of users().get()'
+    pprint.pprint(data)
 
 def main():
-	service = get_authorized_service()
-	get(service)
-
+    service = get_authorized_service()
+    get(service)
 
 if __name__ == '__main__':
-	main()
+    main()
