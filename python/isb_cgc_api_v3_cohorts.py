@@ -21,7 +21,6 @@ from oauth2client.file import Storage
 import httplib2
 import pprint
 import json
-import sys
 import os
 
 # the CLIENT_ID for the ISB-CGC site
@@ -80,6 +79,8 @@ def list(service, cohort_id=None, body=None, name=None):
     data = service.cohorts().list().execute()
     print '\nresults from cohorts().list()'
     pprint.pprint(data)
+    
+    return data
 
 def delete(service, cohort_id=None, body=None, name=None):
     """
@@ -89,13 +90,37 @@ def delete(service, cohort_id=None, body=None, name=None):
     print '\nresults from cohorts().delete()'
     pprint.pprint(data)
 
-def cloud_storage_file_paths(service, cohort_id=None, body=None, name=None):
+def cloud_storage_file_paths(
+        service, cohort_id=None, 
+        analysis_workflow_type=None, 
+        data_category=None, 
+        data_format=None, 
+        data_type=None, 
+        experimental_strategy=None,
+        genomic_build=None,
+        limit=None,
+        platform=None,
+        fields=None
+    ):
     """
     Usage: python python/isb_cgc_api_v3_cohorts.py -e cloud_storage_file_paths -c 24
     """
-    data = service.cohorts().cloud_storage_file_paths(cohort_id=cohort_id).execute()
+    data = service.cohorts().cloud_storage_file_paths(
+        cohort_id=cohort_id, 
+        analysis_workflow_type=analysis_workflow_type, 
+        data_category=data_category, 
+        data_format=data_format, 
+        data_type=data_type,
+        experimental_strategy=experimental_strategy,
+        genomic_build=genomic_build,
+        limit=limit,
+        platform=platform,
+        fields=fields
+    ).execute()
     print '\nresults from cohorts().cloud_storage_file_paths()'
     pprint.pprint(data)
+    
+    return data
 
 # the following two APIs are specific to a program endpoint.  the examples use the isb_cgc_tcga_api endpoint but
 # are also part of the isb_cgc_ccle_api and isb_cgc_target_api endpoints
