@@ -29,17 +29,18 @@ again seemed to work.
 Also we need to get authenticated. At the command line we:
 gcloud auth application-default login
 
-#    table:isb-cgc.tcga_201510_alpha.DNA_Methylation_betas
-#    tablevar:Probe_Id
-#    annot:isb-cgc.platform_reference.methylation_annotation
-#    annotvar:IlmnID
-#    idvar:ParticipantBarcode
-#    valvar:Beta_Value
-#    pivot:UCSC.RefGene_Name  # after the annotation join
-#    filter:SampleTypeLetterCode='TP'
-#    filter:Study='BRCA'
-#    filter:UCSC.RefGene_Name IN ('ACSM5','NAP1L4','SULF2')
-#    limit:100
+table:isb-cgc:tcga_201607_beta.DNA_Methylation_chr11
+tablevar:Probe_Id
+annot:isb-cgc.platform_reference.methylation_annotation
+annotvar:IlmnID
+idvar:ParticipantBarcode
+valvar:Beta_Value
+pivot:UCSC.RefGene_Name
+filter:SampleTypeLetterCode='TP'
+filter:Study='BRCA'
+filter:UCSC.RefGene_Name IN ('ACSM5','NAP1L4','SULF2')
+limit:100
+
 
 '''
 
@@ -47,13 +48,20 @@ from google.cloud import bigquery
 import argparse
 import sys
 
-ko = ['idvar', 'valvar', 'pivot', 'table', 'annot', 'tablevar', 'annotvar', 'filter', 'limit']
+# main key order
+mko = ['idvar', 'valvar', 'table', 'tablevar',]
+# annotation key order
+ako = ['idvar', 'valvar', 'pivot', 'table', 'annot', 'tablevar', 'annotvar', 'filter', 'limit']
+# join key order
+jko = ['idvar', 'valvar', 'pivot', 'table', 'annot', 'tablevar', 'annotvar', 'filter', 'limit']
+
 
 # Some queries must be annoated before running pairwise
 ## to this point, some annotation fields are nested
 ## so we need to check the schema first.
 def checkSchemas(client,ffd):
     # have to use a client pointed to the table that you want to query
+    ks = list(ffd.keys())
     ts = ffd['table'].split('.')
     d1 = client.dataset(ts[1])
     t1 = d1.table(ts[2])
@@ -65,32 +73,37 @@ def checkSchemas(client,ffd):
     print(t1.schema[0].mode)
     # will have to check if any of the fields are records
     # or structs or arrays.
+    return(ffd)
 
 
 # check that dictionary names are
 # in the allowed set.
-def checkQuery(client, ffd):
-    # make sure the query contains only allowed keys in KO.
-    ks = list(ffd.keys())
-    if any([x not in ko for x in ks]):
-        print("Removing items from the filter file:")
-        print([x for x in ks if x not in ko])
-    filtered_dict = {key: value for key, value in ffd.items() if key in ko}
-    filtered_dict = checkSchemas(client, filtered_dict)
-    return(filtered_dict)
+def checkFilterFile(client, ffd):
+    # check schemas for records
+    ffd = checkSchemas(client, ffd)
+    return(ffd)
 
 
-def keyOrder(ffdict):
+def keyOrder(ffdict, mode):
     ks = list(ffdict.keys())
-    kd = [x for x in ko if x in ks]
+    if mode == 'maintable':
+        kd = [x for x in mko if x in mko]
+    elif mode == 'annottable':
+        kd = [x for x in ako if x in ako]
+    elif mode == 'jointable':
+        kd = [x for x in jko if x in jko]
+    else:
+        kd = []
     return(kd)
 
 
 def readFilterFile(filepath):
     # build a dictionary of query terms
+    # the filter entries are concatenated
     fin = open(filepath, 'r')
     ffdict = {}
     for line in fin:
+        print(line)
         strings = line.strip().split(':')
         k, v = [s.strip() for s in strings]
         if k not in ffdict:
@@ -101,11 +114,10 @@ def readFilterFile(filepath):
     return(ffdict)
 
 
-def buildQuery(client, filename):
-    ffd   = readFilterFile(filename)
-    ffd   = checkQuery(client, ffd)
+def buildQuery(client, ffd, mode):
+    query = "T1 AS ( \n"
     query =  "SELECT \n"
-    for key in keyOrder(ffd):  # queries need to have a particular order
+    for key in keyOrder(ffd, mode):  # queries need to have a particular order
         if key in ['idvar', 'valvar']:
             query += ffd[key] + ",\n"
         elif key  == 'table':
@@ -114,12 +126,28 @@ def buildQuery(client, filename):
             query += "LIMIT " + ffd[key] + " \n"
         else:
             query += ffd[key] + " \n"
+    query += '\n)\n'
     return(query)
 
 
-def bq(args):
-    client = bigquery.Client(project=args.proj)
-    queryString = buildQuery(client, args.ff1)
+def buildFilterQuery(args):
+    client = bigquery.Client(project=args.prj)
+    ffdict = readFilterFile(args.ff1)
+    ffdict = checkFilterFile(client, ffdict)
+    q1 = buildQuery(client, ffdict, "maintable")
+    if 'record' in ffdict.keys():
+        # prepare the annotation table
+        q2 = ''
+        q3 = ''
+        #q2 = buildQuery(client, args.ff1)
+        # join in the annotation
+        #q3 = buildQuery(client, args.ff1)
+    else:
+        q2 = '' # no annotation
+        # just query the main table with filters.
+        q3 = ''
+        #q3 = buildQuery(client, ffdict)
+    queryString = q1+q2+q3
     print("*****************************************")
     print(queryString)
     print("*****************************************")
@@ -137,4 +165,4 @@ if __name__ == "__main__":
     parser.add_argument("prj", help="google project ID")
     parser.add_argument("ff1", help="filter file")
     args = parser.parse_args()
-    bq(args)
+    buildFilterQuery(args)

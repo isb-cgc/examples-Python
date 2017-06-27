@@ -1,0 +1,65 @@
+This filter file should produce the following query:
+
+table:isb-cgc:tcga_201607_beta.DNA_Methylation_chr11
+tablevar:Probe_Id
+annot:isb-cgc.platform_reference.methylation_annotation
+annotvar:IlmnID
+idvar:ParticipantBarcode
+valvar:Beta_Value
+pivot:UCSC.RefGene_Name
+filter:SampleTypeLetterCode='TP'
+filter:Study='BRCA'
+filter:UCSC.RefGene_Name IN ('ACSM5','NAP1L4','SULF2')
+limit:100
+
+
+WITH
+
+# FIRST we are getting the methylation data,
+# NO filters here.
+
+  T1 AS (
+  SELECT
+    ParticipantBarcode,
+    Probe_Id,
+    Beta_Value
+  FROM
+    `isb-cgc.tcga_201607_beta.DNA_Methylation_chr11`
+),
+
+# THEN if there's an annotation table requested
+&& check if there's a record present... like UCSC
+    --> always has a dot?
+&&
+  A1 AS (
+  SELECT
+    IlmnID,
+    RefGene_Name
+  FROM
+    `isb-cgc.platform_reference.methylation_annotation`,
+    UNNEST(UCSC))
+
+# LAST,
+&& IF NEEDED, we join in the annotation
+
+SELECT
+  IlmnID,
+  RefGene_Name ParticipantBarcode,
+  Probe_Id,
+  Beta_Value
+FROM
+  T1
+JOIN
+  A1
+ON
+  T1.Probe_Id = A1.IlmnID
+WHERE
+  SampleTypeLetterCode='TP'
+  AND Study='BRCA'
+  AND RefGene_Name IN ('ACSM5','NAP1L4','SULF2')
+LIMIT
+  100
+
+
+1.) get which variables are records.
+2.)
