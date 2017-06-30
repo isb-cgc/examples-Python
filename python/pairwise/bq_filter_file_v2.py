@@ -49,9 +49,9 @@ import argparse
 import sys
 
 # main key order
-mko = ['idvar', 'valvar', 'table', 'tablevar',]
+mko = ['tablevar', 'table' ]
 # annotation key order
-ako = ['idvar', 'valvar', 'pivot', 'table', 'annot', 'tablevar', 'annotvar', 'filter', 'limit']
+ako = [ 'annotvar','annot','recordflatten']
 # join key order
 jko = ['idvar', 'valvar', 'pivot', 'table', 'annot', 'tablevar', 'annotvar', 'filter', 'limit']
 
@@ -62,17 +62,27 @@ jko = ['idvar', 'valvar', 'pivot', 'table', 'annot', 'tablevar', 'annotvar', 'fi
 def checkSchemas(client,ffd):
     # have to use a client pointed to the table that you want to query
     ks = list(ffd.keys())
-    ts = ffd['table'].split('.')
-    d1 = client.dataset(ts[1])
-    t1 = d1.table(ts[2])
-    t1.reload()
-    # then t1 contains a list of schema fields
-    print(t1.schema[0].description)
-    print(t1.schema[0].name)
-    print(t1.schema[0].field_type)
-    print(t1.schema[0].mode)
-    # will have to check if any of the fields are records
-    # or structs or arrays.
+    for x in ['table', 'annot']:
+        if x in ks:
+            ts = ffd[x].split('.')
+            d1 = client.dataset(ts[1])
+            t1 = d1.table(ts[2])
+            t1.reload()
+            # then t1 contains a list of schema fields
+            for i in range(0,len(t1.schema)):
+                if t1.schema[i].field_type == 'RECORD':
+                    ffd['recordflatten'] = t1.schema[i].name
+                    for y in ks:
+                        # then we need to edit that entry and remove the prefix.
+                        if t1.schema[i].name in ffd[y] and y != 'filter':
+                            print(y)
+                            print(ffd[y])
+                            bits = ffd[y].split(",")
+
+                            # and remove ffd[y] from ffd[y]
+    print("")
+    print(ffd['recordflatten'])
+    print("")
     return(ffd)
 
 
@@ -103,11 +113,12 @@ def readFilterFile(filepath):
     fin = open(filepath, 'r')
     ffdict = {}
     for line in fin:
-        print(line)
         strings = line.strip().split(':')
         k, v = [s.strip() for s in strings]
         if k not in ffdict:
             ffdict[k] = v
+        elif k in ffdict and k in ['idvar', 'valvar', 'annotvar', 'tablevar']:
+            ffdict[k] = ffdict[k] + ",\n" + v
         else:
             ffdict[k] = ffdict[k] + " AND " + v
     fin.close()
@@ -115,18 +126,21 @@ def readFilterFile(filepath):
 
 
 def buildQuery(client, ffd, mode):
-    query = "T1 AS ( \n"
     query =  "SELECT \n"
-    for key in keyOrder(ffd, mode):  # queries need to have a particular order
-        if key in ['idvar', 'valvar']:
-            query += ffd[key] + ",\n"
-        elif key  == 'table':
+    thisKeyOrder = keyOrder(ffd, mode)
+    for key in thisKeyOrder:  # queries need to have a particular order
+        if key in ['idvar', 'valvar', 'annotvar', 'tablevar']:
+            query += ffd[key] + "\n"
+        elif key  == 'table' and 'filter' in thisKeyOrder:
             query += "FROM `" + ffd[key] + "`\n WHERE \n"
+        elif (key  == 'table' or key == 'annot') and 'filter' not in thisKeyOrder:
+            query += "FROM `" + ffd[key] + "`\n"
         elif key == 'limit':
             query += "LIMIT " + ffd[key] + " \n"
+        elif key == 'recordflatten':
+            query += ", UNNEST(" + ffd[key] +")\n"
         else:
             query += ffd[key] + " \n"
-    query += '\n)\n'
     return(query)
 
 
@@ -135,11 +149,10 @@ def buildFilterQuery(args):
     ffdict = readFilterFile(args.ff1)
     ffdict = checkFilterFile(client, ffdict)
     q1 = buildQuery(client, ffdict, "maintable")
-    if 'record' in ffdict.keys():
+    if 'recordvar' in ffdict.keys():
         # prepare the annotation table
-        q2 = ''
+        q2 = buildQuery(client, ffdict, "annottable")
         q3 = ''
-        #q2 = buildQuery(client, args.ff1)
         # join in the annotation
         #q3 = buildQuery(client, args.ff1)
     else:

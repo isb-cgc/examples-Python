@@ -1,9 +1,10 @@
 table:isb-cgc.tcga_201607_beta.DNA_Methylation_chr11
 tablevar:Probe_Id
+tablevar:ParticipantBarcode
+tablevar:Beta_Value
 annot:isb-cgc.platform_reference.methylation_annotation
 annotvar:IlmnID
-idvar:ParticipantBarcode
-valvar:Beta_Value
+annotvar:UCSC.RefGene_Name
 pivot:UCSC.RefGene_Name
 filter:SampleTypeLetterCode='TP'
 filter:Study='BRCA'
