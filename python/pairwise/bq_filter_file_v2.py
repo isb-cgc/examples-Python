@@ -74,15 +74,12 @@ def checkSchemas(client,ffd):
                     ffd['recordflatten'] = t1.schema[i].name
                     for y in ks:
                         # then we need to edit that entry and remove the prefix.
-                        if t1.schema[i].name in ffd[y] and y != 'filter':
-                            print(y)
-                            print(ffd[y])
-                            bits = ffd[y].split(",")
-
-                            # and remove ffd[y] from ffd[y]
-    print("")
-    print(ffd['recordflatten'])
-    print("")
+                        if t1.schema[i].name in ffd[y] and (y not in ['filter','pivot']):
+                            searchString = t1.schema[i].name + '.'
+                            z = ffd[y]
+                            z.replace(searchString, '')
+                            print(z)
+                            ffd[y] = z
     return(ffd)
 
 
@@ -149,7 +146,7 @@ def buildFilterQuery(args):
     ffdict = readFilterFile(args.ff1)
     ffdict = checkFilterFile(client, ffdict)
     q1 = buildQuery(client, ffdict, "maintable")
-    if 'recordvar' in ffdict.keys():
+    if 'annot' in ffdict.keys():
         # prepare the annotation table
         q2 = buildQuery(client, ffdict, "annottable")
         q3 = ''
