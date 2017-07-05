@@ -29,17 +29,20 @@ again seemed to work.
 Also we need to get authenticated. At the command line we:
 gcloud auth application-default login
 
-table:isb-cgc:tcga_201607_beta.DNA_Methylation_chr11
+table:isb-cgc.tcga_201607_beta.DNA_Methylation_chr11
 tablevar:Probe_Id
+tablevar:ParticipantBarcode
+tablevar:Beta_Value
+tablekey:Probe_Id
 annot:isb-cgc.platform_reference.methylation_annotation
 annotvar:IlmnID
-idvar:ParticipantBarcode
-valvar:Beta_Value
-pivot:UCSC.RefGene_Name
+annotvar:UCSC.RefGene_Name
+annotkey:IlmnID
 filter:SampleTypeLetterCode='TP'
 filter:Study='BRCA'
 filter:UCSC.RefGene_Name IN ('ACSM5','NAP1L4','SULF2')
 limit:100
+
 
 
 '''
@@ -53,7 +56,7 @@ mko = ['tablevar', 'table' ]
 # annotation key order
 ako = [ 'annotvar','annot','recordflatten']
 # join key order
-jko = ['idvar', 'valvar', 'pivot', 'table', 'annot', 'tablevar', 'annotvar', 'filter', 'limit']
+jko = ['bothvars', 'joinkey', 'filter', 'limit']
 
 
 # Some queries must be annoated before running pairwise
@@ -76,8 +79,11 @@ def checkSchemas(client,ffd):
                         # then we need to edit that entry and remove the prefix.
                         if t1.schema[i].name in ffd[y] and (y not in ['filter','pivot']):
                             searchString = t1.schema[i].name + '.'
-                            z = ffd[y]
-                            z.replace(searchString, '')
+                            z = str(ffd[y])
+                            print("search string: " + searchString)
+                            print("type: " + str(type(z)))
+                            print("remove prefix for " + z)
+                            z = z.replace(searchString, '')
                             print(z)
                             ffd[y] = z
     return(ffd)
@@ -128,8 +134,12 @@ def buildQuery(client, ffd, mode):
     for key in thisKeyOrder:  # queries need to have a particular order
         if key in ['idvar', 'valvar', 'annotvar', 'tablevar']:
             query += ffd[key] + "\n"
-        elif key  == 'table' and 'filter' in thisKeyOrder:
-            query += "FROM `" + ffd[key] + "`\n WHERE \n"
+        elif key == 'bothvars':
+            query += ffd['tablevar'] + ',\n' + ffd['annotvar'] +'\n'
+        elif key == 'joinkey':
+            query += ' FROM T1 JOIN A1 ON T1.' + ffd['tablekey'] + '= A1.' +ffd['annotkey'] +'\n'
+        elif key  == 'filter':
+            query += "WHERE \n" + ffd[key] +'\n'
         elif (key  == 'table' or key == 'annot') and 'filter' not in thisKeyOrder:
             query += "FROM `" + ffd[key] + "`\n"
         elif key == 'limit':
@@ -141,23 +151,35 @@ def buildQuery(client, ffd, mode):
     return(query)
 
 
+def buildAnnotQuery(q1,q2,q3):
+    x = (
+    "WITH\n" +
+    "T1 AS (\n" +
+    q1 +
+    "),\n" +
+    "A1 AS (\n" +
+    q2 +
+    ") \n" +
+    q3
+    )
+    return(x)
+
+
 def buildFilterQuery(args):
     client = bigquery.Client(project=args.prj)
     ffdict = readFilterFile(args.ff1)
     ffdict = checkFilterFile(client, ffdict)
     q1 = buildQuery(client, ffdict, "maintable")
     if 'annot' in ffdict.keys():
-        # prepare the annotation table
+        # prepare the annotation table, and perform a join
         q2 = buildQuery(client, ffdict, "annottable")
-        q3 = ''
-        # join in the annotation
-        #q3 = buildQuery(client, args.ff1)
+        q3 = buildQuery(client, ffdict, "jointable")
+        queryString = buildAnnotQuery(q1,q2,q3)
     else:
-        q2 = '' # no annotation
         # just query the main table with filters.
-        q3 = ''
-        #q3 = buildQuery(client, ffdict)
-    queryString = q1+q2+q3
+        q2 = '' # no annotation
+        q3 = '' # no joins
+        queryString = q1
     print("*****************************************")
     print(queryString)
     print("*****************************************")
