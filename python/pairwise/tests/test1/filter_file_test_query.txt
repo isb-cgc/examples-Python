@@ -1,0 +1,85 @@
+WITH
+  T1 AS (
+  SELECT
+    project_short_name,
+    probe_id,
+    beta_value,
+    case_barcode
+  FROM
+    `isb-cgc.TCGA_hg19_data_v0.DNA_Methylation_chr16` ),
+  A1 AS (
+  SELECT
+    IlmnID,
+    RefGene_Name
+  FROM
+    `isb-cgc.platform_reference.methylation_annotation`,
+    UNNEST(UCSC) ),
+  J1 AS (
+  SELECT
+    project_short_name,
+    probe_id,
+    beta_value,
+    case_barcode,
+    IlmnID,
+    RefGene_Name
+  FROM
+    T1
+  JOIN
+    A1
+  ON
+    T1.probe_id= A1.IlmnID
+  WHERE
+    project_short_name='TCGA-BRCA'
+    AND RefGene_Name = 'GSG1L' ),
+  T2 AS (
+  SELECT
+    project_short_name,
+    HGNC_gene_symbol,
+    normalized_count,
+    case_barcode
+  FROM
+    `isb-cgc.TCGA_hg19_data_v0.RNAseq_Gene_Expression_UNC_RSEM` ),
+  J2 AS (
+  SELECT
+    project_short_name,
+    HGNC_gene_symbol,
+    normalized_count,
+    case_barcode
+  FROM
+    T2
+  WHERE
+    project_short_name='TCGA-BRCA'
+    AND HGNC_gene_symbol='LARP1' ),
+  mainjoin AS (
+  SELECT
+    beta_value,
+    normalized_count,
+    RefGene_Name,
+    HGNC_gene_symbol
+  FROM
+    J1
+  JOIN
+    J2
+  ON
+    J1.case_barcode = J2.case_barcode
+    AND J1.RefGene_Name < J2.HGNC_gene_symbol ),
+  ranktable AS (
+  SELECT
+    RefGene_Name,
+    HGNC_gene_symbol,
+    DENSE_RANK() OVER (PARTITION BY RefGene_Name ORDER BY beta_value ASC) AS rankvar1,
+    DENSE_RANK() OVER (PARTITION BY HGNC_gene_symbol ORDER BY normalized_count ASC) AS rankvar2
+  FROM
+    mainjoin )
+SELECT
+  RefGene_Name,
+  HGNC_gene_symbol,
+  CORR( rankvar1,
+    rankvar2 ) AS Spearmans
+FROM
+  ranktable
+GROUP BY
+  RefGene_Name,
+  HGNC_gene_symbol
+ORDER BY
+  Spearmans DESC

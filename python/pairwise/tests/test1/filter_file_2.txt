@@ -7,5 +7,4 @@ annot:isb-cgc.platform_reference.methylation_annotation
 annotkey:IlmnID
 annotgroup:UCSC.RefGene_Name
 filter:project_short_name='TCGA-BRCA'
-filter:RefGene_Name IN ('ACSM5','NAP1L4','SULF2')
-limit:100
+filter:RefGene_Name = 'GSG1L'
