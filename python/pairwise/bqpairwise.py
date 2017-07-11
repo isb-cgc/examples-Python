@@ -55,34 +55,33 @@ python3 bqpairwise.py isb-cgc filter_file_1.txt filter_file_2.txt
 '''
 
 import filter_and_annot as fa
+import pairwise_fun as pf
 from google.cloud import bigquery
 import argparse
 import sys
 
 
 def mainJoin(ffd1, ffd2):
-    q =  'SELECT '
+    # joins the two filter queries
+    q =  'mainjoin AS ( \nSELECT '
     q += ffd1['valuevar'] + ',\n'
     q += ffd2['valuevar'] + ',\n'
-    if 'groupby' in ffd1.keys() and 'groupby' not in ffd2.keys():
-        q += ffd1['groupby'] + '\n'  # what about groups in both?
-    if 'groupby' not in ffd1.keys() and 'groupby' in ffd2.keys():
-        q += ffd1['groupby'] + '\n'  # what about groups in both?
-    if 'groupby' in ffd1.keys() and 'groupby' in ffd2.keys():
-        q += ffd1['groupby'] + ',' + ffd2['groupby'] + '\n'  # what about groups in both?
+    q += ffd1['groupby']  + ',\n'
+    q += ffd2['groupby']  + ' \n'  # both need a groupby #
     q += 'FROM' + '\n'
     q += 'J1 JOIN J2 ON \n'
-    q += 'J1.'+ffd1['joinkey'] + ' = ' + 'J2.' + ffd2['joinkey']
+    q += 'J1.'+ffd1['joinkey'] + ' = ' + 'J2.' + ffd2['joinkey'] + ' AND \n'
+    q += 'J1.'+ffd1['groupby'] + ' < ' + 'J2.' + ffd2['groupby'] + '\n),\n' # will be another two tables
     return(q)
 
 
 def mainFun(args):
+    # constructs each query, then joins the two queries,
     q1,ffd1 = fa.buildFilterQuery(args, "1")
     q2,ffd2 = fa.buildFilterQuery(args, "2")
     q3 = 'WITH\n' + q1 + ',\n' + q2 + ',\n' + mainJoin(ffd1,ffd2)
-    print(q3)
-    print(ffd1['valuetype'])
-    print(ffd2['valuetype'])
+    q4 = pf.selectTest(q3, ffd1, ffd2)
+    print(q4)
     # query_results = client.run_sync_query(queryString)
     # query_results.use_legacy_sql = False
     # query_results.run()

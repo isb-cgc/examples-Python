@@ -47,11 +47,13 @@ import argparse
 import sys
 
 # main key order
-mko = ['tablevar', 'table' ]
+mko = ['tablevar', 'table']
 # annotation key order
-ako = [ 'annotvar','annot','recordflatten']
+ako = [ 'annotvar', 'annot','recordflatten']
 # join key order
-jko = ['bothvars', 'joinkey', 'filter', 'limit']
+jko = ['bothvar', 'joinkey', 'filter', 'limit']
+# join-with-no-annot key order
+nko = ['tablevar', 't1key', 'filter', 'limit']
 
 
 ## Some queries must be annotated before running pairwise
@@ -92,6 +94,11 @@ def addItem(ffdict, mode, ki):
             ffdict['annotvar'] = ffdict[ki]
         else:
             ffdict['annotvar'] = ffdict['annotvar'] + ",\n" + ffdict[ki]
+    if mode == 'groupby':
+        if 'groupby' not in ffdict.keys():
+            ffdict['groupby'] = ffdict[ki]
+        else:
+            ffdict['groupby'] = ffdict['groupby'] + ",\n" + ffdict[ki]
     return(ffdict)
 
 
@@ -103,7 +110,7 @@ def updateFFdict(ffdict):
         if ki in ['annotkey', 'annotjoin', 'annotgroup']:
             ffdict = addItem(ffdict, 'annotvar', ki)
         if ki in ['annotgroup','tablegroup']:
-            ffdict['groupby'] = ffdict[ki]
+            ffdict = addItem(ffdict, 'groupby', ki)
         if ki in ['annotjoin', 'tablejoin']:
             ffdict['joinkey'] = ffdict[ki]
     return(ffdict)
@@ -122,11 +129,13 @@ def checkFilterFile(client, ffd):
 def keyOrder(ffdict, mode):
     ks = list(ffdict.keys())
     if mode == 'maintable':
-        kd = [x for x in mko if x in mko]
+        kd = [x for x in mko if x in ks]
     elif mode == 'annottable':
-        kd = [x for x in ako if x in ako]
+        kd = [x for x in ako if x in ks]
     elif mode == 'jointable':
-        kd = [x for x in jko if x in jko]
+        kd = [x for x in jko if x in ks]
+    elif mode == 'noannotjoin':
+        kd = [x for x in nko if x in ks]
     else:
         kd = []
     return(kd)
@@ -150,16 +159,18 @@ def readFilterFile(filepath):
     return(ffdict)
 
 
-def buildQuery(client, ffd, mode):
-    query =  "SELECT \n"
+def buildQuery(client, ffd, mode, qid):
+    query = "SELECT \n"
     thisKeyOrder = keyOrder(ffd, mode)
     for key in thisKeyOrder:  # queries need to have a particular order as specified in above lists
         if key in ['idvar', 'valuevar', 'annotvar', 'tablevar']:
             query += ffd[key] + "\n"
-        elif key == 'bothvars':
-            query += ffd['tablevar'] + ',\n' + ffd['annotvar'] +'\n'
+        elif key == 'bothvar':
+            query += ffd['tablevar'] + ",\n" + ffd['annotvar'] +'\n'
         elif key == 'joinkey':
-            query += ' FROM T1 JOIN A1 ON T1.' + ffd['tablekey'] + '= A1.' +ffd['annotkey'] +'\n'
+            query += ' FROM T'+ qid +' JOIN A1 ON T'+ qid +'.' + ffd['tablekey'] + '= A'+ qid +'.' +ffd['annotkey'] +'\n'
+        elif key == 't1key':
+            query += ' FROM T'+ qid +'\n'
         elif key  == 'filter':
             query += "WHERE \n" + ffd[key] +'\n'
         elif (key  == 'table' or key == 'annot') and 'filter' not in thisKeyOrder:
@@ -203,11 +214,6 @@ def buildNoAnnotQuery(q1,q3,qid):
     return(x)
 
 
-def buildQ3NoAnnot(ffdict, qid):
-    q3 = 'SELECT * FROM T' + qid
-    return(q3)
-
-
 def buildFilterQuery(args, qid):
     client = bigquery.Client(project=args.prj)
     if qid == "1":
@@ -215,16 +221,18 @@ def buildFilterQuery(args, qid):
     else:
         ffdict = readFilterFile(args.ff2)
     ffdict = checkFilterFile(client, ffdict)
-    q1 = buildQuery(client, ffdict, "maintable")
+    q1 = buildQuery(client, ffdict, "maintable", qid)
     if 'annot' in ffdict.keys():
         # prepare the annotation table, and perform a join
-        q2 = buildQuery(client, ffdict, "annottable")
-        q3 = buildQuery(client, ffdict, "jointable")
+        q2 = buildQuery(client, ffdict, "annottable", qid)
+        ffdict['bothvar'] = True # we are going to use both sets of vars (table and annot)
+        q3 = buildQuery(client, ffdict, "jointable", qid)
         queryString = buildAnnotQuery(q1,q2,q3,qid)
     else:
         # just query the main table with filters.
         q2 = '' # no annotation
-        q3 = buildQ3NoAnnot(ffdict,qid)
+        ffdict['t1key'] = True # not using annotvars
+        q3 = buildQuery(client, ffdict, "noannotjoin", qid)
         queryString = buildNoAnnotQuery(q1,q3,qid)
     return(queryString, ffdict)
 
