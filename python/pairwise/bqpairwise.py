@@ -64,14 +64,14 @@ import sys
 def mainJoin(ffd1, ffd2):
     # joins the two filter queries
     q =  'mainjoin AS ( \nSELECT '
-    q += ffd1['valuevar'] + ',\n'
-    q += ffd2['valuevar'] + ',\n'
-    q += ffd1['groupby']  + ',\n'
-    q += ffd2['groupby']  + ' \n'  # both need a groupby #
+    q += ffd1['valuevar2'] + ',\n'
+    q += ffd2['valuevar2'] + ',\n'
+    q += ffd1['groupby2']  + ',\n'
+    q += ffd2['groupby2']  + ' \n'  # both need a groupby #
     q += 'FROM' + '\n'
     q += 'J1 JOIN J2 ON \n'
     q += 'J1.'+ffd1['joinkey'] + ' = ' + 'J2.' + ffd2['joinkey'] + ' AND \n'
-    q += 'J1.'+ffd1['groupby'] + ' < ' + 'J2.' + ffd2['groupby'] + '\n),\n' # will be another two tables
+    q += 'J1.'+ffd1['groupby2'] + ' > ' + 'J2.' + ffd2['groupby2'] + '\n),\n' # will be another two tables
     return(q)
 
 

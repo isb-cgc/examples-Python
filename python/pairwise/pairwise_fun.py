@@ -32,22 +32,22 @@ def selectTest(q3, ffd1, ffd2):
 def spearmans(q3, ffd1, ffd2):
     # first rank the data
     thisq =  'ranktable AS (\nSELECT \n '
-    thisq += ffd1['groupby'] + ',\n'
-    thisq += ffd2['groupby'] + ',\n'
-    thisq += '  DENSE_RANK() OVER (PARTITION BY ' + ffd1['groupby'] + ' ORDER BY ' + ffd1['valuevar'] + ' ASC) as rankvar1,  \n'
-    thisq += '  DENSE_RANK() OVER (PARTITION BY ' + ffd2['groupby'] + ' ORDER BY ' + ffd2['valuevar'] + ' ASC) as rankvar2  \n'
+    thisq += ffd1['groupby2'] + ',\n'
+    thisq += ffd2['groupby2'] + ',\n'
+    thisq += '  DENSE_RANK() OVER (PARTITION BY ' + ffd1['groupby2'] + ' ORDER BY ' + ffd1['valuevar2'] + ' ASC) as rankvar1,  \n'
+    thisq += '  DENSE_RANK() OVER (PARTITION BY ' + ffd2['groupby2'] + ' ORDER BY ' + ffd2['valuevar2'] + ' ASC) as rankvar2  \n'
     thisq += 'FROM\nmainjoin \n'
     thisq += ')\n'
     # then correlate the ranks
     thisq += 'SELECT \n'
-    thisq += ffd1['groupby'] + ',\n'
-    thisq += ffd2['groupby'] + ',\n'
+    thisq += ffd1['groupby2'] + ',\n'
+    thisq += ffd2['groupby2'] + ',\n'
     thisq += '  CORR( rankvar1, rankvar2 ) as Spearmans \n'
     thisq += 'FROM\n '
     thisq += '  ranktable \n'
     thisq += 'GROUP BY \n'
-    thisq += ffd1['groupby'] + ',\n'
-    thisq += ffd2['groupby'] + '\n'
+    thisq += ffd1['groupby2'] + ',\n'
+    thisq += ffd2['groupby2'] + '\n'
     thisq += 'ORDER BY \n Spearmans DESC \n'
     return(q3 + thisq)
 

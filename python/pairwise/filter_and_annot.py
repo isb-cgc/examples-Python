@@ -53,7 +53,7 @@ ako = [ 'annotvar', 'annot','recordflatten']
 # join key order
 jko = ['bothvar', 'joinkey', 'filter', 'limit']
 # join-with-no-annot key order
-nko = ['tablevar', 't1key', 'filter', 'limit']
+nko = ['renamevar', 't1key', 'filter', 'limit']
 
 
 ## Some queries must be annotated before running pairwise
@@ -83,45 +83,76 @@ def checkSchemas(client,ffd):
     return(ffd)
 
 
-def addItem(ffdict, mode, ki):
+def addItem(ffdict, mode, ki, qid):
     if mode == 'tablevar':
         if 'tablevar' not in ffdict.keys():
             ffdict['tablevar'] = ffdict[ki]
         else:
             ffdict['tablevar'] = ffdict['tablevar'] + ",\n" + ffdict[ki]
+
+    if mode == 'tablevar2':
+        if 'tablevar2' not in ffdict.keys():
+            ffdict['tablevar2'] = ffdict[ki] + " AS " + ffdict[ki] + "_J" + qid
+            ffdict['tablevar_rename'] = ffdict[ki] + "_J" + qid
+        else:
+            ffdict['tablevar2'] = ffdict['tablevar2'] + ",\n" + ffdict[ki] + " AS " + ffdict[ki] + "_J" + qid
+            ffdict['tablevar_rename'] = ffdict['tablevar_rename'] + ",\n" + ffdict[ki] + "_J" + qid
+
     if mode == 'annotvar':
         if 'annotvar' not in ffdict.keys():
             ffdict['annotvar'] = ffdict[ki]
         else:
             ffdict['annotvar'] = ffdict['annotvar'] + ",\n" + ffdict[ki]
+
+    if mode == 'annotvar2':
+        if 'annotvar2' not in ffdict.keys():
+            ffdict['annotvar2'] = ffdict[ki] + " AS " + ffdict[ki] + "_J" + qid
+            ffdict['annotvar_rename'] = ffdict[ki] + "_J" + qid
+        else:
+            ffdict['annotvar2'] = ffdict['annotvar2'] + ",\n" + ffdict[ki] + " AS " + ffdict[ki] + "_J" + qid
+            ffdict['annotvar_rename'] = ffdict['annotvar_rename'] + ",\n" + ffdict[ki] + "_J" + qid
+
     if mode == 'groupby':
         if 'groupby' not in ffdict.keys():
             ffdict['groupby'] = ffdict[ki]
         else:
             ffdict['groupby'] = ffdict['groupby'] + ",\n" + ffdict[ki]
+
+    if mode == 'groupby2':
+        if 'groupby2' not in ffdict.keys():
+            ffdict['groupby2'] = ffdict[ki] + "_J" + qid
+        else:
+            ffdict['groupby2'] = ffdict['groupby2'] + ",\n" + ffdict[ki] + "_J" + qid
+
     return(ffdict)
 
 
-def updateFFdict(ffdict):
+def updateFFdict(ffdict, qid):
     ks = list(ffdict.keys())
     for ki in ks:
         if ki in ['tablekey','tablejoin','tablegroup', 'valuevar']:
-            ffdict = addItem(ffdict, 'tablevar', ki)
+            ffdict = addItem(ffdict, 'tablevar', ki, qid)
+            ffdict = addItem(ffdict, 'tablevar2', ki, qid)
         if ki in ['annotkey', 'annotjoin', 'annotgroup']:
-            ffdict = addItem(ffdict, 'annotvar', ki)
+            ffdict = addItem(ffdict, 'annotvar', ki, qid)
+            ffdict = addItem(ffdict, 'annotvar2', ki, qid)
         if ki in ['annotgroup','tablegroup']:
-            ffdict = addItem(ffdict, 'groupby', ki)
+            ffdict = addItem(ffdict, 'groupby', ki, qid)
+            ffdict = addItem(ffdict, 'groupby2', ki, qid)
         if ki in ['annotjoin', 'tablejoin']:
             ffdict['joinkey'] = ffdict[ki]
+            ffdict['joinkey'] = ffdict[ki] + "_J" + qid
+        if ki == 'valuevar':
+            ffdict['valuevar2'] = ffdict['valuevar'] + "_J" + qid
     return(ffdict)
 
 
 
 # check that dictionary names are
 # in the allowed set.
-def checkFilterFile(client, ffd):
+def checkFilterFile(client, ffd, qid):
     # check schemas for records
-    ffd = updateFFdict(ffd)
+    ffd = updateFFdict(ffd, qid)
     ffd = checkSchemas(client, ffd)
     return(ffd)
 
@@ -165,10 +196,12 @@ def buildQuery(client, ffd, mode, qid):
     for key in thisKeyOrder:  # queries need to have a particular order as specified in above lists
         if key in ['idvar', 'valuevar', 'annotvar', 'tablevar']:
             query += ffd[key] + "\n"
+        elif key == 'renamevar':
+            query += ffd['tablevar2']
         elif key == 'bothvar':
-            query += ffd['tablevar'] + ",\n" + ffd['annotvar'] +'\n'
+            query += ffd['tablevar2'] + ",\n" + ffd['annotvar2'] +'\n'
         elif key == 'joinkey':
-            query += ' FROM T'+ qid +' JOIN A1 ON T'+ qid +'.' + ffd['tablekey'] + '= A'+ qid +'.' +ffd['annotkey'] +'\n'
+            query += ' FROM T'+ qid +' JOIN A'+ qid +' ON T'+ qid +'.' + ffd['tablekey'] + '= A'+ qid +'.' +ffd['annotkey'] +'\n'
         elif key == 't1key':
             query += ' FROM T'+ qid +'\n'
         elif key  == 'filter':
@@ -220,18 +253,20 @@ def buildFilterQuery(args, qid):
         ffdict = readFilterFile(args.ff1)
     else:
         ffdict = readFilterFile(args.ff2)
-    ffdict = checkFilterFile(client, ffdict)
+    ffdict = checkFilterFile(client, ffdict, qid)
     q1 = buildQuery(client, ffdict, "maintable", qid)
     if 'annot' in ffdict.keys():
         # prepare the annotation table, and perform a join
         q2 = buildQuery(client, ffdict, "annottable", qid)
         ffdict['bothvar'] = True # we are going to use both sets of vars (table and annot)
+        ffdict['renamevar'] = True
         q3 = buildQuery(client, ffdict, "jointable", qid)
         queryString = buildAnnotQuery(q1,q2,q3,qid)
     else:
         # just query the main table with filters.
         q2 = '' # no annotation
         ffdict['t1key'] = True # not using annotvars
+        ffdict['renamevar'] = True
         q3 = buildQuery(client, ffdict, "noannotjoin", qid)
         queryString = buildNoAnnotQuery(q1,q3,qid)
     return(queryString, ffdict)
