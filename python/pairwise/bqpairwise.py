@@ -82,12 +82,16 @@ def mainFun(args):
     q3 = 'WITH\n' + q1 + ',\n' + q2 + ',\n' + mainJoin(ffd1,ffd2)
     q4 = pf.selectTest(q3, ffd1, ffd2)
     print(q4)
-    # query_results = client.run_sync_query(queryString)
-    # query_results.use_legacy_sql = False
-    # query_results.run()
-    # print(query_results.total_rows)
-    # for qi in query_results.rows:
-    # print(qi)
+    client = bigquery.Client(project='isb-cgc-02-0001')
+    query_results = client.run_sync_query(q4)
+    query_results.use_legacy_sql = False
+    query_results.run()
+    print(query_results.total_rows)
+    print(query_results.rows[0])
+    print(query_results.rows[1])
+    print(query_results.rows[2])
+    #for qi in query_results.rows:
+    #    print(qi)
 
 
 if __name__ == "__main__":

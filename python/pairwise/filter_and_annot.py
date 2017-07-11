@@ -182,7 +182,7 @@ def readFilterFile(filepath):
         k, v = [s.strip() for s in strings]
         if k not in ffdict:
             ffdict[k] = v
-        elif k in ffdict and k in ['idvar', 'valuevar', 'annotvar', 'tablevar']:
+        elif k in ffdict and k in ['idvar', 'valuevar', 'annotvar', 'tablevar', 'tablegroup']:
             ffdict[k] = ffdict[k] + ",\n" + v
         else:
             ffdict[k] = ffdict[k] + " AND " + v
@@ -248,11 +248,12 @@ def buildNoAnnotQuery(q1,q3,qid):
 
 
 def buildFilterQuery(args, qid):
-    client = bigquery.Client(project=args.prj)
     if qid == "1":
         ffdict = readFilterFile(args.ff1)
     else:
         ffdict = readFilterFile(args.ff2)
+    thisproject = (ffdict['table'].split('.'))[0]
+    client = bigquery.Client(project=thisproject)
     ffdict = checkFilterFile(client, ffdict, qid)
     q1 = buildQuery(client, ffdict, "maintable", qid)
     if 'annot' in ffdict.keys():

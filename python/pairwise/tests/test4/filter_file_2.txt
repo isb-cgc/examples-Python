@@ -4,5 +4,3 @@ tablevar:project_short_name
 valuevar:normalized_count
 tablegroup:HGNC_gene_symbol
 filter:project_short_name='TCGA-BRCA'
-filter:HGNC_gene_symbol > 'AZ'
-filter:HGNC_gene_symbol < 'BC'
