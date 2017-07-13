@@ -1,0 +1,40 @@
+
+#### BQPairwise ####
+
+To run BQPairwise, you must define two 'filter files'.
+Each filter-file produces a sub-table from a larger table.
+
+Run:  python3 bqpairwise.py [your-project-id] filter-file-1 filter-file-2
+------------------------------------------------------------------------------
+
+How to define a filter file.
+----------------------------
+
+***Example File***
+table:isb-cgc.TCGA_hg19_data_v0.RNAseq_Gene_Expression_UNC_RSEM
+tablejoin:case_barcode
+tablevar:project_short_name
+valuevar:normalized_count
+annot:isb-cgc.QotM.WikiPathways_20170425_Annotated
+annotkey:Symbol
+annotvar:pathway
+tablekey:HGNC_gene_symbol
+filter:project_short_name='TCGA-BRCA'
+filter:pathway='Apoptosis'
+tablegroup:HGNC_gene_symbol
+
+***Definitions***
+table:     [the source of the data]
+tablejoin: [how the data can be 'paired' with another table]
+annotjoin: [if the joining variable is found in the annotation table, only one *join statement needed]
+valuevar:  [the variable of interest, pairwise will be computed on this variable]
+tablevar:  [variables that will be used in filtering or grouping must be included here, part of SELECT]
+tablevar:  [there can be multiple listings of tablevars or related *-vars]
+annot:     [a table used for annotation]
+annotkey:  [variables for linking the table to the annot]
+tablekey:  [variables for linking the table to the annot]
+filter:    [a portion of the WHERE statement in the query]
+filter:    [there can be multiple filter listings]
+tablegroup:[how the valuevar will be grouped, calculations will take place *within* the group]
+           [tablegroup *** must be in *var or *key]
+
