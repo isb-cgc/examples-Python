@@ -1,5 +1,4 @@
 import argparse
-from concurrent import futures
 import fnmatch
 import json
 import multiprocessing
@@ -11,6 +10,7 @@ import uuid
 
 from apiclient import discovery
 from apiclient import errors
+from concurrent import futures
 from oauth2client.client import GoogleCredentials
 
 import boto.gs.connection
