@@ -1,0 +1,6 @@
+table:isb-cgc.TCGA_hg19_data_v0.Protein_Expression
+tablejoin:sample_barcode
+tablevar:project_short_name
+valuevar:protein_expression
+tablegroup:gene_name
+filter:project_short_name='TCGA-BRCA'

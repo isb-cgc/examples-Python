@@ -1,0 +1,8 @@
+table:isb-cgc.tcga_201607_beta.mRNA_UNC_RSEM
+idvar:ParticipantBarcode
+valvar:normalized_count
+pivot:HGNC_gene_symbol
+filter:SampleTypeLetterCode='TP'
+filter:Study='BRCA'
+filter:HGNC_gene_symbol IN ('ACSM5','NAP1L4','SULF2')
+limit:100

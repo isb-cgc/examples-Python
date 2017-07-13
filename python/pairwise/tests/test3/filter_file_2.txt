@@ -1,0 +1,8 @@
+table:isb-cgc.TCGA_hg19_data_v0.RNAseq_Gene_Expression_UNC_RSEM
+tablejoin:sample_barcode
+tablevar:project_short_name
+valuevar:normalized_count
+tablegroup:HGNC_gene_symbol
+filter:project_short_name IN ('TCGA-BRCA', 'TCGA-PAAD', 'TCGA-GBM')
+filter:HGNC_gene_symbol > 'AY'
+filter:HGNC_gene_symbol < 'BCC'

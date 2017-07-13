@@ -1,0 +1,10 @@
+table:isb-cgc.TCGA_hg19_data_v0.DNA_Methylation_chr16
+tablekey:probe_id
+tablevar:project_short_name
+tablejoin:case_barcode
+valuevar:beta_value
+annot:isb-cgc.platform_reference.methylation_annotation
+annotkey:IlmnID
+annotgroup:UCSC.RefGene_Name
+filter:project_short_name='TCGA-BRCA'
+filter:RefGene_Name = 'GSG1L'

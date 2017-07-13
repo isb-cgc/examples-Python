@@ -1,0 +1,7 @@
+table:isb-cgc.TCGA_hg19_data_v0.RNAseq_Gene_Expression_UNC_RSEM
+tablejoin:sample_barcode
+valuevar:normalized_count
+tablegroup:project_short_name
+tablevar:HGNC_gene_symbol
+filter:HGNC_gene_symbol > 'GZ'
+filter:HGNC_gene_symbol < 'HB'
