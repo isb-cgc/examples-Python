@@ -71,7 +71,7 @@ def mainJoin(ffd1, ffd2):
     q += 'FROM' + '\n'
     q += 'J1 JOIN J2 ON \n'
     q += 'J1.'+ffd1['joinkey'] + ' = ' + 'J2.' + ffd2['joinkey'] + ' AND \n'
-    q += 'J1.'+ffd1['groupby2'] + ' > ' + 'J2.' + ffd2['groupby2'] + '\n),\n' # will be another two tables
+    q += 'J1.'+ffd1['groupby2'] + ' < ' + 'J2.' + ffd2['groupby2'] + '\n),\n' # will be another two tables
     return(q)
 
 
@@ -82,7 +82,7 @@ def mainFun(args):
     q3 = 'WITH\n' + q1 + ',\n' + q2 + ',\n' + mainJoin(ffd1,ffd2)
     q4 = pf.selectTest(q3, ffd1, ffd2)
     print(q4)
-    client = bigquery.Client(project='isb-cgc-02-0001')
+    client = bigquery.Client(project=args.prj)
     query_results = client.run_sync_query(q4)
     query_results.use_legacy_sql = False
     query_results.run()

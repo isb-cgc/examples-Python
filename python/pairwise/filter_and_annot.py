@@ -130,10 +130,12 @@ def addItem(ffdict, mode, ki, qid):
 def updateFFdict(ffdict, qid):
     ks = list(ffdict.keys())
     for ki in ks:
-        if ki in ['tablekey','tablejoin','tablegroup', 'valuevar']:
-            ffdict = addItem(ffdict, 'tablevar', ki, qid)
+        #if ki in ['tablekey','tablejoin','tablegroup', 'valuevar']:
+        if ki in ['tablekey', 'tablejoin', 'valuevar']:
+            ffdict = addItem(ffdict, 'tablevar', ki, qid) # if it's a tablegroup... treat like filter item
             ffdict = addItem(ffdict, 'tablevar2', ki, qid)
-        if ki in ['annotkey', 'annotjoin', 'annotgroup']:
+        #if ki in ['annotkey', 'annotjoin', 'annotgroup']:
+        if ki in ['annotkey', 'annotjoin']:
             ffdict = addItem(ffdict, 'annotvar', ki, qid)
             ffdict = addItem(ffdict, 'annotvar2', ki, qid)
         if ki in ['annotgroup','tablegroup']:

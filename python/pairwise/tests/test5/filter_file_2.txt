@@ -1,0 +1,11 @@
+table:isb-cgc.TCGA_hg19_data_v0.DNA_Methylation_chr16
+tablekey:probe_id
+tablevar:project_short_name
+tablejoin:case_barcode
+valuevar:beta_value
+annot:isb-cgc.platform_reference.methylation_annotation
+annotkey:IlmnID
+annotvar:RefGene_Name
+annotgroup:probe_id
+filter:project_short_name='TCGA-BRCA'
+filter:RefGene_Name IN (select Symbol FROM `isb-cgc.QotM.WikiPathways_20170425_Annotated` WHERE pathway = 'Apoptosis')
