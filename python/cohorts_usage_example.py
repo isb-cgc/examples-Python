@@ -189,6 +189,10 @@ def main():
     sample_info = sample_cloud_storage_file_paths(ccle_service, sample_barcode)
     pprint.pprint(sample_info)
 
+    print('\ncohort get files:')
+    cohort_info = cohort_cloud_storage_file_paths(service, cohort_id)
+    pprint.pprint(cohort_info)
+
     print('\ncohort delete:')
     cohort_info = cohort_delete(service, cohort_id)
     pprint.pprint(cohort_info)
