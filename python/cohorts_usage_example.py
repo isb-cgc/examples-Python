@@ -190,7 +190,7 @@ def main():
     pprint.pprint(sample_info)
 
     print('\ncohort get files:')
-    cohort_info = cohort_cloud_storage_file_paths(service, cohort_id)
+    cohort_info = cohort_cloud_storage_file_paths(service, cohort_id, data_format = 'BAM', experimental_strategy = 'RNA-Seq')
     pprint.pprint(cohort_info)
 
     print('\ncohort delete:')
