@@ -46,8 +46,8 @@ def get(service, barcode):
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('--barcode', '-b',
-                        help='Case barcode. Example: TCGA-W5-AA2R')
+    parser.add_argument('--barcode', '-b', type=str, required=True, 
+                        action='store', help='Case barcode. Example: TCGA-W5-AA2R')
     args = parser.parse_args()
     service = get_unauthorized_service()
     get(service, args.barcode)
