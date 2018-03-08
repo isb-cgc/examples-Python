@@ -1,5 +1,7 @@
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
 '''
-Copyright 2017, Institute for Systems Biology.
+Copyright 2018, Institute for Systems Biology.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,15 +15,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 '''
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
 from argparse import ArgumentParser
 from googleapiclient.discovery import build
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client import tools
 from oauth2client.file import Storage
+
 import httplib2
-import pprint
 import json
 import os
+import pprint
+import sys
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 # the CLIENT_ID for the ISB-CGC site
 CLIENT_ID = '907668440978-0ol0griu70qkeb6k3gnn2vipfa5mgl60.apps.googleusercontent.com'
@@ -32,8 +40,8 @@ EMAIL_SCOPE = 'https://www.googleapis.com/auth/userinfo.email'
 # where a default credentials file will be stored for use by the endpoints
 DEFAULT_STORAGE_FILE = os.path.join(os.path.expanduser("~"), '.isb_credentials')
 
-# ------------------------------------------------------------------------------
-# This validates the credentials of the current user against the ISB-CGC site
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# validate the credentials of the current user against the ISB-CGC site
 
 def get_credentials():
     oauth_flow_args = ['--noauth_local_webserver']
@@ -44,6 +52,8 @@ def get_credentials():
         flow.auth_uri = flow.auth_uri.rstrip('/') + '?approval_prompt=force'
         credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args))
     return credentials
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 def get_authorized_service(api_tag):
     api = 'isb_cgc{}_api'.format(api_tag)
@@ -61,12 +71,13 @@ def get_authorized_service(api_tag):
 
     return authorized_service
 
-## resource methods
-
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# resource methods
 # the following four APIs can be cross-program and are part of the isb_cgc_api endpoint
-def get(service, cohort_id=1, body=None, name=None):
+
+def get(service, cohort_id=None, body=None, name=None):
     """
-    Usage: python python/isb_cgc_api_v3_cohorts.py -e get -c 24
+    Usage: python isb_cgc_api_v3_cohorts.py -e get -c 24
     """
     data = service.cohorts().get(cohort_id=cohort_id).execute()
     print '\nresults from cohorts().get()'
@@ -74,7 +85,7 @@ def get(service, cohort_id=1, body=None, name=None):
 
 def list(service, cohort_id=None, body=None, name=None):
     """
-    Usage: python python/isb_cgc_api_v3_cohorts.py -e list
+    Usage: python isb_cgc_api_v3_cohorts.py -e list
     """
     data = service.cohorts().list().execute()
     print '\nresults from cohorts().list()'
@@ -84,49 +95,32 @@ def list(service, cohort_id=None, body=None, name=None):
 
 def delete(service, cohort_id=None, body=None, name=None):
     """
-    Usage: python python/isb_cgc_api_v3_cohorts.py -e delete -c 24
+    Usage: python isb_cgc_api_v3_cohorts.py -e delete -c 24
     """
     data = service.cohorts().delete(cohort_id=cohort_id).execute()
     print '\nresults from cohorts().delete()'
     pprint.pprint(data)
 
-def cloud_storage_file_paths(
-        service, cohort_id=None, 
-        analysis_workflow_type=None, 
-        data_category=None, 
-        data_format=None, 
-        data_type=None, 
-        experimental_strategy=None,
-        genomic_build=None,
-        limit=None,
-        platform=None,
-        fields=None
-    ):
+def cloud_storage_file_paths(service, cohort_id, body=None, name=None):
+
     """
-    Usage: python python/isb_cgc_api_v3_cohorts.py -e cloud_storage_file_paths -c 24
+    Usage: python isb_cgc_api_v3_cohorts.py -e cloud_storage_file_paths -c 24
     """
-    data = service.cohorts().cloud_storage_file_paths(
-        cohort_id=cohort_id, 
-        analysis_workflow_type=analysis_workflow_type, 
-        data_category=data_category, 
-        data_format=data_format, 
-        data_type=data_type,
-        experimental_strategy=experimental_strategy,
-        genomic_build=genomic_build,
-        limit=limit,
-        platform=platform,
-        fields=fields
-    ).execute()
+
+    data = service.cohorts().cloud_storage_file_paths(cohort_id=cohort_id).execute()
     print '\nresults from cohorts().cloud_storage_file_paths()'
     pprint.pprint(data)
     
     return data
 
-# the following two APIs are specific to a program endpoint.  the examples use the isb_cgc_tcga_api endpoint but
-# are also part of the isb_cgc_ccle_api and isb_cgc_target_api endpoints
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# the following two APIs are specific to a program endpoint -- the examples
+# here use the TCGA-specific endpoint, but are also available within the
+# TARGET- and CCLE-specific APIs
+
 def preview(service, cohort_id=None, body=None, name=None):
     """
-    Usage: python python/isb_cgc_api_v3_cohorts.py -e preview -b '{"project_short_name": ["TCGA-BRCA", "TCGA-UCS"], "age_at_diagnosis_gte": 90}'
+    Usage: python isb_cgc_api_v3_cohorts.py -e preview -b '{"project_short_name": ["TCGA-BRCA", "TCGA-UCS"], "age_at_diagnosis_gte": 90}'
     """
     data = service.cohorts().preview(**body).execute()
     print '\nresults from cohorts().preview()'
@@ -134,11 +128,29 @@ def preview(service, cohort_id=None, body=None, name=None):
 
 def create(service, cohort_id=None, body=None, name=None):
     """
-    Usage: python python/isb_cgc_api_v3_cohorts.py -e preview -n mycohortname -b '{"project_short_name": ["TCGA-BRCA", "TCGA-UCS"], "age_at_diagnosis_gte": 90}'
+    Usage: python isb_cgc_api_v3_cohorts.py -e create -n mycohortname -b '{"project_short_name": ["TCGA-BRCA", "TCGA-UCS"], "age_at_diagnosis_gte": 90}'
     """
     data = service.cohorts().create(name=name, body=body).execute()
     print '\nresults from cohorts().create()'
     pprint.pprint(data)
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+def print_usage():
+    print " "
+    print " Usage: python %s --endpoint <endpoint_name> ... " % sys.argv[0]
+    print " "
+    print " Examples: "
+    print "     python %s --endpoint list " % sys.argv[0]
+    print "     python %s --endpoint get --cohort <cohort_id> " % sys.argv[0]
+    print "     python %s --endpoint delete --cohort <cohort_id> " % sys.argv[0]
+    print "     python %s --endpoint cloud_storage_file_paths --cohort <cohort_id> " % sys.argv[0]
+    bodyString = '{"project_short_name": ["TCGA-BRCA", "TCGA-UCS"], "age_at_diagnosis_gte": 90}'
+    ## print "     python %s --endpoint preview --body '%s' " % ( sys.argv[0], bodyString )
+    ## print "     python %s --endpoint create --name myNewCohort --body '%s' " % ( sys.argv[0], bodyString )
+    print " "
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 def main():
     parser = ArgumentParser()
@@ -152,9 +164,36 @@ def main():
                              '{"project_short_name": ["TCGA-BRCA", "TCGA-UCS"], "age_at_diagnosis_gte": 90')
     parser.add_argument('--name', '-n',
                         help='The name of the cohort to create in the create endpoint.')
-    args = parser.parse_args()
-    if args.endpoint not in ['get', 'list', 'preview', 'create', 'delete', 'cloud_storage_file_paths']:
+    try:
+        args = parser.parse_args()
+    except:
+        print_usage()
         return
+
+    if args.endpoint not in ['get', 'list', 'preview', 'create', 'delete', 'cloud_storage_file_paths']:
+        print_usage()
+        return
+
+    if args.endpoint not in ['list', 'preview', 'create']:
+        if ( args.cohort_id is None ):
+            print " "
+            print " an integer cohort identifier is required for this endpoint "
+            print " "
+            print_usage()
+            return
+
+    if args.endpoint in ['preview', 'create']:
+        print " "
+        print " Cohort preview and create functionality is not currently available from the ISB-CGC APIs. "
+        print " "
+        return
+        if ( args.body is None ):
+            print " "
+            print " at least one filter must be specified using the 'body' argument "
+            print " in order to %s a cohort " % args.endpoint
+            print " "
+            print_usage()
+            return
 
     api_tag = '_tcga' if args.endpoint in ('preview', 'create') else '' 
     service = get_authorized_service(api_tag)
@@ -163,5 +202,9 @@ def main():
 
     globals()[args.endpoint](service, cohort_id=cohort_id, body=body, name=args.name)
 
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
 if __name__ == '__main__':
     main()
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
