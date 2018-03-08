@@ -1,5 +1,7 @@
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
 '''
-Copyright 2017, Institute for Systems Biology.
+Copyright 2018, Institute for Systems Biology.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,6 +15,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 '''
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
 from googleapiclient.discovery import build
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client import tools
@@ -20,6 +24,8 @@ from oauth2client.file import Storage
 import httplib2
 import pprint
 import os
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 # the CLIENT_ID for the ISB-CGC site
 CLIENT_ID = '907668440978-0ol0griu70qkeb6k3gnn2vipfa5mgl60.apps.googleusercontent.com'
@@ -31,17 +37,22 @@ EMAIL_SCOPE = 'https://www.googleapis.com/auth/userinfo.email'
 DEFAULT_STORAGE_FILE = os.path.join(os.path.expanduser("~"), '.isb_credentials')
 
 #------------------------------------------------------------------------------
-# This validates the credentials of the current user against the ISB-CGC site
+# validate the credentials of the current user against the ISB-CGC site
 
 def get_credentials():
     oauth_flow_args = ['--noauth_local_webserver']
     storage = Storage(DEFAULT_STORAGE_FILE)
     credentials = storage.get()
     if not credentials or credentials.invalid:
+        print " "
+        print " You do not have cached credentials ... please follow these instructions: "
+        print " "
         flow = OAuth2WebServerFlow(CLIENT_ID, CLIENT_SECRET, EMAIL_SCOPE)
         flow.auth_uri = flow.auth_uri.rstrip('/') + '?approval_prompt=force'
         credentials = tools.run_flow(flow, storage, tools.argparser.parse_args(oauth_flow_args))
     return credentials
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 def get_authorized_service():
     api = 'isb_cgc_tcga_api'
@@ -59,18 +70,29 @@ def get_authorized_service():
 
     return authorized_service
 
-# the API uses the isb_cgc_tcga_api endpoint but is also part of the isb_cgc_ccle_api and isb_cgc_target_api endpoints
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
 def get(service):
     """
     Usage: python python/isb_cgc_api_v3_users.py
     """
     data = service.users().get().execute()
+    print " "
+    print " NB: this API will only return YOUR information as a user of ISB-CGC "
+    print " "
     print '\nresult of users().get()'
     pprint.pprint(data)
+    print " "
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 def main():
     service = get_authorized_service()
     get(service)
 
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
 if __name__ == '__main__':
     main()
+
+# -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
