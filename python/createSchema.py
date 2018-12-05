@@ -44,8 +44,12 @@ def removeSpecialChars ( aString ):
         else:
             bString += aString[ii]
 
-    if ( bString[-1] == "_" ): bString = bString[:-1]
+    try:
+        if ( bString[-1] == "_" ): bString = bString[:-1]
+    except:
+        doNothing = 1
 
+    print "     removeSpecialChars : <%s> <%s> " % ( aString, bString )
     return ( bString )
 
 # --------------------------------------------------------------
@@ -89,10 +93,13 @@ def createValidBQfieldName ( aString ):
         cString = bString
 
     ## check first character:
-    ## print " <%s> " % cString
-    if not letter_or_underscore ( cString[0] ):
-        print " createValidBQfieldName: first character is not valid <%s> " % cString
-        sys.exit(-1)
+    print " <%s> " % cString
+    try:
+        if not letter_or_underscore ( cString[0] ):
+            print " createValidBQfieldName: first character is not valid <%s> " % cString
+            sys.exit(-1)
+    except:
+        doNothing = 1
 
     ## check all other characters:
     for ii in range(len(cString)):
@@ -229,15 +236,19 @@ lowerNames = []
 for ii in range(len(headerRow)):
     aName = removeSpecialChars ( headerRow[ii].strip() )
     aName = createValidBQfieldName ( headerRow[ii].strip() )
+
     if ( aName.lower() in lowerNames ):
         print " ERROR: repeated header token <%s> " % aName
-        sys.exit(-1)
-    elif ( aName == "" ):
+        print " --> appending 'X' --> <%sX> " % aName
+        aName = aName + 'X'
+        ## sys.exit(-1)
+
+    if ( aName == "" ):
         print " ERROR: blank header token ??? "
         sys.exit(-1)
-    else:
-        fieldNames += [ aName ]
-        lowerNames += [ aName.lower() ]
+
+    fieldNames += [ aName ]
+    lowerNames += [ aName.lower() ]
 
 print " "
 print fieldNames
