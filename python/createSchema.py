@@ -110,7 +110,7 @@ def inferDataTypes ( dataRow, dataTypes, fieldNames ):
 
         item = dataRow[ii].strip()
 
-        if ( item == '' ):
+        if ( item == '' or item == 'NA'):
             ## print " SKIPPING field #%d because it is blank ... " % ii      
             continue
 
@@ -253,6 +253,7 @@ while not done:
     aLine = dataFile.readline()
     dmpFh.write ( '%s' % aLine )
     dataRow = aLine.split('\t')
+
     if ( len(dataRow) == 1 ):
         done = 1
         continue
