@@ -181,6 +181,7 @@ def translateInputRow ( dataRow, schemaInfo ):
                     d = d.strip()
                     if ( schemaInfo[ii][1] == 'string' ):
                         if ( d.startswith("u'") ): d = d[2:-1]
+                        if ( d == ',' ): continue
                         outRow += '"%s",' % d
 
                 outRow = outRow[:-1] + '],'
