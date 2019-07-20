@@ -227,7 +227,7 @@ def inferDataTM ( dataRow, dataTypes, dataModes, fieldNames ):
 # --------------------------------------------------------------
 
 # TODO: clean up this code ... also make it capable of handling
-# both TSVs and CSVs ... and look at the shelx module/class 
+# both TSVs and CSVs ... and look at the shlex module/class 
 
 if ( len(sys.argv) == 1 ):
     print " "
